@@ -32,6 +32,7 @@ app/build/
 # Gradle files
 .gradle/
 build/
+*/build/
 
 # Android Studio Navigation editor temp files
 .navigation/
