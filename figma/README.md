@@ -10,3 +10,8 @@ Lê Bảo Ngọc 2 mẫu:
 - Màn hình Ví của tôi & Quản lý xu (My Wallet & SShares Coin Screen)
   
 https://www.figma.com/proto/H3sU2BjNDSptwcvKbmpHpD/Untitled?node-id=0-1&t=xIyFWNpdB0W78pId-1
+
+Lê Nguyễn Khánh Trình 2 mẫu:
+- Màn hình Khám phá Bản đồ (Map / Store Locator Screen)
+- Màn hình Chi tiết Voucher (Voucher Detail Screen)
+https://www.figma.com/design/S5qlqJuZ3EmHMrN9pS7eCl/Mobile_UI_Map_And_VoucherDetail?node-id=2-2&m=dev&t=zV1kZoFLX6HAUNdZ-1
