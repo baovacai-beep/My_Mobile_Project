@@ -10,17 +10,35 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SSharing">
+        android:theme="@style/Theme.SSharing"
+        tools:targetApi="31">
+
+        <!-- Màn hình chính mặc định -->
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 2 Màn hình của Lê Nguyễn Khánh Trình -->
+        <activity
+            android:name=".MapStoreLocatorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".VoucherDetailActivity"
+            android:exported="false" />
+
+        <!-- 2 Màn hình của Lê Bảo Ngọc -->
+        <activity
+            android:name=".WalletActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PostVoucherActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
