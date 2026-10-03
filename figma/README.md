@@ -15,6 +15,7 @@ Lê Nguyễn Khánh Trình 2 mẫu:
 - Màn hình Khám phá Bản đồ (Map / Store Locator Screen)
 - Màn hình Chi tiết Voucher (Voucher Detail Screen)
 https://www.figma.com/design/S5qlqJuZ3EmHMrN9pS7eCl/Mobile_UI_Map_And_VoucherDetail?node-id=2-2&m=dev&t=zV1kZoFLX6HAUNdZ-1
+
 Trần Gia BẢO 2 mẫu:
 - Màn hình Chào (Splash Screen) & Đăng nhập/Đăng ký (Auth Screen)
 - Màn hình Trang chủ (Home Screen - Feed / Marketplace)
