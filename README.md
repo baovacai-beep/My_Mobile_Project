@@ -69,11 +69,10 @@ My_Mobile_Project/
 │           └── values-night/       # Cấu hình tối ưu chế độ nền tối (Dark Mode)
 ├── build.gradle.kts                # Cấu hình root build Gradle
 └── settings.gradle.kts             # Khai báo cấu hình dự án
-
 🚀 5. Hướng dẫn Chạy Thử nghiệm (How to Run & Test)
 Mở dự án: Khởi động Android Studio, chọn Open và dẫn tới thư mục My_Mobile_Project.
 
-Đồng bộ mã nguồn: Chờ Android Studio chạy Gradle Sync tự động.
+Đồng bộ mã nguồn: Chờ Android Studio chạy Gradle Sync tự động hoàn tất.
 
 Biên dịch (Build):
 
