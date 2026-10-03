@@ -1,129 +1,103 @@
-# 🎟️ SSharing - Nền Tảng Chia Sẻ Mã Giảm Giá
+Markdown
+# 🎟️ SSharing - Nền Tảng Chia Sẻ & Giao Dịch Voucher Ký Quỹ (Escrow)
 
-> **Tiết kiệm thông minh - Chia sẻ tiện ích**
-> *SSharing* là ứng dụng di động cho phép cộng đồng người dùng tìm kiếm, chia sẻ và quản lý các mã giảm giá (voucher/coupon) từ các sàn thương mại điện tử, dịch vụ ăn uống, di chuyển và mua sắm phổ biến.
-
----
-
-## 📌 Mục Lục
-
-* [Giới thiệu dự án]
-* [Tính năng nổi bật]
-* [Công nghệ sử dụng]
-* [Cấu trúc dự án]
-* [Cài đặt và Chạy ứng dụng]
-* [Thành viên phát triển]
-* [Giấy phép]
+> **Dự án Lập trình Ứng dụng Di động (Mobile Development Project)**  
+> **Nền tảng:** Android Native (Java) | **Kiến trúc:** Gradle Kotlin DSL (`build.gradle.kts`) | **Package:** `vn.edu.ueh.baoho.ssharing`
 
 ---
 
-## 📖 Giới thiệu dự án
+## 📖 1. Giới thiệu Dự án (Overview)
 
-Trong thời đại mua sắm trực tuyến phát triển, nhu cầu săn mã khuyến mãi và tối ưu chi phí tiêu dùng ngày càng lớn. **SSharing** ra đời nhằm giải quyết vấn đề phân tán thông tin voucher bằng cách xây dựng một cộng đồng nơi mọi người có thể:
+**SSharing** là giải pháp ứng dụng di động cho phép người dùng chia sẻ, mua bán và trao đổi lại các mã giảm giá, voucher dịch vụ (ẩm thực, mua sắm, giải trí, di chuyển...) chưa qua sử dụng. 
 
-* Đóng góp những mã giảm giá mình không dùng đến.
-* Dễ dàng tìm được mã ưu đãi còn hiệu lực cho nhu cầu cá nhân.
-* Tránh lãng phí thời gian thử các mã đã hết hạn thông qua cơ chế phản hồi cộng đồng.
+Điểm cốt lõi của nền tảng là cơ chế **Giao dịch bảo đảm / Ký quỹ (Escrow Payment)** kết hợp tính năng **Trò chuyện trực tiếp (Escrow Chat)** và **Bản đồ định vị cửa hàng (Store Locator)**, giúp loại bỏ triệt để rủi ro voucher giả, mã hết hạn hoặc gian lận trong giao dịch P2P.
 
 ---
 
-## ✨ Tính năng nổi bật
+## 👥 2. Phân công Thành viên & Giao diện Đảm nhiệm (Work Division)
 
-* 🔍 **Tìm kiếm & Phân loại thông minh:** Lọc mã theo danh mục (Shopee, Lazada, Grab, Đồ ăn, Du lịch, Công nghệ,...).
-* 📋 **Sao chép 1 chạm:** Tự động sao chép mã voucher vào bộ nhớ tạm (Clipboard) và chuyển hướng nhanh đến ứng dụng/website mua sắm.
-* ✍️ **Chia sẻ mã cộng đồng:** Người dùng có thể đăng tải mã giảm giá kèm hạn sử dụng, điều kiện áp dụng và mô tả chi tiết.
-* 👍 **Đánh giá & Báo cáo:** Hệ thống bình chọn mã còn hoạt động hay đã hết hạn, giúp giữ chất lượng dữ liệu luôn chính xác.
-* ⭐️ **Lưu trữ mã yêu thích:** Đánh dấu các voucher tiềm năng để sử dụng sau.
-* 👤 **Quản lý tài khoản:** Xem lại các mã đã đăng, lịch sử lưu mã và điểm uy tín cộng đồng.
+Dự án hiện tại đã hoàn thành toàn bộ **Giao diện người dùng (UI/UX Mockup)** theo phong cách **Dark Modern Theme** (`#13101E`) và hệ thống điều hướng activity:
 
----
-
-## 🛠️ Công nghệ sử dụng
-
-| Thành phần | Công nghệ / Thư viện |
-| --- | --- |
-| **Nền tảng** | Android (Java / Kotlin) |
-| **Kiến trúc** | MVVM (Model - View - ViewModel) |
-| **UI Components** | Material Components, RecyclerView, ViewBinding |
-| **Backend & Database** | Firebase (Authentication, Firestore Database, Storage) / RESTful API |
-| **Xử lý bất đồng bộ** | Coroutines / RxJava / ExecutorService |
-| **Tải ảnh** | Glide / Picasso |
+| STT | Thành viên | Màn hình đảm nhiệm (Activities & Layouts) | Vai trò & Nghiệp vụ cốt lõi |
+| :---: | :--- | :--- | :--- |
+| **1** | **Trần Gia Bảo** | • `MainActivity` (`activity_main.xml`)<br>• `LoginActivity` (`activity_login_ui.xml`) | **Trang chủ & Luồng Xác thực:** Dựng layout trang chủ khám phá ưu đãi, phân loại danh mục thương hiệu (Shopee, Grab, Highlands...) và form đăng nhập chuẩn bảo mật. |
+| **2** | **Hồ Gia Bảo** | • `SellerDashboardActivity` (`activity_seller_dashboard.xml`)<br>• `EscrowChatActivity` (`activity_escrow_chat.xml`)<br>• `ProfileActivity` (`activity_profile.xml`) | **Kênh Bán, Ký quỹ & Tín nhiệm:** Bảng điều khiển tài chính người bán, luồng chat thương lượng có banner ký quỹ giữ tiền an toàn và trang hồ sơ hiển thị điểm tín nhiệm (Trust Score). |
+| **3** | **Lê Bảo Ngọc** | • `WalletActivity` (`activity_wallet.xml`)<br>• `PostVoucherActivity` (`activity_post_voucher.xml`) | **Ví người dùng & Đăng bán Voucher:** Quản lý số dư khả dụng/chờ giải ngân, lịch sử biến động số dư và biểu mẫu đăng bán voucher kèm khu vực tải ảnh mã QR. |
+| **4** | **Khánh Trình** | • `VoucherDetailActivity` (`activity_voucher_detail.xml`)<br>• `MapStoreLocatorActivity` (`activity_map_store_locator.xml`) | **Chi tiết Voucher & Định vị chi nhánh:** Hiển thị thông số giảm giá, điều kiện áp dụng, thông tin người bán và bản đồ tích hợp danh sách chi nhánh áp dụng voucher gần nhất. |
 
 ---
 
-## 📁 Cấu trúc dự án
+## 🏗️ 3. Kiến trúc Hệ thống & Tài liệu Phân tích (System Diagrams)
+
+Toàn bộ tài liệu phân tích và thiết kế hệ thống được lưu trữ đầy đủ trong thư mục dự án:
+
+* **Sơ đồ Lớp (Class Diagram):** `Diagram/Class Diagram.png`  
+  Mô hình hóa các thực thể cốt lõi trong hệ thống: `User`, `Voucher`, `Order`, `EscrowTransaction`, `Wallet`.
+* **Sơ đồ Thực thể - Quan hệ (ERD):** `Diagram/EDR.png`  
+  Mô hình cơ sở dữ liệu quan hệ, thể hiện liên kết khóa ngoại và ràng buộc toàn vẹn dữ liệu cho giao dịch escrow.
+* **Sơ đồ Phân rã Chức năng (Function Diagram):** `Diagram/Function Diagram.jpg`  
+  Phân tích chi tiết luồng xử lý từ lúc đăng tải voucher, giữ tiền ký quỹ, bàn giao mã, đến khi giải ngân hoàn tất.
+* **Nguyên mẫu Thiết kế (UI Mockup Overview):** `figma/`  
+  Bao gồm file tổng quan `figma_overview.png` và ảnh export chi tiết của từng màn hình tương ứng.
+
+---
+
+## 📂 4. Cấu trúc Thư mục Mã nguồn (Project Structure)
 
 ```text
-SSharing/
+My_Mobile_Project/
+├── Diagram/                        # Bản vẽ phân tích hệ thống (Class, ERD, Functional)
+├── figma/                          # Ảnh chụp thiết kế màn hình chuẩn UI/UX
 ├── app/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/project/ssharing/
-│   │   │   │   ├── data/            # Models, Repositories, Data Sources
-│   │   │   │   ├── ui/              # Activities, Fragments, Adapters, ViewModels
-│   │   │   │   │   ├── auth/        # Đăng ký, Đăng nhập
-│   │   │   │   │   ├── home/        # Màn hình chính, danh sách mã
-│   │   │   │   │   ├── post/        # Đăng mã giảm giá mới
-│   │   │   │   │   ├── saved/       # Danh sách mã đã lưu
-│   │   │   │   │   └── profile/     # Trang cá nhân
-│   │   │   │   └── utils/           # Helper classes, Constants, Formatters
-│   │   │   └── res/                 # Layouts, Drawables, Values, Navigations
-│   └── build.gradle
-└── README.md
+│   ├── build.gradle.kts            # Cấu hình module app & dependencies
+│   └── src/main/
+│       ├── AndroidManifest.xml     # Đăng ký 9 Activities và cấu hình quyền ứng dụng
+│       ├── java/vn/edu/ueh/baoho/ssharing/
+│       │   ├── MainActivity.java               # Trang chủ + Menu test nhanh các màn hình
+│       │   ├── LoginActivity.java              # Đăng nhập & Xác thực
+│       │   ├── SellerDashboardActivity.java    # Bảng điều khiển kênh người bán
+│       │   ├── EscrowChatActivity.java         # Chat giao dịch giữ tiền ký quỹ
+│       │   ├── ProfileActivity.java            # Hồ sơ người dùng & Điểm tín nhiệm
+│       │   ├── WalletActivity.java             # Ví điện tử & Quản lý số dư
+│       │   ├── PostVoucherActivity.java        # Biểu mẫu đăng bán voucher mới
+│       │   ├── VoucherDetailActivity.java      # Chi tiết ưu đãi & Điều kiện áp dụng
+│       │   └── MapStoreLocatorActivity.java    # Bản đồ tra cứu địa điểm sử dụng voucher
+│       └── res/
+│           ├── drawable/           # Bộ tài nguyên bo góc, nút tím, bóng chat, icon vector
+│           ├── layout/             # 9 file giao diện XML tương ứng cho các Activity
+│           ├── values/             # Bảng màu (colors.xml), chuỗi (strings.xml), theme/style
+│           └── values-night/       # Cấu hình tối ưu chế độ nền tối (Dark Mode)
+├── build.gradle.kts                # Cấu hình root build Gradle
+└── settings.gradle.kts             # Khai báo cấu hình dự án
 
-```
+🚀 5. Hướng dẫn Chạy Thử nghiệm (How to Run & Test)
+Mở dự án: Khởi động Android Studio, chọn Open và dẫn tới thư mục My_Mobile_Project.
 
----
+Đồng bộ mã nguồn: Chờ Android Studio chạy Gradle Sync tự động.
 
-## 🚀 Cài đặt và Chạy ứng dụng
+Biên dịch (Build):
 
-### Yêu cầu tiên quyết
+Nhấn tổ hợp phím Ctrl + F9 (hoặc biểu tượng cây búa) để Make Project.
 
-* **Android Studio** (Phiên bản Jellyfish / Koala hoặc mới hơn).
-* **JDK:** Phiên bản 17 hoặc 21.
-* Thiết bị thật chạy Android 8.0 (API 26) trở lên hoặc Android Emulator.
+Dự án đạt trạng thái BUILD SUCCESSFUL không có lỗi biên dịch.
 
-### Các bước cài đặt
+Kiểm thử trên thiết bị (Run App):
 
-1. **Clone repository về máy:**
-```bash
-git clone https://github.com/baovacai-beep/Du_an_di_dong_cua_toi.git
+Kết nối thiết bị thật (bật USB Debugging) hoặc khởi chạy máy ảo Android Emulator (Pixel 4 / API 30+).
 
-```
+Nhấn Shift + F10 (hoặc biểu tượng Run tam giác xanh).
 
+Menu Điều Hướng Demo: Tại góc trên bên phải màn hình chính (MainActivity), bấm vào biểu tượng Menu 3 chấm để chuyển trực tiếp đến bất kỳ màn hình nào của các thành viên trong nhóm phục vụ việc chấm điểm và đánh giá giao diện.
 
-2. **Mở dự án:**
-* Mở Android Studio $\rightarrow$ Chọn **File** $\rightarrow$ **Open...** $\rightarrow$ Trỏ tới thư mục vừa clone.
+📌 6. Kế hoạch Phát triển Tiếp theo (Roadmap)
+[x] Thiết kế UI/UX Mockup trên Figma & xây dựng sơ đồ hệ thống (Class, ERD, Functional).
 
+[x] Chuyển đổi toàn bộ layout sang XML Native và khai báo đầy đủ AndroidManifest.
 
-3. **Cấu hình dịch vụ (nếu có sử dụng Firebase):**
-* Đặt file `google-services.json` vào thư mục `app/`.
+[x] Hoàn thiện hệ thống điều hướng tập trung phục vụ kiểm thử.
 
+[ ] Xây dựng Database Backend (Firebase Firestore / SQLite Room) cho User & Voucher.
 
-4. **Đồng bộ Gradle:**
-* Nhấn nút **Sync Project with Gradle Files**.
+[ ] Lập trình logic tính toán số dư ví và trạng thái giao dịch Ký quỹ (Escrow State Machine).
 
-
-5. **Chạy ứng dụng:**
-* Chọn thiết bị máy ảo/máy thật và nhấn biểu tượng **Run** (phím tắt `Shift + F10`).
-
-
-
----
-
-## 👥 Thành viên phát triển
-
-Dự án được xây dựng và hoàn thiện bởi nhóm sinh viên:
-
-| STT | Họ và Tên | Vai trò chính |
-| --- | --- | --- |
-| 1 | **Lê Nguyễn Khánh Trình** | Team Leader / Architecture & Backend Integration |
-| 2 | **Lê Bảo Ngọc** | UI/UX Designer & Frontend Mobile Developer |
-| 3 | **Hồ Gia Bảo** | Mobile Developer & Logic Flow |
-| 4 | **Trần Gia Bảo** | Database Management & Quality Assurance (Tester) |
-
----
-
-## 📄 Giấy phép
-
-Dự án được phát triển phục vụ mục đích học tập và nghiên cứu môn Lập trình ứng dụng di động. Mọi quyền đóng góp và sử dụng mã nguồn tuân thủ theo giấy phép [MIT License](https://www.google.com/search?q=LICENSE&utm_source=gemini).
+[ ] Tích hợp Google Maps SDK cho tính năng Store Locator.
