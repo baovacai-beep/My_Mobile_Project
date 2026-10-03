@@ -70,7 +70,7 @@ My_Mobile_Project/
 ├── build.gradle.kts                # Cấu hình root build Gradle
 └── settings.gradle.kts             # Khai báo cấu hình dự án
 ```
-##🚀 5. Hướng dẫn Chạy Thử nghiệm (How to Run & Test)
+# 🚀 5. Hướng dẫn Chạy Thử nghiệm (How to Run & Test)
 Mở dự án: Khởi động Android Studio, chọn Open và dẫn tới thư mục My_Mobile_Project.
 
 Đồng bộ mã nguồn: Chờ Android Studio chạy Gradle Sync tự động hoàn tất.
@@ -89,7 +89,7 @@ Nhấn Shift + F10 (hoặc biểu tượng Run tam giác xanh).
 
 Menu Điều Hướng Demo: Tại góc trên bên phải màn hình chính (MainActivity), bấm vào biểu tượng Menu 3 chấm để chuyển trực tiếp đến bất kỳ màn hình nào của các thành viên trong nhóm phục vụ việc chấm điểm và đánh giá giao diện.
 
-##📌 6. Kế hoạch Phát triển Tiếp theo (Roadmap)
+# 📌 6. Kế hoạch Phát triển Tiếp theo (Roadmap)
 [x] Thiết kế UI/UX Mockup trên Figma & xây dựng sơ đồ hệ thống (Class, ERD, Functional).
 
 [x] Chuyển đổi toàn bộ layout sang XML Native và khai báo đầy đủ AndroidManifest.
