@@ -16,7 +16,7 @@ Lê Nguyễn Khánh Trình 2 mẫu:
 - Màn hình Chi tiết Voucher (Voucher Detail Screen)
 https://www.figma.com/design/S5qlqJuZ3EmHMrN9pS7eCl/Mobile_UI_Map_And_VoucherDetail?node-id=2-2&m=dev&t=zV1kZoFLX6HAUNdZ-1
 
-Trần Gia BẢO 2 mẫu:
+Trần Gia Bảo 2 mẫu:
 - Màn hình Chào (Splash Screen) & Đăng nhập/Đăng ký (Auth Screen)
 - Màn hình Trang chủ (Home Screen - Feed / Marketplace)
   https://www.figma.com/design/5HNRg11vHBGF4Xh9IoPoW0/Untitled?node-id=0-1&t=n2SWb9Nid5wonk0c-1
