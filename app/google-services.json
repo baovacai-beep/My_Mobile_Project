@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "357897117038",
+    "project_id": "ssharing-8cdd0",
+    "storage_bucket": "ssharing-8cdd0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357897117038:android:897e6f38bc4e9c5ccab57f",
+        "android_client_info": {
+          "package_name": "vn.edu.ueh.baoho.ssharing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2uIMxBoLigEB2JXmDsQ3QZb1KAd1rws8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
