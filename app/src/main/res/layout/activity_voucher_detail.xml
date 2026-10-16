@@ -25,29 +25,32 @@
                     android:id="@+id/imgHeader"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:contentDescription="Ảnh banner voucher"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_launcher_background" />
 
                 <!-- Back Button -->
                 <ImageButton
                     android:id="@+id/btnBack"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="40dp"
                     android:background="@drawable/bg_rounded_card"
+                    android:contentDescription="Quay lại"
                     android:src="@android:drawable/ic_menu_revert"
                     app:tint="@color/text_white" />
 
                 <!-- Share Button -->
                 <ImageButton
                     android:id="@+id/btnShare"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="40dp"
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/bg_rounded_card"
+                    android:contentDescription="Chia sẻ"
                     android:src="@android:drawable/ic_menu_share"
                     app:tint="@color/text_white" />
             </RelativeLayout>
@@ -114,6 +117,7 @@
                             android:id="@+id/imgMerchant"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
+                            android:contentDescription="Icon thương hiệu"
                             android:src="@drawable/ic_launcher_background" />
 
                         <LinearLayout
@@ -169,6 +173,7 @@
                         <ImageView
                             android:layout_width="18dp"
                             android:layout_height="18dp"
+                            android:contentDescription="Icon Escrow"
                             android:src="@android:drawable/ic_lock_lock"
                             app:tint="@color/purple_light" />
 

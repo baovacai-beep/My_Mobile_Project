@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B0914"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/iv_icon_2fa"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="60dp"
+        android:contentDescription="Xác thực 2FA"
+        android:src="@android:drawable/ic_lock_lock"
+        app:tint="#E9D5FF"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_title_2fa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Xác Thực 2 Bước (2FA)"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/iv_icon_2fa"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_desc_2fa"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Mã bảo vệ 6 chữ số đã được gửi qua SMS/Email OTP của bạn. Vui lòng nhập để hoàn tất thao tác."
+        android:textAlignment="center"
+        android:textColor="#E9D5FF"
+        android:textSize="13sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_2fa"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/layout_otp_inputs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="6"
+        app:layout_constraintTop_toBottomOf="@id/tv_desc_2fa">
+
+        <EditText android:id="@+id/et_otp_1" android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@drawable/bg_otp_box" android:gravity="center" android:inputType="number" android:importantForAutofill="no" android:hint="-" tools:ignore="LabelFor,SpeakableTextPresentCheck,HardcodedText" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="20sp" android:textStyle="bold" />
+        <EditText android:id="@+id/et_otp_2" android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@drawable/bg_otp_box" android:gravity="center" android:inputType="number" android:importantForAutofill="no" android:hint="-" tools:ignore="LabelFor,SpeakableTextPresentCheck,HardcodedText" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="20sp" android:textStyle="bold" />
+        <EditText android:id="@+id/et_otp_3" android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@drawable/bg_otp_box" android:gravity="center" android:inputType="number" android:importantForAutofill="no" android:hint="-" tools:ignore="LabelFor,SpeakableTextPresentCheck,HardcodedText" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="20sp" android:textStyle="bold" />
+        <EditText android:id="@+id/et_otp_4" android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@drawable/bg_otp_box" android:gravity="center" android:inputType="number" android:importantForAutofill="no" android:hint="-" tools:ignore="LabelFor,SpeakableTextPresentCheck,HardcodedText" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="20sp" android:textStyle="bold" />
+        <EditText android:id="@+id/et_otp_5" android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@drawable/bg_otp_box" android:gravity="center" android:inputType="number" android:importantForAutofill="no" android:hint="-" tools:ignore="LabelFor,SpeakableTextPresentCheck,HardcodedText" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="20sp" android:textStyle="bold" />
+        <EditText android:id="@+id/et_otp_6" android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@drawable/bg_otp_box" android:gravity="center" android:inputType="number" android:importantForAutofill="no" android:hint="-" tools:ignore="LabelFor,SpeakableTextPresentCheck,HardcodedText" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="20sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_countdown_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Mã hết hạn trong: 00:59"
+        android:textColor="#FCD34D"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/layout_otp_inputs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btn_xac_nhan_otp"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/bg_btn_purple"
+        android:text="Xác Nhận Xác Thực"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/tv_countdown_timer" />
+
+    <TextView
+        android:id="@+id/btn_resend_otp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="Chưa nhận được mã? Gửi lại OTP"
+        android:textColor="#8B5CF6"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/btn_xac_nhan_otp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

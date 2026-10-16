@@ -66,6 +66,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:background="@drawable/bg_circle_icon"
+                        android:contentDescription="Thông báo"
                         android:padding="10dp"
                         android:src="@drawable/ic_bell"
                         app:tint="#FFFFFF" />
@@ -75,6 +76,7 @@
                         android:layout_height="40dp"
                         android:layout_marginStart="10dp"
                         android:background="@drawable/bg_circle_icon"
+                        android:contentDescription="Cài đặt"
                         android:padding="10dp"
                         android:src="@drawable/ic_settings"
                         app:tint="#FFFFFF" />
@@ -130,6 +132,7 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:contentDescription="Icon Xu"
                             android:src="@drawable/ic_coin" />
 
                         <TextView
@@ -152,8 +155,9 @@
                         android:orientation="vertical">
 
                         <Button
+                            android:id="@+id/btnDeposit"
                             android:layout_width="wrap_content"
-                            android:layout_height="38dp"
+                            android:layout_height="48dp"
                             android:backgroundTint="#815BF5"
                             android:paddingHorizontal="16dp"
                             android:text="+ Nạp thêm"
@@ -235,6 +239,7 @@
                         android:layout_width="52dp"
                         android:layout_height="52dp"
                         android:background="@drawable/bg_rounded_icon"
+                        android:contentDescription="Icon Shopee"
                         android:scaleType="centerCrop" />
 
                     <LinearLayout
@@ -281,7 +286,7 @@
 
                     <Button
                         android:layout_width="wrap_content"
-                        android:layout_height="36dp"
+                        android:layout_height="48dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:backgroundTint="#26213D"
@@ -312,6 +317,7 @@
                         android:layout_width="52dp"
                         android:layout_height="52dp"
                         android:background="@drawable/bg_rounded_icon"
+                        android:contentDescription="Icon Grab"
                         android:scaleType="centerInside" />
 
                     <LinearLayout
@@ -341,7 +347,7 @@
 
                     <Button
                         android:layout_width="wrap_content"
-                        android:layout_height="36dp"
+                        android:layout_height="48dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:backgroundTint="#815BF5"
@@ -375,6 +381,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_centerVertical="true"
+                    android:contentDescription="Lịch sử cộng xu"
                     android:src="@drawable/ic_arrow_down_left"
                     app:tint="#43E5A0" />
 
@@ -410,6 +417,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_centerVertical="true"
+                    android:contentDescription="Lịch sử trừ xu"
                     android:src="@drawable/ic_arrow_up_right"
                     app:tint="#FFFFFF" />
 
@@ -459,6 +467,7 @@
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
+                android:contentDescription="Trang chủ"
                 android:src="@drawable/ic_home"
                 app:tint="#858095" />
 
@@ -482,6 +491,7 @@
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
+                android:contentDescription="Chợ"
                 android:src="@drawable/ic_market"
                 app:tint="#858095" />
 

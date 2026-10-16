@@ -103,10 +103,10 @@
                         android:orientation="horizontal"
                         android:paddingHorizontal="16dp">
 
-                        <!-- TODO: Đổi thành icon phong thư thật nếu có -->
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
+                            android:contentDescription="Tài khoản"
                             android:src="@drawable/ic_user"
                             app:tint="#888888" />
 
@@ -118,6 +118,7 @@
                             android:background="@null"
                             android:hint="Email / Phone"
                             android:inputType="textEmailAddress"
+                            android:importantForAutofill="no"
                             android:textColor="#FFFFFF"
                             android:textColorHint="#555555"
                             android:textSize="14sp" />
@@ -137,10 +138,10 @@
                         android:orientation="horizontal"
                         android:paddingHorizontal="16dp">
 
-                        <!-- TODO: Đổi thành icon ổ khóa thật nếu có -->
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
+                            android:contentDescription="Mật khẩu"
                             android:src="@drawable/ic_settings"
                             app:tint="#888888" />
 
@@ -153,6 +154,7 @@
                             android:background="@null"
                             android:hint="Password"
                             android:inputType="textPassword"
+                            android:importantForAutofill="no"
                             android:textColor="#FFFFFF"
                             android:textColorHint="#555555"
                             android:textSize="14sp" />
@@ -161,6 +163,7 @@
                             android:id="@+id/btnTogglePassword"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:contentDescription="Ẩn hiện mật khẩu"
                             android:src="@drawable/ic_eye"
                             app:tint="#888888" />
                     </LinearLayout>
@@ -267,6 +270,7 @@
                 <ImageView
                     android:layout_width="18dp"
                     android:layout_height="18dp"
+                    android:contentDescription="Icon Email"
                     android:src="@drawable/ic_document_file"
                     app:tint="#FFFFFF" />
 
@@ -286,6 +290,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="48dp"
                 android:layout_marginBottom="16dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -304,8 +309,13 @@
                     android:id="@+id/tvRegister"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:text="Đăng ký ngay"
-                    android:textColor="#00E676"
+                    android:textColor="#815BF5"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>

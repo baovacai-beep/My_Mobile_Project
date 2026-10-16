@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B0914"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tv_header_ekyc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Định Danh Điện Tử (eKYC)"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Thanh tiến trình 3 bước -->
+    <LinearLayout
+        android:id="@+id/layout_step_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        app:layout_constraintTop_toBottomOf="@id/tv_header_ekyc">
+
+        <TextView
+            android:id="@+id/tv_step_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="1. Mặt trước"
+            android:textColor="#6EE7B7"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_step_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="2. Mặt sau"
+            android:textColor="#E9D5FF"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_step_3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="3. Quét mặt"
+            android:textColor="#E9D5FF"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- Khung ngắm Camera chụp CCCD -->
+    <FrameLayout
+        android:id="@+id/frame_camera_container"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_card_dark"
+        app:layout_constraintTop_toBottomOf="@id/layout_step_progress">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_camera_viewfinder" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Đặt thẻ CCCD khớp khung viền"
+            android:textColor="#6EE7B7"
+            android:textSize="13sp" />
+    </FrameLayout>
+
+    <!-- Thẻ hiển thị dữ liệu bóc tách được từ OCR -->
+    <LinearLayout
+        android:id="@+id/card_ocr_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_card_dark"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/frame_camera_container">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dữ liệu trích xuất tự động (ML Kit):"
+            android:textColor="#E9D5FF"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_extracted_so_cccd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Số CCCD: Đang chờ quét..."
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_extracted_ho_ten"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Họ và tên: Đang chờ quét..."
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_chup_anh_cccd"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_btn_purple"
+        android:text="Chụp &amp; Nhận Diện Bằng AI"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/btn_tiep_tuc_ekyc" />
+
+    <Button
+        android:id="@+id/btn_tiep_tuc_ekyc"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#2E274C"
+        android:text="Tiếp Tục Bước Tiếp Theo"
+        android:textAllCaps="false"
+        android:textColor="#E9D5FF"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

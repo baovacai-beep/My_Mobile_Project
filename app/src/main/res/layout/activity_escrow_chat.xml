@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0D0A17"
     android:padding="16dp">
 
-    <!-- Header: Người giao dịch -->
+    <!-- 1. Header: Người giao dịch -->
     <RelativeLayout
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
@@ -17,6 +18,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Quay lại"
+            android:padding="4dp"
             android:text="❮"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
@@ -43,6 +51,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_partner_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Minh Triết"
@@ -51,6 +60,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_partner_trust"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
@@ -63,25 +73,33 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/btnMoreOptions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Tùy chọn khác"
+            android:padding="4dp"
             android:text="•••"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
     </RelativeLayout>
 
-    <!-- Thẻ trạng thái Ký quỹ Escrow -->
+    <!-- 2. Thẻ trạng thái Ký quỹ Escrow (Sticky Header) -->
     <LinearLayout
         android:id="@+id/cardEscrowStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutHeader"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="14dp"
         android:background="@drawable/bg_card_dark"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="14dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -115,30 +133,33 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_escrow_holding_amount"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Đang tạm giữ: 1,500 SS"
                 android:textColor="#00E676"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_escrow_countdown_timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="⏱ Còn lại 01:45:20"
+                android:text="⏱ Còn lại 00:58:24 để thử mã"
                 android:textColor="#FFA726"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Thẻ Voucher đang giao dịch -->
+    <!-- 3. Thẻ Voucher & Hộp mở mã bí mật -->
     <RelativeLayout
         android:id="@+id/cardVoucherInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/cardEscrowStatus"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/bg_card_dark"
         android:padding="12dp">
 
@@ -150,19 +171,36 @@
             android:gravity="center"
             android:text="🎟" />
 
-        <TextView
-            android:id="@+id/tvVoucherTitle"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:layout_toEndOf="@id/icVoucher"
-            android:text="Shopee 50K  SP****99"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvVoucherTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shopee 50K - Điện tử"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSecretCodeDisplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Mã bí mật: SP50K-OCTOBER99"
+                android:textColor="#6EE7B7"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <TextView
+            android:id="@+id/btnCopyVoucherCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -175,13 +213,15 @@
             android:textSize="12sp" />
     </RelativeLayout>
 
-    <!-- Khu vực Chat tin nhắn -->
+    <!-- 4. Khu vực cuộn Chat tin nhắn P2P -->
     <ScrollView
+        android:id="@+id/scrollChatArea"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/layoutBottomAction"
+        android:layout_above="@id/layoutBottomContainer"
         android:layout_below="@id/cardVoucherInfo"
-        android:layout_marginVertical="12dp">
+        android:layout_marginVertical="8dp"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -189,19 +229,22 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvSystemNotice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="8dp"
+                android:layout_marginVertical="6dp"
+                android:background="@drawable/bg_card_dark"
                 android:gravity="center"
-                android:text="Hệ thống: Người mua đã thanh toán 1,500 SS vào ví trung gian. Người mua vui lòng kiểm tra mã trước khi xác nhận."
-                android:textColor="#78718C"
-                android:textSize="12sp" />
+                android:padding="8dp"
+                android:text="🛡️ Hệ thống: Người mua đã khóa 1,500 SS vào ví Escrow. Người mua có 60 phút để kiểm tra mã trước khi tiền giải ngân."
+                android:textColor="#9E9AA9"
+                android:textSize="11sp" />
 
             <!-- Tin nhắn Người bán -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -240,12 +283,12 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Tin nhắn Người mua (Chính mình) -->
+            <!-- Tin nhắn Người mua -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_bubble_buyer"
                 android:maxWidth="260dp"
                 android:orientation="vertical"
@@ -270,35 +313,70 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 2 Nút thao tác dưới cùng -->
+    <!-- 5. Khung đáy -->
     <LinearLayout
-        android:id="@+id/layoutBottomAction"
+        android:id="@+id/layoutBottomContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
+        <!-- Ô soạn tin nhắn -->
+        <LinearLayout
+            android:id="@+id/layoutChatInputBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_chat_input"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:hint="Nhập tin nhắn trao đổi..."
+                android:inputType="textShortMessage"
+                android:importantForAutofill="no"
+                android:paddingHorizontal="14dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#6C638A"
+                android:textSize="13sp" />
+
+            <ImageButton
+                android:id="@+id/btn_send_chat"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_btn_purple"
+                android:contentDescription="Gửi tin nhắn"
+                android:src="@android:drawable/ic_menu_send"
+                app:tint="#FFFFFF" />
+        </LinearLayout>
+
+        <!-- 2 Nút thao tác Ký quỹ -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnConfirmEscrow"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="@drawable/bg_btn_purple"
-            android:text="✓ Xác nhận mã thành công"
+            android:text="✓ Xác nhận mã thành công (Giải phóng Xu)"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnReportEscrow"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:background="@drawable/bg_btn_outline_pink"
-            android:text="⚠ Báo cáo lỗi / Khiếu nại"
+            android:text="⚠ Báo cáo lỗi / Khiếu nại mã"
             android:textAllCaps="false"
             android:textColor="#FF4081"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>
 </RelativeLayout>

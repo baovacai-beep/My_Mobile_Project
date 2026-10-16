@@ -8,5 +8,9 @@ public class SellerDashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_dashboard);
+
+        if (findViewById(R.id.btnBackShop) != null) {
+            findViewById(R.id.btnBackShop).setOnClickListener(v -> finish());
+        }
     }
 }

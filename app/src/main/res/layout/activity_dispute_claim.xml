@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B0914"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:id="@+id/card_dispute_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_alert_dispute"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚠️ Trung Tâm Tiếp Nhận Khiếu Nại Ký Quỹ"
+                android:textColor="#F472B6"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Khi gửi khiếu nại, số Xu của bạn sẽ lập tức bị đóng băng an toàn trong hệ thống Escrow. Nhân viên hỗ trợ sẽ vào phòng chat để đối soát chứng cứ."
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_label_ly_do"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Chọn lý do mã voucher bị lỗi:"
+            android:textColor="#E9D5FF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/card_dispute_warning"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/rg_ly_do_loi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_label_ly_do">
+
+            <RadioButton
+                android:id="@+id/rb_da_su_dung"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="Mã đã có người sử dụng trước đó (MA_DA_SU_DUNG)"
+                android:textColor="#FFFFFF"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/rb_sai_menh_gia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="Sai mệnh giá hoặc rào cản đơn (SAI_MENH_GIA)"
+                android:textColor="#FFFFFF" />
+
+            <RadioButton
+                android:id="@+id/rb_het_han"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="Mã đã hết hạn sử dụng thực tế (HET_HAN)"
+                android:textColor="#FFFFFF" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tv_label_mota"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Mô tả chi tiết quá trình áp dụng không thành công:"
+            android:textColor="#E9D5FF"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/rg_ly_do_loi"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/et_mo_ta_chi_tiet"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_input_field"
+            android:gravity="top|start"
+            android:hint="Ví dụ: Áp dụng mã trên app Shopee lúc 10h15 thì hệ thống báo mã đã dùng..."
+            android:inputType="textMultiLine"
+            android:importantForAutofill="no"
+            android:padding="12dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#6C638A"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/tv_label_mota" />
+
+        <TextView
+            android:id="@+id/tv_label_evidence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Đính kèm ảnh chụp màn hình báo lỗi (Bằng chứng):"
+            android:textColor="#E9D5FF"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/et_mo_ta_chi_tiet"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_bang_chung_preview"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_card_dark"
+            android:contentDescription="Bằng chứng khiếu nại"
+            android:scaleType="centerInside"
+            android:src="@android:drawable/ic_menu_camera"
+            app:tint="#8B5CF6"
+            app:layout_constraintTop_toBottomOf="@id/tv_label_evidence" />
+
+        <Button
+            android:id="@+id/btn_gui_khieu_nai"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_btn_purple"
+            android:text="Gửi Hồ Sơ Tới Trọng Tài Sàn"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/iv_bang_chung_preview"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

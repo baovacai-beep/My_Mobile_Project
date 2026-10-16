@@ -52,6 +52,10 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
+        <!-- 3 Màn hình mới của Bảo -->
+        <activity android:name=".TwoFactorAuthActivity" android:exported="false" />
+        <activity android:name=".EkycVerificationActivity" android:exported="false" />
+        <activity android:name=".DisputeClaimActivity" android:exported="false" />
 
     </application>
 

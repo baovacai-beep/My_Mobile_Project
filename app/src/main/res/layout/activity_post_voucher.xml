@@ -14,13 +14,14 @@
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:padding="4dp"
+            android:contentDescription="Quay lại"
+            android:padding="10dp"
             android:src="@drawable/ic_arrow_back"
             app:tint="#FFFFFF" />
 
@@ -35,14 +36,15 @@
 
         <ImageView
             android:id="@+id/btnInfo"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:padding="4dp"
+            android:contentDescription="Thông tin"
+            android:padding="10dp"
             android:src="@drawable/ic_info"
             app:tint="#FFFFFF" />
     </RelativeLayout>
@@ -66,6 +68,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:focusable="true"
                 app:cardBackgroundColor="#161327"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp">
@@ -86,6 +90,7 @@
                             android:layout_width="28dp"
                             android:layout_height="28dp"
                             android:layout_centerInParent="true"
+                            android:contentDescription="Icon tài liệu"
                             android:src="@drawable/ic_document_file"
                             app:tint="#815BF5" />
                     </RelativeLayout>
@@ -101,7 +106,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Card Thông tin Voucher (Thương hiệu, Mã, Giảm giá, Hạn dùng) -->
+            <!-- Card Thông tin Voucher -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -129,20 +134,23 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="THƯƠNG HIỆU"
-                            android:textColor="#858095"
+                            android:textColor="#A09CAB"
                             android:textSize="11sp" />
 
                         <EditText
                             android:id="@+id/etBrand"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:layout_below="@id/lblBrand"
                             android:layout_marginTop="2dp"
                             android:layout_toStartOf="@id/badgeFB"
                             android:background="@null"
                             android:hint="Thương hiệu"
+                            android:inputType="text"
+                            android:importantForAutofill="no"
                             android:textColor="#FFFFFF"
-                            android:textColorHint="#555160"
+                            android:textColorHint="#A09CAB"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -174,20 +182,23 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="MÃ VOUCHER"
-                            android:textColor="#858095"
+                            android:textColor="#A09CAB"
                             android:textSize="11sp" />
 
                         <EditText
                             android:id="@+id/etCode"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:layout_below="@id/lblCode"
                             android:layout_marginTop="2dp"
                             android:layout_toStartOf="@id/iconsRightCode"
                             android:background="@null"
                             android:hint="Nhập mã voucher"
+                            android:inputType="text"
+                            android:importantForAutofill="no"
                             android:textColor="#FFFFFF"
-                            android:textColorHint="#555160"
+                            android:textColorHint="#A09CAB"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -200,15 +211,18 @@
                             android:gravity="center_vertical">
 
                             <ImageView
-                                android:layout_width="22dp"
-                                android:layout_height="22dp"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:padding="13dp"
+                                android:contentDescription="Xem mã"
                                 android:src="@drawable/ic_eye"
                                 app:tint="#FFFFFF" />
 
                             <ImageView
-                                android:layout_width="22dp"
-                                android:layout_height="22dp"
-                                android:layout_marginStart="12dp"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:padding="13dp"
+                                android:contentDescription="Sao chép"
                                 android:src="@drawable/ic_copy"
                                 app:tint="#FFFFFF" />
                         </LinearLayout>
@@ -227,20 +241,22 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="GIẢM GIÁ"
-                            android:textColor="#858095"
+                            android:textColor="#A09CAB"
                             android:textSize="11sp" />
 
                         <EditText
                             android:id="@+id/etDiscount"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:layout_below="@id/lblDiscount"
                             android:layout_marginTop="2dp"
                             android:background="@null"
                             android:hint="Nhập giá giảm"
                             android:inputType="number"
+                            android:importantForAutofill="no"
                             android:textColor="#43E5A0"
-                            android:textColorHint="#555160"
+                            android:textColorHint="#A09CAB"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
@@ -257,31 +273,35 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="HẠN DÙNG"
-                            android:textColor="#858095"
+                            android:textColor="#A09CAB"
                             android:textSize="11sp" />
 
                         <EditText
                             android:id="@+id/etExpiry"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:layout_below="@id/lblExpiry"
                             android:layout_marginTop="2dp"
                             android:layout_toStartOf="@id/icCalendar"
                             android:background="@null"
                             android:hint="DD/MM/YYYY"
                             android:inputType="date"
+                            android:importantForAutofill="no"
                             android:text="31/12/2026"
                             android:textColor="#FFFFFF"
-                            android:textColorHint="#555160"
+                            android:textColorHint="#A09CAB"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
                         <ImageView
                             android:id="@+id/icCalendar"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:padding="13dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
+                            android:contentDescription="Lịch"
                             android:src="@drawable/ic_calendar"
                             app:tint="#FFFFFF" />
                     </RelativeLayout>
@@ -326,20 +346,23 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Giá bán mong muốn"
-                            android:textColor="#858095"
+                            android:textColor="#A09CAB"
                             android:textSize="11sp" />
 
                         <EditText
                             android:id="@+id/etSellingPrice"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:layout_below="@id/lblSellingPrice"
                             android:layout_marginTop="2dp"
                             android:layout_toStartOf="@id/chipSShares"
                             android:background="@null"
                             android:hint="0 SS"
+                            android:inputType="number"
+                            android:importantForAutofill="no"
                             android:textColor="#43E5A0"
-                            android:textColorHint="#555160"
+                            android:textColorHint="#A09CAB"
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
@@ -357,6 +380,7 @@
                             <ImageView
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
+                                android:contentDescription="Xu SShares"
                                 android:src="@drawable/ic_coin" />
 
                             <TextView
@@ -382,21 +406,24 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Mô tả ngắn voucher"
-                            android:textColor="#858095"
+                            android:textColor="#A09CAB"
                             android:textSize="11sp" />
 
                         <EditText
                             android:id="@+id/etDescription"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:layout_below="@id/lblDescription"
                             android:layout_marginTop="6dp"
                             android:background="@null"
                             android:gravity="top"
                             android:hint="Nhập mô tả..."
+                            android:inputType="textMultiLine"
+                            android:importantForAutofill="no"
                             android:minLines="3"
                             android:textColor="#FFFFFF"
-                            android:textColorHint="#555160"
+                            android:textColorHint="#A09CAB"
                             android:textSize="13sp" />
                     </RelativeLayout>
 

@@ -67,6 +67,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:contentDescription="Bản đồ"
                 android:src="@android:drawable/ic_dialog_map"
                 app:tint="@color/purple_light" />
 
@@ -77,6 +78,8 @@
                 android:layout_weight="1"
                 android:background="@null"
                 android:hint="Search nearby deals..."
+                android:inputType="text"
+                android:importantForAutofill="no"
                 android:textColor="@color/text_white"
                 android:textColorHint="@color/text_muted"
                 android:textSize="14sp" />
@@ -84,6 +87,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:contentDescription="Bộ lọc"
                 android:src="@android:drawable/ic_menu_manage"
                 app:tint="@color/text_gray" />
         </LinearLayout>
@@ -98,6 +102,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:background="@drawable/bg_outline_button"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
@@ -110,6 +119,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:background="@drawable/bg_rounded_card"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
@@ -121,6 +135,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
                 android:background="@drawable/bg_rounded_card"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
@@ -144,6 +163,7 @@
             android:id="@+id/imgCardStore"
             android:layout_width="64dp"
             android:layout_height="64dp"
+            android:contentDescription="Ảnh cửa hàng"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_background" />
 
@@ -202,12 +222,13 @@
 
         <ImageButton
             android:id="@+id/btnNext"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@drawable/bg_rounded_card"
             android:backgroundTint="@color/bg_inner_card"
+            android:contentDescription="Xem chi tiết cửa hàng"
             android:src="@android:drawable/ic_media_next"
             app:tint="@color/purple_light" />
     </RelativeLayout>
