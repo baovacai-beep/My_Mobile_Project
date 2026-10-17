@@ -1,190 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_main">
 
-    <!-- Map Area Container -->
-    <FrameLayout
-        android:id="@+id/mapContainer"
+    <!-- Bản đồ thực tế từ SDK (thay vì hình mờ) -->
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#07070F">
+        android:layout_height="match_parent" />
 
-        <!-- Pins Mẫu trên Map -->
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="top|start"
-            android:layout_marginStart="80dp"
-            android:layout_marginTop="220dp"
-            android:background="@drawable/bg_rounded_card"
-            android:backgroundTint="@color/pin_pink"
-            android:padding="6dp"
-            android:src="@android:drawable/ic_dialog_info"
-            app:tint="@color/text_white" />
-
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="top|end"
-            android:layout_marginTop="320dp"
-            android:layout_marginEnd="90dp"
-            android:background="@drawable/bg_rounded_card"
-            android:backgroundTint="@color/pin_blue"
-            android:padding="6dp"
-            android:src="@android:drawable/ic_menu_compass"
-            app:tint="@color/text_white" />
-
-        <!-- Pin Đang chọn -->
-        <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_rounded_card"
-            android:backgroundTint="@color/purple_primary"
-            android:padding="8dp"
-            android:src="@android:drawable/ic_dialog_map"
-            app:tint="@color/text_white" />
-    </FrameLayout>
-
-    <!-- Top Search & Filters Bar -->
+    <!-- Thanh Search trên cùng -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:orientation="vertical"
         android:paddingHorizontal="16dp">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@drawable/bg_search_bar"
+            android:background="@drawable/bg_rounded_card"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp">
-
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:contentDescription="Bản đồ"
                 android:src="@android:drawable/ic_dialog_map"
                 app:tint="@color/purple_light" />
-
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:background="@null"
-                android:hint="Search nearby deals..."
-                android:inputType="text"
-                android:importantForAutofill="no"
+                android:hint="Tìm kiếm chi nhánh gần đây..."
                 android:textColor="@color/text_white"
                 android:textColorHint="@color/text_muted"
                 android:textSize="14sp" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:contentDescription="Bộ lọc"
-                android:src="@android:drawable/ic_menu_manage"
-                app:tint="@color/text_gray" />
-        </LinearLayout>
-
-        <!-- Distance Radius Filters -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="@drawable/bg_outline_button"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:text="1 km"
-                android:textColor="@color/text_white"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="@drawable/bg_rounded_card"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:text="3 km"
-                android:textColor="@color/text_gray"
-                android:textSize="12sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="@drawable/bg_rounded_card"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:text="5 km"
-                android:textColor="@color/text_gray"
-                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Bottom Floating Store Preview Card -->
-    <RelativeLayout
-        android:id="@+id/cardMerchantDetail"
+    <!-- Bottom Sheet Danh sách Chi Nhánh -->
+    <LinearLayout
+        android:id="@+id/bottomSheetStores"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/bottomNavigation"
-        android:layout_margin="16dp"
         android:background="@drawable/bg_rounded_card"
-        android:padding="12dp">
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="160dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-        <ImageView
-            android:id="@+id/imgCardStore"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:contentDescription="Ảnh cửa hàng"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background" />
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:background="@color/text_muted" />
 
-        <LinearLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chi nhánh áp dụng gần nhất"
+            android:textColor="@color/text_white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="12dp"
-            android:layout_toStartOf="@id/btnNext"
-            android:layout_toEndOf="@id/imgCardStore"
-            android:orientation="vertical">
+            android:layout_marginTop="12dp"
+            android:background="@color/bg_inner_card"
+            android:padding="12dp">
+
+            <ImageView
+                android:id="@+id/imgCardStore"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_background" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:layout_marginStart="12dp"
+                android:layout_toEndOf="@id/imgCardStore"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="The Coffee House"
+                    android:text="Highlands 279 NVL"
                     android:textColor="@color/text_white"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -192,163 +102,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_rounded_card"
-                    android:backgroundTint="@color/green_trust_bg"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="2dp"
-                    android:text="15% OFF"
-                    android:textColor="@color/green_trust"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
+                    android:layout_marginTop="4dp"
+                    android:text="📍 0.8 km (279 Nguyễn Tri Phương, Q10)"
+                    android:textColor="@color/text_gray"
+                    android:textSize="12sp" />
             </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="📍 0.8 km away"
-                android:textColor="@color/text_gray"
-                android:textSize="12sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="★ 4.8  (230 reviews)"
-                android:textColor="@color/gold_text"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/btnNext"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bg_rounded_card"
-            android:backgroundTint="@color/bg_inner_card"
-            android:contentDescription="Xem chi tiết cửa hàng"
-            android:src="@android:drawable/ic_media_next"
-            app:tint="@color/purple_light" />
-    </RelativeLayout>
-
-    <!-- Bottom Navigation Bar -->
-    <LinearLayout
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/bg_bottom_nav"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@android:drawable/ic_menu_view"
-                app:tint="@color/text_gray" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Home"
-                android:textColor="@color/text_gray"
-                android:textSize="11sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@android:drawable/ic_dialog_map"
-                app:tint="@color/purple_primary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Map"
-                android:textColor="@color/purple_primary"
-                android:textSize="11sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@android:drawable/ic_menu_agenda"
-                app:tint="@color/text_gray" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Vouchers"
-                android:textColor="@color/text_gray"
-                android:textSize="11sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@android:drawable/ic_menu_manage"
-                app:tint="@color/text_gray" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Wallet"
-                android:textColor="@color/text_gray"
-                android:textSize="11sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@android:drawable/ic_menu_myplaces"
-                app:tint="@color/text_gray" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Profile"
-                android:textColor="@color/text_gray"
-                android:textSize="11sp" />
-        </LinearLayout>
-
+        </RelativeLayout>
     </LinearLayout>
-
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
