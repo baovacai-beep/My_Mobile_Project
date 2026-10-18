@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B0914"
+    android:padding="16dp">
+
+    <!-- Header -->
+    <RelativeLayout
+        android:id="@+id/headerTopup"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:contentDescription="Quay lại"
+            android:padding="10dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="#FFFFFF" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Nạp Tiền VietQR"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnSandboxTest"
+        android:layout_below="@id/headerTopup">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="CHỌN GÓI NẠP XU (THƯỞNG LÊN ĐẾN +20%)"
+                android:textColor="#A09CAB"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- 5 Gói Nạp -->
+            <RadioGroup
+                android:id="@+id/rgPackages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="50.000 VNĐ (+0% Xu thưởng)"
+                    android:textColor="#FFFFFF" />
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="100.000 VNĐ (+5% Xu thưởng)"
+                    android:textColor="#FFFFFF" />
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="200.000 VNĐ (+10% Xu thưởng)"
+                    android:textColor="#FFFFFF" />
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="500.000 VNĐ (+15% Xu thưởng)"
+                    android:textColor="#FFFFFF" />
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1.000.000 VNĐ (+20% Xu thưởng)"
+                    android:textColor="#43E5A0"
+                    android:textStyle="bold" />
+            </RadioGroup>
+
+            <!-- Khung Mã VietQR -->
+            <ImageView
+                android:id="@+id/imgVietQR"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="20dp"
+                android:background="#161327"
+                android:contentDescription="Mã VietQR Napas247"
+                android:padding="16dp"
+                android:src="@drawable/ic_document_file"
+                app:tint="#815BF5" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Quét mã VietQR Napas247 để tự động cộng xu"
+                android:textColor="#A09CAB"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Nút Demo Sandbox -->
+    <Button
+        android:id="@+id/btnSandboxTest"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="#815BF5"
+        android:text="Giả Lập Thanh Toán Sandbox"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:cornerRadius="12dp" />
+</RelativeLayout>

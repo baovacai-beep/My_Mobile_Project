@@ -38,6 +38,13 @@
         <activity
             android:name=".PostVoucherActivity"
             android:exported="false" />
+        <activity
+            android:name=".InstantBuybackActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".CoinTopupActivity"
+            android:exported="false" />
         <!-- 3 Màn hình của Hồ Gia Bảo -->
         <activity
             android:name=".EscrowChatActivity"
