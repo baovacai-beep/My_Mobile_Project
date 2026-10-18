@@ -2,12 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A0910"> <!-- Màu nền tối tĩnh -->
+    android:background="#0A0910">
 
-    <!-- ScrollView để đảm bảo UI không bị lỗi khi mở bàn phím -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +16,6 @@
             android:layout_height="wrap_content"
             android:padding="24dp">
 
-            <!-- LOGO S GÓC TRÊN -->
             <FrameLayout
                 android:id="@+id/logoContainer"
                 android:layout_width="64dp"
@@ -28,14 +25,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <!-- Hiệu ứng viền sáng (Glow) mờ phía sau -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:alpha="0.2"
                     android:background="@drawable/bg_circle_purple" />
 
-                <!-- Chữ S trong ô bo góc -->
                 <TextView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
@@ -49,7 +44,6 @@
                     android:textStyle="bold" />
             </FrameLayout>
 
-            <!-- TIÊU ĐỀ -->
             <TextView
                 android:id="@+id/tvWelcome"
                 android:layout_width="wrap_content"
@@ -75,12 +69,11 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvWelcome" />
 
-            <!-- FORM ĐĂNG NHẬP (Chứa input, quên mật khẩu và nút đăng nhập) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardForm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 app:cardBackgroundColor="#100E17"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
@@ -94,7 +87,6 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <!-- Trường Email / Phone -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
@@ -106,7 +98,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:contentDescription="Tài khoản"
+                            android:contentDescription="User"
                             android:src="@drawable/ic_user"
                             app:tint="#888888" />
 
@@ -116,20 +108,16 @@
                             android:layout_height="match_parent"
                             android:layout_marginStart="12dp"
                             android:background="@null"
-                            android:hint="Email / Phone"
+                            android:hint="Email / Tên đăng nhập"
                             android:inputType="textEmailAddress"
-                            android:importantForAutofill="no"
                             android:textColor="#FFFFFF"
                             android:textColorHint="#555555"
                             android:textSize="14sp" />
                     </LinearLayout>
 
-                    <!-- Khoảng cách -->
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="12dp" />
+                    <View android:layout_width="match_parent" android:layout_height="12dp" />
 
-                    <!-- Trường Mật khẩu -->
+                    <!-- Trường Số điện thoại bổ sung -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
@@ -141,7 +129,37 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:contentDescription="Mật khẩu"
+                            android:contentDescription="Phone"
+                            android:src="@drawable/ic_user"
+                            app:tint="#888888" />
+
+                        <EditText
+                            android:id="@+id/etPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="12dp"
+                            android:background="@null"
+                            android:hint="Số điện thoại xác thực"
+                            android:inputType="phone"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#555555"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="Password"
                             android:src="@drawable/ic_settings"
                             app:tint="#888888" />
 
@@ -152,9 +170,8 @@
                             android:layout_marginStart="12dp"
                             android:layout_weight="1"
                             android:background="@null"
-                            android:hint="Password"
+                            android:hint="Mật khẩu"
                             android:inputType="textPassword"
-                            android:importantForAutofill="no"
                             android:textColor="#FFFFFF"
                             android:textColorHint="#555555"
                             android:textSize="14sp" />
@@ -163,12 +180,11 @@
                             android:id="@+id/btnTogglePassword"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:contentDescription="Ẩn hiện mật khẩu"
+                            android:contentDescription="Toggle Password"
                             android:src="@drawable/ic_eye"
                             app:tint="#888888" />
                     </LinearLayout>
 
-                    <!-- Quên mật khẩu -->
                     <TextView
                         android:id="@+id/tvForgotPassword"
                         android:layout_width="wrap_content"
@@ -180,7 +196,6 @@
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-                    <!-- Nút Đăng nhập chính -->
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnLogin"
                         android:layout_width="match_parent"
@@ -194,131 +209,6 @@
                         android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <!-- PHẦN CHIA CẮT (Hoặc đăng nhập bằng) -->
-            <LinearLayout
-                android:id="@+id/dividerLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/cardForm">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="#2A263D" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="12dp"
-                    android:text="Hoặc đăng nhập bằng"
-                    android:textColor="#555555"
-                    android:textSize="12sp" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="#2A263D" />
-            </LinearLayout>
-
-            <!-- NÚT ĐĂNG NHẬP GOOGLE -->
-            <LinearLayout
-                android:id="@+id/btnGoogleLogin"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/bg_outline_button"
-                android:gravity="center"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/dividerLayout">
-
-                <!-- Placeholder chữ G (hoặc thay bằng icon gg) -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="G"
-                    android:textColor="#F4B400"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="Đăng nhập bằng Google"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!-- NÚT ĐĂNG NHẬP EMAIL -->
-            <LinearLayout
-                android:id="@+id/btnEmailLogin"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_outline_button"
-                android:gravity="center"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/btnGoogleLogin">
-
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:contentDescription="Icon Email"
-                    android:src="@drawable/ic_document_file"
-                    app:tint="#FFFFFF" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="Đăng nhập bằng Email"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!-- CHƯA CÓ TÀI KHOẢN (Đẩy xuống dưới cùng) -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                android:layout_marginBottom="16dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnEmailLogin"
-                app:layout_constraintVertical_bias="1.0">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Chưa có tài khoản? "
-                    android:textColor="#888888"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tvRegister"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:text="Đăng ký ngay"
-                    android:textColor="#815BF5"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
