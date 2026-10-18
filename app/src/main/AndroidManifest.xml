@@ -19,6 +19,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -60,10 +61,23 @@
             android:name=".LoginActivity"
             android:exported="false" />
         <!-- 3 Màn hình mới của Bảo -->
-        <activity android:name=".TwoFactorAuthActivity" android:exported="false" />
-        <activity android:name=".EkycVerificationActivity" android:exported="false" />
-        <activity android:name=".DisputeClaimActivity" android:exported="false" />
-
+        <activity
+            android:name=".TwoFactorAuthActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EkycVerificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DisputeClaimActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity_brand_mall"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity_staff_arbiter"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
