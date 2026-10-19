@@ -16,11 +16,12 @@
             android:layout_height="wrap_content"
             android:padding="24dp">
 
+            <!-- Logo -->
             <FrameLayout
                 android:id="@+id/logoContainer"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -48,38 +49,61 @@
                 android:id="@+id/tvWelcome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Chào mừng trở lại!"
+                android:layout_marginTop="14dp"
+                android:text="Chào mừng đến SSharing"
                 android:textColor="#FFFFFF"
-                android:textSize="24sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/logoContainer" />
 
-            <TextView
-                android:id="@+id/tvSubtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Đăng nhập để nhận hàng ngàn voucher ưu đãi"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvWelcome" />
+            <!-- Tab Switcher (Đăng Nhập / Đăng Ký) -->
+            <LinearLayout
+                android:id="@+id/layoutAuthTabs"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_tab_container"
+                android:orientation="horizontal"
+                android:padding="4dp"
+                app:layout_constraintTop_toBottomOf="@id/tvWelcome">
+
+                <TextView
+                    android:id="@+id/btnTabLogin"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_tab_active"
+                    android:gravity="center"
+                    android:text="Đăng Nhập"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnTabRegister"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Đăng Ký Mới"
+                    android:textColor="#888888"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardForm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 app:cardBackgroundColor="#100E17"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:strokeColor="#2A263D"
                 app:strokeWidth="1dp"
-                app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
+                app:layout_constraintTop_toBottomOf="@id/layoutAuthTabs">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -87,9 +111,44 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
+                    <!-- Trường Họ và Tên (chỉ hiện khi Đăng ký) -->
+                    <LinearLayout
+                        android:id="@+id/layoutFullNameField"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="User"
+                            android:src="@drawable/ic_user"
+                            app:tint="#888888" />
+
+                        <EditText
+                            android:id="@+id/etFullName"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="12dp"
+                            android:background="@null"
+                            android:hint="Họ và tên của bạn"
+                            android:importantForAutofill="no"
+                            android:inputType="textPersonName"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#555555"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <!-- Trường Tên Đăng Nhập / Email -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:layout_marginBottom="12dp"
                         android:background="@drawable/bg_input_field"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
@@ -108,23 +167,25 @@
                             android:layout_height="match_parent"
                             android:layout_marginStart="12dp"
                             android:background="@null"
-                            android:hint="Email / Tên đăng nhập"
-                            android:inputType="textEmailAddress"
+                            android:hint="Tên đăng nhập / Email"
+                            android:importantForAutofill="no"
+                            android:inputType="text"
                             android:textColor="#FFFFFF"
                             android:textColorHint="#555555"
                             android:textSize="14sp" />
                     </LinearLayout>
 
-                    <View android:layout_width="match_parent" android:layout_height="12dp" />
-
-                    <!-- Trường Số điện thoại bổ sung -->
+                    <!-- Trường Số Điện Thoại -->
                     <LinearLayout
+                        android:id="@+id/layoutPhoneField"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:layout_marginBottom="12dp"
                         android:background="@drawable/bg_input_field"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingHorizontal="16dp">
+                        android:paddingHorizontal="16dp"
+                        android:visibility="gone">
 
                         <ImageView
                             android:layout_width="20dp"
@@ -140,14 +201,14 @@
                             android:layout_marginStart="12dp"
                             android:background="@null"
                             android:hint="Số điện thoại xác thực"
+                            android:importantForAutofill="no"
                             android:inputType="phone"
                             android:textColor="#FFFFFF"
                             android:textColorHint="#555555"
                             android:textSize="14sp" />
                     </LinearLayout>
 
-                    <View android:layout_width="match_parent" android:layout_height="12dp" />
-
+                    <!-- Mật khẩu -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
@@ -171,6 +232,7 @@
                             android:layout_weight="1"
                             android:background="@null"
                             android:hint="Mật khẩu"
+                            android:importantForAutofill="no"
                             android:inputType="textPassword"
                             android:textColor="#FFFFFF"
                             android:textColorHint="#555555"
@@ -190,22 +252,50 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:layout_marginTop="12dp"
-                        android:text="Quên mật khẩu?"
+                        android:layout_marginTop="10dp"
+                        android:text="Quên mật khẩu / 2FA?"
                         android:textColor="#7C4DFF"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
+                    <!-- Nút Đăng Nhập -->
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnLogin"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/bg_btn_purple"
-                        android:text="Đăng nhập"
+                        android:text="ĐĂNG NHẬP"
                         android:textAllCaps="false"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <!-- Nút Đăng Ký (Ẩn mặc định) -->
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnRegisterSubmit"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_btn_purple"
+                        android:text="TẠO TÀI KHOẢN MỚI"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <!-- Tài Khoản Mẫu Nhanh -->
+                    <TextView
+                        android:id="@+id/btnQuickFillAdmin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="14dp"
+                        android:padding="6dp"
+                        android:text="🔑 Điền tài khoản mẫu: baoho123 / admin123"
+                        android:textColor="#43E5A0"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

@@ -25,16 +25,20 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA_DemoGoogleMapsApiKeySSharing2026" />
 
-        <!-- Màn hình chính mặc định -->
+        <!-- Màn hình Đăng nhập (Màn hình khởi chạy bắt buộc) -->
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Màn hình chính -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="false" />
 
         <!-- Màn hình Trạm 0đ & Flash Grab -->
         <activity
@@ -75,10 +79,6 @@
             android:exported="false" />
         <activity
             android:name=".ui.ProfileActivity"
-            android:exported="false" />
-        <!-- Màn hình Đăng nhập của Trần Gia Bảo -->
-        <activity
-            android:name=".ui.LoginActivity"
             android:exported="false" />
         <!-- 3 Màn hình mới của Bảo -->
         <activity

@@ -117,6 +117,7 @@
                         android:gravity="center_vertical">
 
                         <TextView
+                            android:id="@+id/tvProfileFullName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Gia Bảo Hồ"
@@ -128,14 +129,16 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:layout_marginStart="6dp"
+                            android:contentDescription="Tín nhiệm"
                             android:src="@drawable/ic_info"
                             app:tint="@color/pin_blue" />
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/tvProfileEmailPhone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="\@baogiasave • Đã xác minh CCCD"
+                        android:text="\@baoho123 • Đã xác minh CCCD (eKYC)"
                         android:textColor="#9E9AA9"
                         android:textSize="12sp" />
                 </LinearLayout>

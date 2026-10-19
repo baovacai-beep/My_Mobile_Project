@@ -56,14 +56,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Kiểm tra phiên đăng nhập bắt buộc
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        boolean đãĐăngNhập = bộLưuTrữVí.getBoolean("IS_LOGGED_IN", false);
+        if (!đãĐăngNhập) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
         khởiTạoÁnhXạGiaoDiện();
+        cậpNhậtTênNgườiDùngMànChính(bộLưuTrữVí);
         khởiTạoViewModel();
         càiĐặtBannerAutoSlider();
         càiĐặtSựKiệnLắngNgheGiaoDiện();
         cậpNhậtGiaoDiệnTab(true); // Mặc định hiển thị SSharing Mall
         cậpNhậtKhungGợiÝDànhChoBạn();
+    }
+
+    private void cậpNhậtTênNgườiDùngMànChính(SharedPreferences bộLưuTrữ) {
+        TextView nhãnTênUser = findViewById(R.id.tvUsername);
+        if (nhãnTênUser != null) {
+            String tênNgườiDùng = bộLưuTrữ.getString("CURRENT_USER_NAME", "Gia Bảo Hồ");
+            nhãnTênUser.setText(tênNgườiDùng);
+        }
     }
 
     private void khởiTạoÁnhXạGiaoDiện() {
