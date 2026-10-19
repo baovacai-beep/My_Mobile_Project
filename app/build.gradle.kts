@@ -28,6 +28,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity.ktx)
     implementation(libs.constraintlayout)
+    // Thư viện Google ML Kit Text Recognition (Dùng cho quét OCR mã voucher)
+    implementation("com.google.mlkit:text-recognition:16.0.1")
 
     // ==========================================
     // 1. Thư viện Room Database (SQLite Cục bộ)

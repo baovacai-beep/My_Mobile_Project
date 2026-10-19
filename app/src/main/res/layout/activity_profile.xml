@@ -1,130 +1,323 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0D0A17"
-    android:padding="16dp">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <!-- Header Toolbar -->
+    <RelativeLayout
+        android:id="@+id/topBarProfile"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="56dp"
+        android:background="#121018"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/btnBackProfile"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Quay lại"
+            android:padding="4dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="#FFFFFF" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:text="Hồ sơ cá nhân / Profile"
             android:textColor="#FFFFFF"
             android:textSize="17sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginTop="8dp"/>
+            android:textStyle="bold" />
+    </RelativeLayout>
 
-        <!-- Vòng tròn Trust Score -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="20dp">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
-            <ProgressBar
-                android:id="@+id/progressTrustScore"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:progressDrawable="@drawable/bg_rounded_card"
-                android:progress="96"
-                android:max="100" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="96"
-                    android:textColor="@color/text_white"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Trust Score"
-                    android:textColor="@color/text_gray"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </RelativeLayout>
-
-        <!-- Thông tin cá nhân -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_rounded_card"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/bg_rounded_card"
-                android:gravity="center"
-                android:text="GB"
-                android:textColor="#FFFFFF"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
+            <!-- Vòng tròn Trust Score -->
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:layout_marginTop="10dp">
+
+                <ProgressBar
+                    android:id="@+id/progressTrustScore"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:progressDrawable="@drawable/bg_rounded_card"
+                    android:progress="96"
+                    android:max="100" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="96"
+                        android:textColor="@color/text_white"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Trust Score"
+                        android:textColor="@color/text_gray"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Thông tin cá nhân -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_rounded_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:gravity="center"
+                    android:text="GB"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gia Bảo Hồ"
+                            android:textColor="#FFFFFF"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginStart="6dp"
+                            android:src="@drawable/ic_info"
+                            app:tint="@color/pin_blue" />
+                    </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Gia Bảo Hồ"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:text="\@baogiasave • Đã xác minh CCCD"
+                        android:textColor="#9E9AA9"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
 
-                    <!-- Tích xanh eKYC -->
+            <!-- Menu Chức Năng Quản Lý -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="20dp">
+
+                <!-- eKYC -->
+                <LinearLayout
+                    android:id="@+id/btnMenuEkyc"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="10dp">
                     <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_marginStart="6dp"
-                        android:src="@android:drawable/ic_input_add"
-                        app:tint="@color/pin_blue" />
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_user"
+                        app:tint="#815BF5" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="Xác thực eKYC CCCD"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="❯"
+                        android:textColor="#9E9AA9" />
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="\@baogiasave • Đã xác minh CCCD"
-                    android:textColor="#9E9AA9"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </LinearLayout>
+                <!-- 2FA -->
+                <LinearLayout
+                    android:id="@+id/btnMenu2FA"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_settings"
+                        app:tint="#43E5A0" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="Bảo mật 2 lớp (2FA)"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="❯"
+                        android:textColor="#9E9AA9" />
+                </LinearLayout>
 
-        <!-- Nút Đăng Xuất -->
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="@color/pin_pink"
-            android:text="🚪 Đăng xuất"
-            android:textColor="@color/text_white" />
-    </LinearLayout>
-</ScrollView>
+                <!-- Kênh người bán -->
+                <LinearLayout
+                    android:id="@+id/btnMenuSeller"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_market"
+                        app:tint="#FFD54F" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="Kênh Người Bán / My Shop"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="❯"
+                        android:textColor="#9E9AA9" />
+                </LinearLayout>
+
+                <!-- Ví của tôi -->
+                <LinearLayout
+                    android:id="@+id/btnMenuWallet"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_wallet"
+                        app:tint="#E1BEE7" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="Ví Xu của tôi"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="❯"
+                        android:textColor="#9E9AA9" />
+                </LinearLayout>
+
+                <!-- Trọng tài CSKH -->
+                <LinearLayout
+                    android:id="@+id/btnMenuArbiter"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_info"
+                        app:tint="#FF4081" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="Bàn làm việc Trọng Tài CS"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="❯"
+                        android:textColor="#9E9AA9" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Nút Đăng Xuất -->
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/pin_pink"
+                android:text="🚪 Đăng xuất"
+                android:textColor="@color/text_white" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

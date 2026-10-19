@@ -70,6 +70,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/tvCountdownHours"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/bg_card_dark"
@@ -89,6 +90,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvCountdownMinutes"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/bg_card_dark"
@@ -108,6 +110,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvCountdownSeconds"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/bg_card_dark"

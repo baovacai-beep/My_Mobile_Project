@@ -64,7 +64,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Weekend Coffee Treat – 15% OFF"
+                    android:text="Voucher Cà Phê Cuối Tuần – Giảm 15%"
                     android:textColor="@color/text_white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -165,7 +165,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="Voucher Terms &amp; Conditions"
+                    android:text="Điều Khoản &amp; Điều Kiện Áp Dụng"
                     android:textColor="@color/text_white"
                     android:textSize="16sp"
                     android:textStyle="bold" />

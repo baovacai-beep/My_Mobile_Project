@@ -5,38 +5,60 @@
     android:layout_height="match_parent"
     android:background="@color/bg_main">
 
-    <!-- Bản đồ thực tế từ SDK (thay vì hình mờ) -->
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <!-- Container nạp động Google Maps Fragment -->
+    <FrameLayout
+        android:id="@+id/map_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Thanh Search trên cùng -->
+    <!-- Bản đồ thực tế WebView OpenStreetMap / Leaflet (Hiển thị bản đồ giao thông đường xá thật 100%) -->
+    <WebView
+        android:id="@+id/webViewMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Thanh Search trên cùng & Back Button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:paddingHorizontal="16dp">
-        <LinearLayout
-            android:layout_width="match_parent"
+
+        <ImageView
+            android:id="@+id/btnBackMap"
+            android:layout_width="48dp"
             android:layout_height="48dp"
+            android:background="@drawable/bg_rounded_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Quay lại"
+            android:padding="12dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/text_white" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
             android:background="@drawable/bg_rounded_card"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp">
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@android:drawable/ic_dialog_map"
+                android:src="@drawable/ic_market"
                 app:tint="@color/purple_light" />
             <EditText
+                android:id="@+id/etSearchStore"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:background="@null"
-                android:hint="Tìm kiếm chi nhánh gần đây..."
+                android:hint="Tìm kiếm chi nhánh Highlands Coffee..."
                 android:textColor="@color/text_white"
                 android:textColorHint="@color/text_muted"
                 android:textSize="14sp" />
@@ -52,7 +74,7 @@
         android:orientation="vertical"
         android:padding="16dp"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="160dp"
+        app:behavior_peekHeight="210dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -65,48 +87,126 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chi nhánh áp dụng gần nhất"
+            android:text="Chi nhánh áp dụng gần nhất (Highlands Coffee)"
             android:textColor="@color/text_white"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
-        <RelativeLayout
+        <!-- Chi nhánh 1: Highlands 279 Nguyễn Tri Phương -->
+        <LinearLayout
+            android:id="@+id/cardStore1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:background="@color/bg_inner_card"
+            android:orientation="vertical"
             android:padding="12dp">
 
-            <ImageView
-                android:id="@+id/imgCardStore"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_launcher_background" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_toEndOf="@id/imgCardStore"
-                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/imgCardStore1"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg_badge_pink" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Highlands 279 NVL"
-                    android:textColor="@color/text_white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:layout_marginStart="12dp"
+                    android:layout_toEndOf="@id/imgCardStore1"
+                    android:orientation="vertical">
 
-                <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Highlands Coffee - 279 Nguyễn Tri Phương"
+                        android:textColor="@color/text_white"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="📍 0.3 km • 279 Nguyễn Tri Phương, P.5, Q.10 (UEH B)"
+                        android:textColor="@color/text_gray"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnNavGoogleMaps1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_btn_purple"
+                android:text="🗺 Mở Google Maps Chỉ Đường Chi Nhánh Này"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Chi nhánh 2: Highlands Vạn Hạnh Mall -->
+        <LinearLayout
+            android:id="@+id/cardStore2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/bg_inner_card"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/imgCardStore2"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg_badge_pink" />
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="📍 0.8 km (279 Nguyễn Tri Phương, Q10)"
-                    android:textColor="@color/text_gray"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </RelativeLayout>
+                    android:layout_marginStart="12dp"
+                    android:layout_toEndOf="@id/imgCardStore2"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Highlands Coffee - Vạn Hạnh Mall"
+                        android:textColor="@color/text_white"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="📍 1.2 km • 11 Sư Vạn Hạnh, P.12, Q.10"
+                        android:textColor="@color/text_gray"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnNavGoogleMaps2"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_outline_button"
+                android:text="🗺 Mở Google Maps Chỉ Đường Vạn Hạnh Mall"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
