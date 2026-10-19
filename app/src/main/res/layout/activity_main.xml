@@ -50,7 +50,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Good morning,"
+                        android:text="Xin chào,"
                         android:textColor="#9E9DA8"
                         android:textSize="12sp" />
 
@@ -58,7 +58,7 @@
                         android:id="@+id/tvUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Linh Nguyen"
+                        android:text="Gia Bảo Hồ"
                         android:textColor="#FFFFFF"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -72,8 +72,8 @@
                     android:layout_centerVertical="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
-                    android:focusable="true"
                     android:contentDescription="Thông báo"
+                    android:focusable="true"
                     android:padding="10dp"
                     android:src="@drawable/ic_bell" />
 
@@ -107,7 +107,7 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <!-- 2. BANNER SECTION -->
+            <!-- 2. SLIDER BANNER SECTION -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
@@ -130,7 +130,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="THE OFFICIAL BRAND EDIT"
+                            android:text="THƯƠNG HIỆU CHÍNH HÃNG"
                             android:textColor="#E0D7FF"
                             android:textSize="10sp"
                             android:textStyle="bold" />
@@ -139,9 +139,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="SSharing Mall - Big brands, deep discounts"
+                            android:text="SSharing Mall - Deals hot thương hiệu, giảm sâu"
                             android:textColor="#FFFFFF"
-                            android:textSize="18sp"
+                            android:textSize="17sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -178,7 +178,128 @@
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 3. TOGGLE SWITCH -->
+            <!-- 2.1 QUICK ACTION HUB (4 Nút tròn) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <!-- Trạm 0đ -->
+                <LinearLayout
+                    android:id="@+id/btnQuickTram0D"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_circle_icon"
+                        android:contentDescription="Trạm 0đ"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_market"
+                        app:tint="#FF4081" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Trạm 0đ"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Giựt Deal -->
+                <LinearLayout
+                    android:id="@+id/btnQuickFlashGrab"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_circle_icon"
+                        android:contentDescription="Giựt Deal"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_coin"
+                        app:tint="#FFD54F" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Giựt Deal"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Mall -->
+                <LinearLayout
+                    android:id="@+id/btnQuickMall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_circle_icon"
+                        android:contentDescription="Mall"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_wallet"
+                        app:tint="#E1BEE7" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Mall"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Đổi Xu -->
+                <LinearLayout
+                    android:id="@+id/btnQuickCoinExchange"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_circle_icon"
+                        android:contentDescription="Đổi Xu"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_arrow_up_right"
+                        app:tint="#4DB6AC" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Đổi Xu"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 3. TOGGLE SWITCH (Thanh tab Mall / Chợ C2C) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -220,6 +341,7 @@
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"
+                        android:contentDescription="Icon Chợ"
                         android:src="@drawable/ic_user"
                         app:tint="#9E9DA8" />
                     <TextView
@@ -250,6 +372,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:background="@drawable/bg_circle_icon"
+                        android:contentDescription="Ẩm thực"
                         android:padding="16dp"
                         android:src="@drawable/ic_market"
                         app:tint="#FF4081" />
@@ -257,7 +380,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Food"
+                        android:text="Ẩm thực"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -272,6 +395,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:background="@drawable/bg_circle_icon"
+                        android:contentDescription="Mua sắm"
                         android:padding="16dp"
                         android:src="@drawable/ic_wallet"
                         app:tint="#E1BEE7" />
@@ -279,7 +403,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Shopping"
+                        android:text="Mua sắm"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -294,6 +418,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:background="@drawable/bg_circle_icon"
+                        android:contentDescription="Di chuyển"
                         android:padding="16dp"
                         android:src="@drawable/ic_arrow_up_right"
                         app:tint="#4DB6AC" />
@@ -301,7 +426,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Transport"
+                        android:text="Di chuyển"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -316,6 +441,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:background="@drawable/bg_circle_icon"
+                        android:contentDescription="Giải trí"
                         android:padding="16dp"
                         android:src="@drawable/ic_coin"
                         app:tint="#FFD54F" />
@@ -323,7 +449,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Entertainment"
+                        android:text="Giải trí"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -337,7 +463,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Picked for you"
+                    android:text="Dành riêng cho bạn"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -347,7 +473,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:text="View all  →"
+                    android:text="Xem tất cả  →"
                     android:textColor="#9E9DA8"
                     android:textSize="14sp" />
             </RelativeLayout>
@@ -378,6 +504,7 @@
                             <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:contentDescription="Starbucks Deal"
                                 android:scaleType="centerCrop"
                                 android:src="@drawable/bg_card_dark" />
                             <TextView
@@ -399,7 +526,7 @@
                                 android:background="@drawable/bg_tag_dark"
                                 android:paddingHorizontal="6dp"
                                 android:paddingVertical="2dp"
-                                android:text="✓ Official"
+                                android:text="✓ Chính hãng"
                                 android:textColor="#FFFFFF"
                                 android:textSize="10sp" />
                         </RelativeLayout>
@@ -412,7 +539,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="2"
-                                android:text="20K off orders from 50K"
+                                android:text="Giảm 20K cho đơn từ 50K"
                                 android:textColor="#FFFFFF"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -426,6 +553,7 @@
                                     android:layout_width="14dp"
                                     android:layout_height="14dp"
                                     android:layout_marginEnd="4dp"
+                                    android:contentDescription="Coin Icon"
                                     android:src="@drawable/ic_coin" />
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -445,7 +573,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="⚡ Instant delivery"
+                                android:text="⚡ Giao mã tức thì"
                                 android:textColor="#9E9DA8"
                                 android:textSize="10sp" />
                             <LinearLayout
@@ -463,7 +591,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="8dp"
-                                    android:text="Starbucks\nTrust score 100"
+                                    android:text="Starbucks\nĐiểm uy tín 100"
                                     android:textColor="#888888"
                                     android:textSize="9sp" />
                             </LinearLayout>
@@ -490,6 +618,7 @@
                             <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:contentDescription="Grab Deal"
                                 android:scaleType="centerCrop"
                                 android:src="@drawable/bg_card_dark" />
                             <TextView
@@ -511,7 +640,7 @@
                                 android:background="@drawable/bg_tag_dark"
                                 android:paddingHorizontal="6dp"
                                 android:paddingVertical="2dp"
-                                android:text="👥 Community"
+                                android:text="👥 Cộng đồng"
                                 android:textColor="#FFFFFF"
                                 android:textSize="10sp" />
                         </RelativeLayout>
@@ -524,7 +653,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="2"
-                                android:text="50K off your next ride"
+                                android:text="Giảm 50K chuyến xe tiếp theo"
                                 android:textColor="#FFFFFF"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -538,6 +667,7 @@
                                     android:layout_width="14dp"
                                     android:layout_height="14dp"
                                     android:layout_marginEnd="4dp"
+                                    android:contentDescription="Coin Icon"
                                     android:src="@drawable/ic_coin" />
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -560,7 +690,7 @@
                                 android:background="@drawable/bg_chip_gold"
                                 android:paddingHorizontal="6dp"
                                 android:paddingVertical="2dp"
-                                android:text="⏰ Expiring soon"
+                                android:text="⏰ Sắp hết hạn"
                                 android:textColor="#000000"
                                 android:textSize="10sp"
                                 android:textStyle="bold" />
@@ -579,7 +709,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="8dp"
-                                    android:text="\@minh.anh\nTrust score 98"
+                                    android:text="\@minh.anh\nĐiểm uy tín 98"
                                     android:textColor="#888888"
                                     android:textSize="9sp" />
                             </LinearLayout>
@@ -613,13 +743,14 @@
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
+                android:contentDescription="Home Icon"
                 android:src="@drawable/ic_home"
                 app:tint="#7C4DFF" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Home"
+                android:text="Trang chủ"
                 android:textColor="#7C4DFF"
                 android:textSize="10sp" />
         </LinearLayout>
@@ -635,36 +766,21 @@
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
+                android:contentDescription="Search Icon"
                 android:src="@drawable/ic_market"
                 app:tint="#888888" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Search"
+                android:text="Bản đồ"
                 android:textColor="#888888"
                 android:textSize="10sp" />
         </LinearLayout>
 
-        <!-- Sell Placeholder -->
+        <!-- Post -->
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="bottom|center_horizontal"
-            android:orientation="vertical"
-            android:paddingBottom="8dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sell"
-                android:textColor="#888888"
-                android:textSize="10sp" />
-        </LinearLayout>
-
-        <!-- Transactions -->
-        <LinearLayout
-            android:id="@+id/navTransactions"
+            android:id="@+id/navSell"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -673,13 +789,37 @@
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
+                android:contentDescription="Post Icon"
+                android:src="@drawable/ic_arrow_up_right"
+                app:tint="#888888" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Đăng bán"
+                android:textColor="#888888"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <!-- Wallet -->
+        <LinearLayout
+            android:id="@+id/navWallet"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="Wallet Icon"
                 android:src="@drawable/ic_wallet"
                 app:tint="#888888" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Transactions"
+                android:text="Ví Xu"
                 android:textColor="#888888"
                 android:textSize="10sp" />
         </LinearLayout>
@@ -695,31 +835,17 @@
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
+                android:contentDescription="Profile Icon"
                 android:src="@drawable/ic_user"
                 app:tint="#888888" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Profile"
+                android:text="Cá nhân"
                 android:textColor="#888888"
                 android:textSize="10sp" />
         </LinearLayout>
     </LinearLayout>
-
-    <!-- NÚT DẤU CỘNG (Đứng độc lập, tự động căn giữa ConstraintLayout) -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabSell"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="Sell"
-        android:src="@drawable/ic_plus"
-        app:backgroundTint="#7C4DFF"
-        app:fabSize="normal"
-        app:tint="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/bottomNavigationContainer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

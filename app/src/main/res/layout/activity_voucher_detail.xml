@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/bg_main">
 
-    <!-- Scrollable Content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,20 +15,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Banner Header Image -->
-            <RelativeLayout
+            <!-- Banner Header Image (Tỷ lệ 16:9) -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="250dp">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/imgHeader"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="Ảnh banner voucher"
+                    android:layout_height="0dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_launcher_background" />
+                    android:src="@drawable/ic_launcher_background"
+                    app:layout_constraintDimensionRatio="16:9"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <!-- Back Button -->
+                <!-- Nút Back & Share -->
                 <ImageButton
                     android:id="@+id/btnBack"
                     android:layout_width="48dp"
@@ -37,25 +37,24 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="40dp"
                     android:background="@drawable/bg_rounded_card"
-                    android:contentDescription="Quay lại"
                     android:src="@android:drawable/ic_menu_revert"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/text_white" />
 
-                <!-- Share Button -->
                 <ImageButton
                     android:id="@+id/btnShare"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="40dp"
                     android:layout_marginEnd="16dp"
+                    android:layout_marginTop="40dp"
                     android:background="@drawable/bg_rounded_card"
-                    android:contentDescription="Chia sẻ"
                     android:src="@android:drawable/ic_menu_share"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/text_white" />
-            </RelativeLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Voucher Content Details -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,42 +64,39 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Weekend Coffee Treat – 15% OFF"
+                    android:text="Voucher Cà Phê Cuối Tuần – Giảm 15%"
                     android:textColor="@color/text_white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <!-- Chips Row -->
+                <!-- Khung Mã Bảo Mật (Che mờ) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_rounded_card"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_gold_badge"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="6dp"
-                        android:text="🕒 2d 14h left"
-                        android:textColor="@color/gold_text"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/ic_secure"
+                        app:tint="@color/purple_primary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_rounded_card"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="6dp"
-                        android:text="Min Spend 100k"
-                        android:textColor="@color/text_gray"
-                        android:textSize="12sp" />
+                        android:text="Mã bảo mật: SP*****99"
+                        android:textColor="@color/purple_light"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"/>
                 </LinearLayout>
 
-                <!-- Merchant Card -->
+                <!-- Merchant Card (Trust Score) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -112,14 +108,11 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-
                         <ImageView
                             android:id="@+id/imgMerchant"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            android:contentDescription="Icon thương hiệu"
                             android:src="@drawable/ic_launcher_background" />
-
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -127,37 +120,21 @@
                             android:layout_marginStart="12dp"
                             android:layout_toEndOf="@id/imgMerchant"
                             android:orientation="vertical">
-
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="The Coffee House"
+                                android:text="Người bán: Gia Bảo Hồ"
                                 android:textColor="@color/text_white"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
-
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="2,340 sold  •  ★ 4.8"
-                                android:textColor="@color/text_gray"
+                                android:text="Trust Score: 98% (Đã eKYC)"
+                                android:textColor="@color/green_trust"
                                 android:textSize="12sp" />
                         </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/bg_rounded_card"
-                            android:backgroundTint="@color/green_trust_bg"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="4dp"
-                            android:text="Trust 98%"
-                            android:textColor="@color/green_trust"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
                     </RelativeLayout>
 
                     <!-- Escrow Protection Badge -->
@@ -169,125 +146,40 @@
                         android:backgroundTint="@color/bg_inner_card"
                         android:gravity="center_vertical"
                         android:padding="10dp">
-
                         <ImageView
                             android:layout_width="18dp"
                             android:layout_height="18dp"
-                            android:contentDescription="Icon Escrow"
                             android:src="@android:drawable/ic_lock_lock"
                             app:tint="@color/purple_light" />
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="Buyer Protection – Escrow Secured"
+                            android:text="Bảo vệ giao dịch bằng Ký quỹ Escrow"
                             android:textColor="@color/purple_light"
                             android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Terms & Conditions Section -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="Voucher Terms &amp; Conditions"
+                    android:text="Điều Khoản &amp; Điều Kiện Áp Dụng"
                     android:textColor="@color/text_white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
-
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="✓  "
-                            android:textColor="@color/green_trust"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Valid at all The Coffee House branches nationwide"
-                            android:textColor="@color/text_gray"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="✓  "
-                            android:textColor="@color/green_trust"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Applicable for dine-in and takeaway orders"
-                            android:textColor="@color/text_gray"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="✓  "
-                            android:textColor="@color/green_trust"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Cannot be combined with other active store promotions"
-                            android:textColor="@color/text_gray"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="✓  "
-                            android:textColor="@color/green_trust"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Must be redeemed at checkout via QR code validation"
-                            android:textColor="@color/text_gray"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-                </LinearLayout>
-
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/text_gray"
+                    android:text="✓ Áp dụng tại tất cả chi nhánh\n✓ Không áp dụng cùng khuyến mãi khác"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Fixed Bottom Action Bar -->
+    <!-- Bottom Bar -->
     <LinearLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
@@ -304,7 +196,7 @@
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:background="@drawable/bg_outline_button"
-            android:text="🗺 View on Map"
+            android:text="🗺 Xem Bản Đồ"
             android:textAllCaps="false"
             android:textColor="@color/purple_light"
             app:backgroundTint="@null" />
@@ -315,12 +207,10 @@
             android:layout_height="52dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1.2"
-            android:background="@drawable/bg_purple_button"
-            android:text="Buy for 1,500 SS"
+            android:backgroundTint="@color/purple_primary"
+            android:text="Mua Ngay 1,500 SS"
             android:textAllCaps="false"
             android:textColor="@color/text_white"
-            android:textStyle="bold"
-            app:backgroundTint="@null" />
+            android:textStyle="bold" />
     </LinearLayout>
-
 </RelativeLayout>

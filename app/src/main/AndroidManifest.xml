@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Quyền truy cập GPS, Camera và Internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,50 +20,84 @@
         android:theme="@style/Theme.SSharing"
         tools:targetApi="31">
 
+        <!-- API Key Google Maps SDK -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA_DemoGoogleMapsApiKeySSharing2026" />
+
         <!-- Màn hình chính mặc định -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- 2 Màn hình của Lê Nguyễn Khánh Trình -->
+        <!-- Màn hình Trạm 0đ & Flash Grab -->
         <activity
-            android:name=".MapStoreLocatorActivity"
+            android:name=".ui.CommunityCouponsActivity"
             android:exported="false" />
         <activity
-            android:name=".VoucherDetailActivity"
+            android:name=".ui.FlashGrabActivity"
+            android:exported="false" />
+
+        <!-- 2 Màn hình của Lê Nguyễn Khánh Trình -->
+        <activity
+            android:name=".ui.MapStoreLocatorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.VoucherDetailActivity"
             android:exported="false" />
 
         <!-- 2 Màn hình của Lê Bảo Ngọc -->
         <activity
-            android:name=".WalletActivity"
+            android:name=".ui.WalletActivity"
             android:exported="false" />
         <activity
-            android:name=".PostVoucherActivity"
+            android:name=".ui.PostVoucherActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.InstantBuybackActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.CoinTopupActivity"
             android:exported="false" />
         <!-- 3 Màn hình của Hồ Gia Bảo -->
         <activity
-            android:name=".EscrowChatActivity"
+            android:name=".ui.EscrowChatActivity"
             android:exported="false" />
         <activity
-            android:name=".SellerDashboardActivity"
+            android:name=".ui.SellerDashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".ui.ProfileActivity"
             android:exported="false" />
         <!-- Màn hình Đăng nhập của Trần Gia Bảo -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.LoginActivity"
             android:exported="false" />
         <!-- 3 Màn hình mới của Bảo -->
-        <activity android:name=".TwoFactorAuthActivity" android:exported="false" />
-        <activity android:name=".EkycVerificationActivity" android:exported="false" />
-        <activity android:name=".DisputeClaimActivity" android:exported="false" />
-
+        <activity
+            android:name=".ui.TwoFactorAuthActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.EkycVerificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.DisputeClaimActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activity_brand_mall"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.activity_staff_arbiter"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

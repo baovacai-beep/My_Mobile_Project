@@ -28,6 +28,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity.ktx)
     implementation(libs.constraintlayout)
+    // Thư viện Google ML Kit Text Recognition (Dùng cho quét OCR mã voucher)
+    implementation("com.google.mlkit:text-recognition:16.0.1")
 
     // ==========================================
     // 1. Thư viện Room Database (SQLite Cục bộ)
@@ -43,6 +45,12 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore") // Cloud Firestore
     implementation("com.google.firebase:firebase-auth")      // Xác thực người dùng
     implementation("com.google.firebase:firebase-storage")   // Lưu trữ hình ảnh
+
+    // ==========================================
+    // 3. Thư viện Google Maps & Định vị (GPS)
+    // ==========================================
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
