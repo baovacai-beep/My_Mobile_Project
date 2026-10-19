@@ -6,7 +6,7 @@
     android:background="#0B0914"
     android:padding="16dp">
 
-    <!-- Header -->
+    <!-- Header Toolbar -->
     <RelativeLayout
         android:id="@+id/headerTopup"
         android:layout_width="match_parent"
@@ -17,6 +17,9 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             android:contentDescription="Quay lại"
             android:padding="10dp"
             android:src="@drawable/ic_arrow_back"
@@ -61,44 +64,72 @@
                 android:layout_marginTop="12dp">
 
                 <RadioButton
+                    android:id="@+id/rbGoi50k"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="50.000 VNĐ (+0% Xu thưởng)"
+                    android:minHeight="48dp"
+                    android:paddingVertical="8dp"
+                    android:text="50.000 VNĐ (+0% Xu thưởng = 50 SS)"
                     android:textColor="#FFFFFF" />
 
                 <RadioButton
+                    android:id="@+id/rbGoi100k"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="100.000 VNĐ (+5% Xu thưởng)"
+                    android:minHeight="48dp"
+                    android:paddingVertical="8dp"
+                    android:text="100.000 VNĐ (+5% Xu thưởng = 105 SS)"
                     android:textColor="#FFFFFF" />
 
                 <RadioButton
+                    android:id="@+id/rbGoi200k"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:paddingVertical="8dp"
                     android:checked="true"
-                    android:text="200.000 VNĐ (+10% Xu thưởng)"
+                    android:text="200.000 VNĐ (+10% Xu thưởng = 220 SS)"
                     android:textColor="#FFFFFF" />
 
                 <RadioButton
+                    android:id="@+id/rbGoi500k"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="500.000 VNĐ (+15% Xu thưởng)"
+                    android:minHeight="48dp"
+                    android:paddingVertical="8dp"
+                    android:text="500.000 VNĐ (+15% Xu thưởng = 575 SS)"
                     android:textColor="#FFFFFF" />
 
                 <RadioButton
+                    android:id="@+id/rbGoi1000k"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="1.000.000 VNĐ (+20% Xu thưởng)"
+                    android:minHeight="48dp"
+                    android:paddingVertical="8dp"
+                    android:text="1.000.000 VNĐ (+20% Xu thưởng = 1200 SS)"
                     android:textColor="#43E5A0"
                     android:textStyle="bold" />
             </RadioGroup>
 
+            <TextView
+                android:id="@+id/tvThongTinGoiNap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_card_dark"
+                android:gravity="center"
+                android:padding="12dp"
+                android:text="Số Xu sẽ cộng vào ví: 220 SS"
+                android:textColor="#6EE7B7"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
             <!-- Khung Mã VietQR -->
             <ImageView
                 android:id="@+id/imgVietQR"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_marginTop="20dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginTop="16dp"
                 android:background="#161327"
                 android:contentDescription="Mã VietQR Napas247"
                 android:padding="16dp"
@@ -109,6 +140,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
                 android:text="Quét mã VietQR Napas247 để tự động cộng xu"
                 android:textColor="#A09CAB"
                 android:textSize="12sp" />

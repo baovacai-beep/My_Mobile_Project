@@ -63,6 +63,7 @@
                     android:layout_centerVertical="true">
 
                     <ImageView
+                        android:id="@+id/btnThongBao"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:background="@drawable/bg_circle_icon"
@@ -72,6 +73,7 @@
                         app:tint="#FFFFFF" />
 
                     <ImageView
+                        android:id="@+id/btnCaiDat"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginStart="10dp"
@@ -136,6 +138,7 @@
                             android:src="@drawable/ic_coin" />
 
                         <TextView
+                            android:id="@+id/tvSoDuXuSS"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
@@ -185,15 +188,18 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/bg_tab_container"
                 android:padding="4dp">
 
                 <TextView
+                    android:id="@+id/tabViVoucher"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@drawable/bg_tab_active"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center"
                     android:text="Ví Voucher của tôi"
                     android:textColor="#FFFFFF"
@@ -201,64 +207,184 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tabLichSuGiaoDich"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center"
                     android:text="Lịch sử giao dịch"
                     android:textColor="#6C677A"
                     android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Section Voucher -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="Voucher khả dụng"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <!-- Voucher Item 1 -->
-            <androidx.cardview.widget.CardView
+            <!-- SECTION VOUCHER -->
+            <LinearLayout
+                android:id="@+id/khungSectionVoucher"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#161327"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+                android:orientation="vertical">
 
-                <RelativeLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="Voucher khả dụng"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <!-- Dynamic Container Voucher đã giựt -->
+                <LinearLayout
+                    android:id="@+id/containerDanhSachVoucherDaLuu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="12dp">
+                    android:orientation="vertical" />
 
-                    <ImageView
-                        android:id="@+id/imgShopee"
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:background="@drawable/bg_rounded_icon"
-                        android:contentDescription="Icon Shopee"
-                        android:scaleType="centerCrop" />
+                <!-- Voucher Item 1 -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="#161327"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="12dp"
-                        android:layout_toEndOf="@id/imgShopee"
-                        android:orientation="vertical">
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:id="@+id/imgShopee"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/bg_rounded_icon"
+                            android:contentDescription="Icon Shopee"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_market"
+                            app:tint="#815BF5" />
+
+                        <Button
+                            android:id="@+id/btnSaoChep1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="44dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:backgroundTint="#26213D"
+                            android:text="Sao chép"
+                            android:textAllCaps="false"
+                            android:textColor="#E2DEEC"
+                            android:textSize="12sp"
+                            app:cornerRadius="10dp" />
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical">
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_toStartOf="@id/btnSaoChep1"
+                            android:layout_toEndOf="@id/imgShopee"
+                            android:orientation="vertical">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:singleLine="true"
                                 android:text="Shopee Hoàn Xu 20K"
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/bg_badge_pink"
+                                    android:paddingHorizontal="6dp"
+                                    android:paddingVertical="2dp"
+                                    android:text="Đã Quét"
+                                    android:textColor="#FF4D8D"
+                                    android:textSize="9sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="6dp"
+                                    android:text="HSD: 30 T04 2026"
+                                    android:textColor="#858095"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Voucher Item 2 -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    app:cardBackgroundColor="#161327"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:id="@+id/imgGrab"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/bg_rounded_icon"
+                            android:contentDescription="Icon Grab"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_wallet"
+                            app:tint="#FF4081" />
+
+                        <Button
+                            android:id="@+id/btnMoApp2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="44dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:backgroundTint="#815BF5"
+                            android:text="Mở App"
+                            android:textAllCaps="false"
+                            android:textColor="#FFFFFF"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:cornerRadius="10dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_toStartOf="@id/btnMoApp2"
+                            android:layout_toEndOf="@id/imgGrab"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:singleLine="true"
+                                android:text="GrabFood FreeShip 30K"
                                 android:textColor="#FFFFFF"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -266,181 +392,118 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="6dp"
-                                android:background="@drawable/bg_badge_pink"
-                                android:paddingHorizontal="6dp"
-                                android:paddingVertical="2dp"
-                                android:text="Đã Quét"
-                                android:textColor="#FF4D8D"
-                                android:textSize="9sp" />
+                                android:layout_marginTop="4dp"
+                                android:text="HSD: 15 T09 2026"
+                                android:textColor="#858095"
+                                android:textSize="11sp" />
                         </LinearLayout>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="HSD: 30 T04 2026"
-                            android:textColor="#858095"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="48dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:backgroundTint="#26213D"
-                        android:text="Sao chép"
-                        android:textAllCaps="false"
-                        android:textColor="#E2DEEC"
-                        android:textSize="12sp"
-                        app:cornerRadius="10dp" />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Voucher Item 2 -->
-            <androidx.cardview.widget.CardView
+            <!-- SECTION LỊCH SỬ GIAO DỊCH -->
+            <LinearLayout
+                android:id="@+id/khungSectionLichSu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="#161327"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+                android:orientation="vertical"
+                android:visibility="visible">
 
-                <RelativeLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="Giao dịch gần đây"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <!-- Transaction Container -->
+                <LinearLayout
+                    android:id="@+id/containerDanhSáchGiaoDịch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="12dp">
+                    android:orientation="vertical">
 
-                    <ImageView
-                        android:id="@+id/imgGrab"
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:background="@drawable/bg_rounded_icon"
-                        android:contentDescription="Icon Grab"
-                        android:scaleType="centerInside" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <!-- Transaction Item 1 -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="12dp"
-                        android:layout_toEndOf="@id/imgGrab"
-                        android:orientation="vertical">
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_card_dark"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:id="@+id/icTx1"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_centerVertical="true"
+                            android:contentDescription="Lịch sử cộng xu"
+                            android:src="@drawable/ic_arrow_down_left"
+                            app:tint="#43E5A0" />
 
                         <TextView
+                            android:id="@+id/tvTxTitle1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="GrabFood FreeShip 30K"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="10dp"
+                            android:layout_toEndOf="@id/icTx1"
+                            android:text="Nạp xu qua VietQR"
                             android:textColor="#FFFFFF"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvTxAmount1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:text="+500 SS"
+                            android:textColor="#43E5A0"
                             android:textSize="14sp"
                             android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <!-- Transaction Item 2 -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_card_dark"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:id="@+id/icTx2"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_centerVertical="true"
+                            android:contentDescription="Lịch sử trừ xu"
+                            android:src="@drawable/ic_arrow_up_right"
+                            app:tint="#FF4081" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="HSD: 15 T09 2026"
-                            android:textColor="#858095"
-                            android:textSize="12sp" />
-                    </LinearLayout>
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="10dp"
+                            android:layout_toEndOf="@id/icTx2"
+                            android:text="Mua Voucher Highlands"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp" />
 
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="48dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:backgroundTint="#815BF5"
-                        android:text="Mở App"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:cornerRadius="10dp" />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Section Giao dịch gần đây -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="Giao dịch gần đây"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <!-- Transaction Item 1 -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp">
-
-                <ImageView
-                    android:id="@+id/icTx1"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="Lịch sử cộng xu"
-                    android:src="@drawable/ic_arrow_down_left"
-                    app:tint="#43E5A0" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@id/icTx1"
-                    android:text="Nạp xu qua VietQR"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:text="+500 SS"
-                    android:textColor="#43E5A0"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-
-            <!-- Transaction Item 2 -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp">
-
-                <ImageView
-                    android:id="@+id/icTx2"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="Lịch sử trừ xu"
-                    android:src="@drawable/ic_arrow_up_right"
-                    app:tint="#FFFFFF" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@id/icTx2"
-                    android:text="Mua Voucher Highlands"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:text="-35 SS"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:text="-35 SS"
+                            android:textColor="#FF4081"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
@@ -458,9 +521,12 @@
 
         <!-- Item 1: Trang chủ -->
         <LinearLayout
+            android:id="@+id/btnNavHome"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -482,9 +548,12 @@
 
         <!-- Item 2: Chợ -->
         <LinearLayout
+            android:id="@+id/btnNavMarket"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -506,15 +575,19 @@
 
         <!-- Item 3: Center Plus Action Button -->
         <RelativeLayout
+            android:id="@+id/btnNavAdd"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center">
 
             <ImageView
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:background="@drawable/bg_circle_purple"
+                android:contentDescription="Đăng bán"
                 android:padding="10dp"
                 android:src="@drawable/ic_plus"
                 app:tint="#FFFFFF" />
@@ -522,15 +595,19 @@
 
         <!-- Item 4: Ví của tôi (Active) -->
         <LinearLayout
+            android:id="@+id/btnNavWallet"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
+                android:contentDescription="Ví của tôi"
                 android:src="@drawable/ic_wallet"
                 app:tint="#815BF5" />
 
@@ -546,15 +623,19 @@
 
         <!-- Item 5: Tôi -->
         <LinearLayout
+            android:id="@+id/btnNavProfile"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
+                android:contentDescription="Tôi"
                 android:src="@drawable/ic_user"
                 app:tint="#858095" />
 

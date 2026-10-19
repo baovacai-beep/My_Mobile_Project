@@ -1,104 +1,170 @@
 package vn.edu.ueh.baoho.ssharing.ui;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 
 import vn.edu.ueh.baoho.ssharing.R;
-import vn.edu.ueh.baoho.ssharing.model.VoucherC2C;
-import vn.edu.ueh.baoho.ssharing.model.VoucherCongDong;
-import vn.edu.ueh.baoho.ssharing.viewmodel.VoucherViewModel;
 
 public class PostVoucherActivity extends AppCompatActivity {
 
-    private EditText etBrand, etCode, etDiscount, etExpiry, etSellingPrice, etDescription;
-    private RadioGroup rgSellType;
-    private RadioButton rbDonateCommunity;
-    private VoucherViewModel voucherViewModel;
+    private AutoCompleteTextView ôThươngHiệu;
+    private EditText ôMãVoucher, ôGiảmGiá, ôHạnDùng, ôGiáBánSS, ôMôTảChiTiết;
+    private RadioGroup nhómLoạiHìnhĐăng;
+    private RadioButton nútChọnTặngCộngĐồng;
+    private Button nútGửiBàiĐăng;
+
+    private boolean làChếĐộChỉnhSửa = false;
+    private String mãBàiĐăngCầnSửa = "";
+
+    private final String[] danhSáchThươngHiệuGợiÝ = {
+            "Shopee", "Grab", "Lazada", "Tiki", "TikTok Shop",
+            "Highlands Coffee", "Starbucks Coffee", "Phúc Long", "MoMo",
+            "CGV Cinemas", "Be Group", "Xanh SM", "Galaxy Cinema", "Spotify", "ShopeeFood"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_voucher);
 
-        voucherViewModel = new ViewModelProvider(this).get(VoucherViewModel.class);
+        khởiTạoÁnhXạGiaoDiện();
+        càiĐặtThươngHiệuAutoComplete();
+        kiểmTraChếĐộChỉnhSửa();
+        càiĐặtSựKiệnLắngNghe();
+    }
 
-        etBrand = findViewById(R.id.etBrand);
-        etCode = findViewById(R.id.etCode);
-        etDiscount = findViewById(R.id.etDiscount);
-        etExpiry = findViewById(R.id.etExpiry);
-        etSellingPrice = findViewById(R.id.etSellingPrice);
-        etDescription = findViewById(R.id.etDescription);
-        rgSellType = findViewById(R.id.rg_sell_type);
-        rbDonateCommunity = findViewById(R.id.rb_donate_community);
+    private void khởiTạoÁnhXạGiaoDiện() {
+        ôThươngHiệu = findViewById(R.id.etBrand);
+        ôMãVoucher = findViewById(R.id.etCode);
+        ôGiảmGiá = findViewById(R.id.etDiscount);
+        ôHạnDùng = findViewById(R.id.etExpiry);
+        ôGiáBánSS = findViewById(R.id.etSellingPrice);
+        ôMôTảChiTiết = findViewById(R.id.etDescription);
+        nhómLoạiHìnhĐăng = findViewById(R.id.rg_sell_type);
+        nútChọnTặngCộngĐồng = findViewById(R.id.rb_donate_community);
+        nútGửiBàiĐăng = findViewById(R.id.btnSubmit);
+    }
 
+    private void càiĐặtThươngHiệuAutoComplete() {
+        if (ôThươngHiệu != null) {
+            ArrayAdapter<String> bộĐiềuPhốiThươngHiệu = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_dropdown_item_1line,
+                    danhSáchThươngHiệuGợiÝ
+            );
+            ôThươngHiệu.setAdapter(bộĐiềuPhốiThươngHiệu);
+            ôThươngHiệu.setOnClickListener(v -> ôThươngHiệu.showDropDown());
+            ôThươngHiệu.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus) ôThươngHiệu.showDropDown();
+            });
+        }
+    }
+
+    private void kiểmTraChếĐộChỉnhSửa() {
+        Intent dữLiệuĐầuVào = getIntent();
+        if (dữLiệuĐầuVào != null && dữLiệuĐầuVào.getBooleanExtra("IS_EDIT", false)) {
+            làChếĐộChỉnhSửa = true;
+            mãBàiĐăngCầnSửa = dữLiệuĐầuVào.getStringExtra("VOUCHER_ID");
+
+            String thươngHiệuSửa = dữLiệuĐầuVào.getStringExtra("BRAND");
+            String mãSửa = dữLiệuĐầuVào.getStringExtra("CODE");
+            String giáSửa = dữLiệuĐầuVào.getStringExtra("PRICE");
+            String môTảSửa = dữLiệuĐầuVào.getStringExtra("DESC");
+
+            if (ôThươngHiệu != null && thươngHiệuSửa != null) ôThươngHiệu.setText(thươngHiệuSửa);
+            if (ôMãVoucher != null && mãSửa != null) ôMãVoucher.setText(mãSửa);
+            if (ôGiáBánSS != null && giáSửa != null) ôGiáBánSS.setText(giáSửa);
+            if (ôMôTảChiTiết != null && môTảSửa != null) ôMôTảChiTiết.setText(môTảSửa);
+
+            if (nútGửiBàiĐăng != null) nútGửiBàiĐăng.setText("Cập nhật bài đăng ngay");
+        }
+    }
+
+    private void càiĐặtSựKiệnLắngNghe() {
         if (findViewById(R.id.btnBack) != null) {
-            findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+            findViewById(R.id.btnBack).setOnClickListener(vương -> finish());
         }
 
-        // Tự động điều chỉnh khi chọn Tặng 0 Xu
-        if (rgSellType != null) {
-            rgSellType.setOnCheckedChangeListener((group, checkedId) -> {
-                if (checkedId == R.id.rb_donate_community) {
-                    if (etSellingPrice != null) {
-                        etSellingPrice.setText("0");
-                        etSellingPrice.setEnabled(false);
+        if (nhómLoạiHìnhĐăng != null) {
+            nhómLoạiHìnhĐăng.setOnCheckedChangeListener((nhóm, mãNútĐượcChọn) -> {
+                if (mãNútĐượcChọn == R.id.rb_donate_community) {
+                    if (ôGiáBánSS != null) {
+                        ôGiáBánSS.setText("0");
+                        ôGiáBánSS.setEnabled(false);
                     }
                 } else {
-                    if (etSellingPrice != null) {
-                        etSellingPrice.setEnabled(true);
+                    if (ôGiáBánSS != null) {
+                        ôGiáBánSS.setEnabled(true);
                     }
                 }
             });
         }
 
-        if (findViewById(R.id.btnSubmit) != null) {
-            findViewById(R.id.btnSubmit).setOnClickListener(v -> {
-                String brand = etBrand != null ? etBrand.getText().toString().trim() : "";
-                String code = etCode != null ? etCode.getText().toString().trim() : "";
-                String discountStr = etDiscount != null ? etDiscount.getText().toString().trim() : "0";
-                String priceStr = etSellingPrice != null ? etSellingPrice.getText().toString().trim() : "0";
-                String expiry = etExpiry != null ? etExpiry.getText().toString().trim() : "31/12/2026";
-                String title = etDescription != null && !etDescription.getText().toString().trim().isEmpty()
-                        ? etDescription.getText().toString().trim()
-                        : "Voucher " + (brand.isEmpty() ? "Ưu Đãi" : brand);
-
-                if (code.isEmpty()) {
-                    Toast.makeText(this, "Vui lòng nhập mã voucher!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                double discount = 0;
-                double price = 0;
-                try {
-                    discount = Double.parseDouble(discountStr);
-                    price = Double.parseDouble(priceStr);
-                } catch (Exception ignored) {}
-
-                String newId = "VCH_" + System.currentTimeMillis();
-
-                if (rbDonateCommunity != null && rbDonateCommunity.isChecked()) {
-                    VoucherCongDong vCongDong = new VoucherCongDong(
-                            newId, title, brand.isEmpty() ? "Cộng Đồng" : brand,
-                            discount, expiry, "CURRENT_USER", code
-                    );
-                    voucherViewModel.themVoucher(vCongDong);
-                    Toast.makeText(this, "Đã đăng tặng Voucher 0đ vào Trạm Cộng Đồng thành công!", Toast.LENGTH_LONG).show();
-                } else {
-                    VoucherC2C vC2C = new VoucherC2C(
-                            newId, title, brand.isEmpty() ? "Thương Hiệu" : brand,
-                            discount, price, expiry, "CURRENT_USER", code
-                    );
-                    voucherViewModel.themVoucher(vC2C);
-                    Toast.makeText(this, "Đăng bán Voucher lấy Xu thành công! Mã đã được lưu vào Room DB.", Toast.LENGTH_LONG).show();
-                }
-
-                finish();
-            });
+        if (nútGửiBàiĐăng != null) {
+            nútGửiBàiĐăng.setOnClickListener(vương -> thựcHiệnLưuBàiĐăngVoucher());
         }
+    }
+
+    private void thựcHiệnLưuBàiĐăngVoucher() {
+        String thươngHiệu = ôThươngHiệu != null ? ôThươngHiệu.getText().toString().trim() : "Shopee";
+        String mãVoucher = ôMãVoucher != null ? ôMãVoucher.getText().toString().trim() : "SP50K";
+        String giáBánChuỗi = ôGiáBánSS != null ? ôGiáBánSS.getText().toString().trim() : "1500";
+        String hạnDùng = ôHạnDùng != null ? ôHạnDùng.getText().toString().trim() : "31/12/2026";
+        String môTả = ôMôTảChiTiết != null && !ôMôTảChiTiết.getText().toString().trim().isEmpty()
+                ? ôMôTảChiTiết.getText().toString().trim()
+                : "Giảm 50K đơn từ 250K - Điện tử";
+
+        if (mãVoucher.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập mã voucher!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String danhSáchĐăngBánGốc = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_DANG_BAN", "");
+
+        String mãBàiĐăng = làChếĐộChỉnhSửa ? mãBàiĐăngCầnSửa : "POS_" + System.currentTimeMillis();
+        String bảnGhiMới = mãBàiĐăng + "||" + môTả + "||" + thươngHiệu + "||" + mãVoucher + "||" + giáBánChuỗi + "||" + hạnDùng + "||" + môTả;
+
+        StringBuilder danhSáchMới = new StringBuilder();
+
+        if (làChếĐộChỉnhSửa) {
+            // Thay thế bài đăng cũ
+            String[] cácBài = danhSáchĐăngBánGốc.split(";;");
+            for (String bài : cácBài) {
+                if (bài.trim().isEmpty()) continue;
+                if (bài.startsWith(mãBàiĐăngCầnSửa)) {
+                    if (danhSáchMới.length() > 0) danhSáchMới.append(";;");
+                    danhSáchMới.append(bảnGhiMới);
+                } else {
+                    if (danhSáchMới.length() > 0) danhSáchMới.append(";;");
+                    danhSáchMới.append(bài);
+                }
+            }
+            Toast.makeText(this, "Đã cập nhật bài đăng voucher thành công!", Toast.LENGTH_LONG).show();
+        } else {
+            // Thêm bài đăng mới lên đầu
+            if (danhSáchĐăngBánGốc.isEmpty()) {
+                danhSáchMới.append(bảnGhiMới);
+            } else {
+                danhSáchMới.append(bảnGhiMới).append(";;").append(danhSáchĐăngBánGốc);
+            }
+            Toast.makeText(this, "Đã đăng bán Voucher thành công! Bài đăng đang hiển thị trên sàn.", Toast.LENGTH_LONG).show();
+        }
+
+        bộLưuTrữCụcBộ.edit()
+                .putString("DANH_SACH_VOUCHER_DANG_BAN", danhSáchMới.toString())
+                .apply();
+
+        startActivity(new Intent(this, SellerDashboardActivity.class));
+        finish();
     }
 }

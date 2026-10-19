@@ -62,9 +62,10 @@
                 android:padding="16dp">
 
                 <TextView
+                    android:id="@+id/tvVoucherDetailTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Voucher Cà Phê Cuối Tuần – Giảm 15%"
+                    android:text="Voucher Starbucks Giảm 20K"
                     android:textColor="@color/text_white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -82,14 +83,16 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:contentDescription="Icon Bảo Mật"
                         android:src="@android:drawable/ic_secure"
                         app:tint="@color/purple_primary" />
 
                     <TextView
+                        android:id="@+id/tvVoucherDetailSecretCode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Mã bảo mật: SP*****99"
+                        android:text="Mã bảo mật: SBUX****OK"
                         android:textColor="@color/purple_light"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -112,6 +115,7 @@
                             android:id="@+id/imgMerchant"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
+                            android:contentDescription="Icon Thương hiệu"
                             android:src="@drawable/ic_launcher_background" />
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -121,17 +125,19 @@
                             android:layout_toEndOf="@id/imgMerchant"
                             android:orientation="vertical">
                             <TextView
+                                android:id="@+id/tvVoucherDetailSeller"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Người bán: Gia Bảo Hồ"
+                                android:text="Thương hiệu: Starbucks Coffee"
                                 android:textColor="@color/text_white"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
                             <TextView
+                                android:id="@+id/tvVoucherDetailTrust"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Trust Score: 98% (Đã eKYC)"
+                                android:text="✓ Đối Tác Chính Hãng (Trust Score: 100%)"
                                 android:textColor="@color/green_trust"
                                 android:textSize="12sp" />
                         </LinearLayout>

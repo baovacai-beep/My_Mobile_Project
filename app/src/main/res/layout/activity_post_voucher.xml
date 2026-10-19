@@ -166,7 +166,7 @@
                             android:textColor="#A09CAB"
                             android:textSize="11sp" />
 
-                        <EditText
+                        <AutoCompleteTextView
                             android:id="@+id/etBrand"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -174,7 +174,8 @@
                             android:layout_marginTop="2dp"
                             android:layout_toStartOf="@id/badgeFB"
                             android:background="@null"
-                            android:hint="Thương hiệu"
+                            android:completionThreshold="1"
+                            android:hint="Thương hiệu (Ví dụ: Shopee, Grab, Tiki...)"
                             android:importantForAutofill="no"
                             android:inputType="text"
                             android:minHeight="48dp"

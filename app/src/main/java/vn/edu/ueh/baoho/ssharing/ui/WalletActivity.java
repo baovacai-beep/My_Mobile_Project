@@ -1,31 +1,403 @@
 package vn.edu.ueh.baoho.ssharing.ui;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import vn.edu.ueh.baoho.ssharing.R;
 
 public class WalletActivity extends AppCompatActivity {
+
+    private TextView nhãnSốDưXu;
+    private TextView tabVíVoucher;
+    private TextView tabLịchSửGiaoDịch;
+    private View khungVíVoucher;
+    private View khungLịchSử;
+    private LinearLayout containerGiaoDịchĐộng;
+    private LinearLayout containerVoucherĐãLưuĐộng;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wallet);
 
-        View imgAvatar = findViewById(R.id.imgAvatar);
-        if (imgAvatar != null) {
-            imgAvatar.setOnClickListener(v ->
+        khởiTạoÁnhXạGiaoDiện();
+        càiĐặtSựKiệnLắngNghe();
+        cậpNhậtSốDưVàDữLiệuVí();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cậpNhậtSốDưVàDữLiệuVí();
+    }
+
+    private void khởiTạoÁnhXạGiaoDiện() {
+        nhãnSốDưXu = findViewById(R.id.tvSoDuXuSS);
+        tabVíVoucher = findViewById(R.id.tabViVoucher);
+        tabLịchSửGiaoDịch = findViewById(R.id.tabLichSuGiaoDich);
+        khungVíVoucher = findViewById(R.id.khungSectionVoucher);
+        khungLịchSử = findViewById(R.id.khungSectionLichSu);
+        containerGiaoDịchĐộng = findViewById(R.id.containerDanhSáchGiaoDịch);
+        containerVoucherĐãLưuĐộng = findViewById(R.id.containerDanhSachVoucherDaLuu);
+    }
+
+    private void càiĐặtSựKiệnLắngNghe() {
+        // Nút mở trang Profile
+        View ảnhĐạiDiện = findViewById(R.id.imgAvatar);
+        if (ảnhĐạiDiện != null) {
+            ảnhĐạiDiện.setOnClickListener(vương ->
                     startActivity(new Intent(this, ProfileActivity.class))
             );
         }
 
-        if (findViewById(R.id.btnDeposit) != null) {
-            findViewById(R.id.btnDeposit).setOnClickListener(v -> {
-                Toast.makeText(this, "Chuyển sang màn hình Nạp xu VietQR...", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, CoinTopupActivity.class));
-            });
+        // Nút Nạp thêm xu -> Mở CoinTopupActivity
+        View nútNạpThêm = findViewById(R.id.btnDeposit);
+        if (nútNạpThêm != null) {
+            nútNạpThêm.setOnClickListener(vương ->
+                    startActivity(new Intent(this, CoinTopupActivity.class))
+            );
+        }
+
+        // Chuyển Tab "Ví Voucher của tôi"
+        if (tabVíVoucher != null) {
+            tabVíVoucher.setOnClickListener(vương -> chuyểnSangTabVíVoucher());
+        }
+
+        // Chuyển Tab "Lịch sử giao dịch"
+        if (tabLịchSửGiaoDịch != null) {
+            tabLịchSửGiaoDịch.setOnClickListener(vương -> chuyểnSangTabLịchSử());
+        }
+
+        // Nút Sao chép mã Voucher Shopee mẫu
+        Button nútSaoChépMã1 = findViewById(R.id.btnSaoChep1);
+        if (nútSaoChépMã1 != null) {
+            nútSaoChépMã1.setOnClickListener(vương -> thựcHiệnSaoChépMãVoucher("SP20K-HOANXU"));
+        }
+
+        // Nút Mở App GrabFood mẫu
+        Button nútMởAppGrab = findViewById(R.id.btnMoApp2);
+        if (nútMởAppGrab != null) {
+            nútMởAppGrab.setOnClickListener(vương ->
+                    Toast.makeText(this, "Đang mở ứng dụng GrabFood để áp dụng voucher...", Toast.LENGTH_SHORT).show()
+            );
+        }
+
+        // Điều hướng Bottom Navigation
+        càiĐặtThanhĐiềuHướngĐáy();
+    }
+
+    private void chuyểnSangTabVíVoucher() {
+        if (tabVíVoucher != null && tabLịchSửGiaoDịch != null) {
+            tabVíVoucher.setBackgroundResource(R.drawable.bg_tab_active);
+            tabVíVoucher.setTextColor(0xFFFFFFFF);
+            tabLịchSửGiaoDịch.setBackground(null);
+            tabLịchSửGiaoDịch.setTextColor(0xFF6C677A);
+        }
+        if (khungVíVoucher != null) khungVíVoucher.setVisibility(View.VISIBLE);
+        if (khungLịchSử != null) khungLịchSử.setVisibility(View.GONE);
+    }
+
+    private void chuyểnSangTabLịchSử() {
+        if (tabVíVoucher != null && tabLịchSửGiaoDịch != null) {
+            tabLịchSửGiaoDịch.setBackgroundResource(R.drawable.bg_tab_active);
+            tabLịchSửGiaoDịch.setTextColor(0xFFFFFFFF);
+            tabVíVoucher.setBackground(null);
+            tabVíVoucher.setTextColor(0xFF6C677A);
+        }
+        if (khungLịchSử != null) khungLịchSử.setVisibility(View.VISIBLE);
+        if (khungVíVoucher != null) khungVíVoucher.setVisibility(View.GONE);
+    }
+
+    private void thựcHiệnSaoChépMãVoucher(String mãVoucher) {
+        ClipboardManager quảnLýKhayNhớTạm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData dữLiệuMã = ClipData.newPlainText("MãVoucher", mãVoucher);
+        if (quảnLýKhayNhớTạm != null) {
+            quảnLýKhayNhớTạm.setPrimaryClip(dữLiệuMã);
+            Toast.makeText(this, "Đã sao chép mã voucher: " + mãVoucher, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void cậpNhậtSốDưVàDữLiệuVí() {
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        int sốDưXuHiệnTại = bộLưuTrữVí.getInt("SO_DU_XU_SS", 1250);
+        if (nhãnSốDưXu != null) {
+            nhãnSốDưXu.setText(String.format("%,d", sốDưXuHiệnTại) + " SS");
+        }
+
+        tảiLịchSửGiaoDịchĐộng(bộLưuTrữVí);
+        tảiDanhSáchVoucherĐãLưu(bộLưuTrữVí);
+    }
+
+    private void tảiLịchSửGiaoDịchĐộng(SharedPreferences bộLưuTrữVí) {
+        if (containerGiaoDịchĐộng == null) return;
+        containerGiaoDịchĐộng.removeAllViews();
+
+        String danhSáchChuỗiGiaoDịch = bộLưuTrữVí.getString("DANH_SACH_GIAO_DICH", "");
+        if (danhSáchChuỗiGiaoDịch.isEmpty()) {
+            // Nạp 2 bản ghi mặc định nếu chưa có lịch sử
+            danhSáchChuỗiGiaoDịch = "TX-N892031||Nạp xu qua VietQR Napas247||+500 SS||19/10/2026 14:30:00||Nạp tiền VietQR||Thành công||Nạp 500.000đ nhận 500 SS xu" +
+                    ";;TX-E761920||Mua Voucher Highlands Coffee||-35 SS||19/10/2026 12:15:00||Thanh toán Escrow||Thành công||Thanh toán mua voucher Trà Sen Vàng";
+        }
+
+        String[] cácBảnGhi = danhSáchChuỗiGiaoDịch.split(";;");
+        for (String bảnGhi : cácBảnGhi) {
+            if (bảnGhi.trim().isEmpty()) continue;
+            String[] mảngTrường = bảnGhi.split("\\|\\|");
+            if (mảngTrường.length < 3) continue;
+
+            String mãGiaoDịch = mảngTrường[0];
+            String tiêuĐề = mảngTrường[1];
+            String sốXu = mảngTrường[2];
+            String thờiGian = mảngTrường.length > 3 ? mảngTrường[3] : "19/10/2026";
+            String loạiGiaoDịch = mảngTrường.length > 4 ? mảngTrường[4] : "Giao dịch ví";
+            String trạngThái = mảngTrường.length > 5 ? mảngTrường[5] : "Thành công";
+            String môTả = mảngTrường.length > 6 ? mảngTrường[6] : "Giao dịch nguyên tử qua hệ thống SSharing";
+
+            boolean làCộngXu = sốXu.contains("+");
+
+            // Tạo Card Giao Dịch
+            RelativeLayout thẻGiaoDịch = new RelativeLayout(this);
+            thẻGiaoDịch.setBackgroundResource(R.drawable.bg_card_dark);
+            thẻGiaoDịch.setPadding(32, 32, 32, 32);
+            thẻGiaoDịch.setClickable(true);
+            thẻGiaoDịch.setFocusable(true);
+
+            LinearLayout.LayoutParams thôngSốThẻ = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            thôngSốThẻ.bottomMargin = 24;
+            thẻGiaoDịch.setLayoutParams(thôngSốThẻ);
+
+            // Icon Mũi Tên (+ xanh, - hồng)
+            ImageView iconMũiTên = new ImageView(this);
+            iconMũiTên.setId(View.generateViewId());
+            iconMũiTên.setImageResource(làCộngXu ? R.drawable.ic_arrow_down_left : R.drawable.ic_arrow_up_right);
+            iconMũiTên.setColorFilter(Color.parseColor(làCộngXu ? "#43E5A0" : "#FF4081"));
+            RelativeLayout.LayoutParams thôngSốIcon = new RelativeLayout.LayoutParams(60, 60);
+            thôngSốIcon.addRule(RelativeLayout.CENTER_VERTICAL);
+            iconMũiTên.setLayoutParams(thôngSốIcon);
+
+            // Số Xu
+            TextView nhãnXu = new TextView(this);
+            nhãnXu.setId(View.generateViewId());
+            nhãnXu.setText(sốXu);
+            nhãnXu.setTextColor(Color.parseColor(làCộngXu ? "#43E5A0" : "#FF4081"));
+            nhãnXu.setTextSize(14);
+            nhãnXu.setTypeface(null, android.graphics.Typeface.BOLD);
+            RelativeLayout.LayoutParams thôngSốXu = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+            );
+            thôngSốXu.addRule(RelativeLayout.ALIGN_PARENT_END);
+            thôngSốXu.addRule(RelativeLayout.CENTER_VERTICAL);
+            nhãnXu.setLayoutParams(thôngSốXu);
+
+            // Khung Tiêu Đề & Thời Gian
+            LinearLayout khungMôTảGiaoDịch = new LinearLayout(this);
+            khungMôTảGiaoDịch.setOrientation(LinearLayout.VERTICAL);
+            RelativeLayout.LayoutParams thôngSốMôTả = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+            );
+            thôngSốMôTả.addRule(RelativeLayout.CENTER_VERTICAL);
+            thôngSốMôTả.addRule(RelativeLayout.RIGHT_OF, iconMũiTên.getId());
+            thôngSốMôTả.addRule(RelativeLayout.LEFT_OF, nhãnXu.getId());
+            thôngSốMôTả.leftMargin = 24;
+            thôngSốMôTả.rightMargin = 16;
+            khungMôTảGiaoDịch.setLayoutParams(thôngSốMôTả);
+
+            TextView nhãnTiêuĐề = new TextView(this);
+            nhãnTiêuĐề.setText(tiêuĐề);
+            nhãnTiêuĐề.setTextColor(Color.WHITE);
+            nhãnTiêuĐề.setTextSize(14);
+            nhãnTiêuĐề.setSingleLine(true);
+            nhãnTiêuĐề.setEllipsize(android.text.TextUtils.TruncateAt.END);
+
+            TextView nhãnMốcThờiGian = new TextView(this);
+            nhãnMốcThờiGian.setText(thờiGian);
+            nhãnMốcThờiGian.setTextColor(Color.parseColor("#858095"));
+            nhãnMốcThờiGian.setTextSize(11);
+
+            khungMôTảGiaoDịch.addView(nhãnTiêuĐề);
+            khungMôTảGiaoDịch.addView(nhãnMốcThờiGian);
+
+            thẻGiaoDịch.addView(iconMũiTên);
+            thẻGiaoDịch.addView(khungMôTảGiaoDịch);
+            thẻGiaoDịch.addView(nhãnXu);
+
+            // Sự kiện bấm vào dòng Lịch sử -> Mở Chi Tiết Giao Dịch
+            thẻGiaoDịch.setOnClickListener(vương ->
+                    hiểnThịChiTiếtGiaoDịch(mãGiaoDịch, tiêuĐề, sốXu, thờiGian, loạiGiaoDịch, trạngThái, môTả)
+            );
+
+            containerGiaoDịchĐộng.addView(thẻGiaoDịch);
+        }
+    }
+
+    private void tảiDanhSáchVoucherĐãLưu(SharedPreferences bộLưuTrữVí) {
+        if (containerVoucherĐãLưuĐộng == null) return;
+        containerVoucherĐãLưuĐộng.removeAllViews();
+
+        String danhSáchChuỗiVoucher = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_LUU", "");
+        if (danhSáchChuỗiVoucher.isEmpty()) return;
+
+        String[] cácVoucher = danhSáchChuỗiVoucher.split(";;");
+        for (String chuỗiVoucher : cácVoucher) {
+            if (chuỗiVoucher.trim().isEmpty()) continue;
+            String[] mảngVoucher = chuỗiVoucher.split("::");
+            if (mảngVoucher.length < 2) continue;
+
+            String mãBíMật = mảngVoucher[0];
+            String tênVoucher = mảngVoucher[1];
+            String hạnDùng = mảngVoucher.length > 2 ? mảngVoucher[2] : "HSD: 31 T12 2026";
+            String loạiIcon = mảngVoucher.length > 3 ? mảngVoucher[3] : "FLASH";
+
+            // Tạo Card Voucher Đã Giựt
+            CardView thẻVoucher = new CardView(this);
+            thẻVoucher.setCardBackgroundColor(Color.parseColor("#161327"));
+            thẻVoucher.setRadius(32);
+            thẻVoucher.setCardElevation(0);
+
+            LinearLayout.LayoutParams thôngSốThẻ = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            thôngSốThẻ.bottomMargin = 24;
+            thẻVoucher.setLayoutParams(thôngSốThẻ);
+
+            RelativeLayout khungNộiDung = new RelativeLayout(this);
+            khungNộiDung.setPadding(32, 32, 32, 32);
+
+            // Icon Thương Hiệu
+            ImageView iconMặtHàng = new ImageView(this);
+            iconMặtHàng.setId(View.generateViewId());
+            iconMặtHàng.setBackgroundResource(R.drawable.bg_rounded_icon);
+            iconMặtHàng.setPadding(24, 24, 24, 24);
+            if ("GRAB".equals(loạiIcon)) {
+                iconMặtHàng.setImageResource(R.drawable.ic_wallet);
+                iconMặtHàng.setColorFilter(Color.parseColor("#FF4081"));
+            } else if ("SHOPEE".equals(loạiIcon)) {
+                iconMặtHàng.setImageResource(R.drawable.ic_market);
+                iconMặtHàng.setColorFilter(Color.parseColor("#815BF5"));
+            } else {
+                iconMặtHàng.setImageResource(R.drawable.ic_coin);
+                iconMặtHàng.setColorFilter(Color.parseColor("#FFD54F"));
+            }
+            RelativeLayout.LayoutParams thôngSốIcon = new RelativeLayout.LayoutParams(120, 120);
+            thôngSốIcon.addRule(RelativeLayout.CENTER_VERTICAL);
+            iconMặtHàng.setLayoutParams(thôngSốIcon);
+
+            // Nút Sao Chép Mã
+            Button nútSaoChép = new Button(this);
+            nútSaoChép.setId(View.generateViewId());
+            nútSaoChép.setText("Sao chép mã");
+            nútSaoChép.setTextSize(12);
+            nútSaoChép.setTextColor(Color.parseColor("#E2DEEC"));
+            nútSaoChép.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#26213D")));
+            RelativeLayout.LayoutParams thôngSốNút = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    110
+            );
+            thôngSốNút.addRule(RelativeLayout.ALIGN_PARENT_END);
+            thôngSốNút.addRule(RelativeLayout.CENTER_VERTICAL);
+            nútSaoChép.setLayoutParams(thôngSốNút);
+            nútSaoChép.setOnClickListener(vương -> thựcHiệnSaoChépMãVoucher(mãBíMật));
+
+            // Khung Tiêu Đề & Hạn Dùng
+            LinearLayout khungChiTiết = new LinearLayout(this);
+            khungChiTiết.setOrientation(LinearLayout.VERTICAL);
+            RelativeLayout.LayoutParams thôngSốChiTiết = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+            );
+            thôngSốChiTiết.addRule(RelativeLayout.CENTER_VERTICAL);
+            thôngSốChiTiết.addRule(RelativeLayout.RIGHT_OF, iconMặtHàng.getId());
+            thôngSốChiTiết.addRule(RelativeLayout.LEFT_OF, nútSaoChép.getId());
+            thôngSốChiTiết.leftMargin = 24;
+            thôngSốChiTiết.rightMargin = 16;
+            khungChiTiết.setLayoutParams(thôngSốChiTiết);
+
+            TextView nhãnTên = new TextView(this);
+            nhãnTên.setText(tênVoucher);
+            nhãnTên.setTextColor(Color.WHITE);
+            nhãnTên.setTextSize(14);
+            nhãnTên.setTypeface(null, android.graphics.Typeface.BOLD);
+            nhãnTên.setSingleLine(true);
+            nhãnTên.setEllipsize(android.text.TextUtils.TruncateAt.END);
+
+            TextView nhãnBadge = new TextView(this);
+            nhãnBadge.setText("🎉 Deal Giờ Vàng (Đã Giựt) - " + hạnDùng);
+            nhãnBadge.setTextColor(Color.parseColor("#FFD54F"));
+            nhãnBadge.setTextSize(10);
+
+            khungChiTiết.addView(nhãnTên);
+            khungChiTiết.addView(nhãnBadge);
+
+            khungNộiDung.addView(iconMặtHàng);
+            khungNộiDung.addView(khungChiTiết);
+            khungNộiDung.addView(nútSaoChép);
+
+            thẻVoucher.addView(khungNộiDung);
+            containerVoucherĐãLưuĐộng.addView(thẻVoucher);
+        }
+    }
+
+    private void hiểnThịChiTiếtGiaoDịch(String mãGiaoDịch, String tiêuĐề, String sốXuThayĐổi, String thờiGian, String loạiGiaoDịch, String trạngThái, String môTả) {
+        String nộiDungChiTiết = "📌 Mã giao dịch: " + mãGiaoDịch + "\n\n" +
+                "📝 Nội dung: " + tiêuĐề + "\n" +
+                "🪙 Số xu thay đổi: " + sốXuThayĐổi + "\n" +
+                "⏱ Thời gian: " + thờiGian + "\n" +
+                "📂 Loại giao dịch: " + loạiGiaoDịch + "\n" +
+                "✅ Trạng thái: " + trạngThái + "\n\n" +
+                "ℹ️ Mô tả chi tiết: " + môTả;
+
+        new AlertDialog.Builder(this)
+                .setTitle("Chi Tiết Giao Dịch")
+                .setMessage(nộiDungChiTiết)
+                .setPositiveButton("Đóng", null)
+                .show();
+    }
+
+    private void càiĐặtThanhĐiềuHướngĐáy() {
+        View nútTrangChủ = findViewById(R.id.btnNavHome);
+        View nútĐăngBán = findViewById(R.id.btnNavAdd);
+        View nútTrangCáNhân = findViewById(R.id.btnNavProfile);
+
+        if (nútTrangChủ != null) {
+            nútTrangChủ.setOnClickListener(vương ->
+                    startActivity(new Intent(this, MainActivity.class))
+            );
+        }
+        if (nútĐăngBán != null) {
+            nútĐăngBán.setOnClickListener(vương ->
+                    startActivity(new Intent(this, PostVoucherActivity.class))
+            );
+        }
+        if (nútTrangCáNhân != null) {
+            nútTrangCáNhân.setOnClickListener(vương ->
+                    startActivity(new Intent(this, ProfileActivity.class))
+            );
         }
     }
 }

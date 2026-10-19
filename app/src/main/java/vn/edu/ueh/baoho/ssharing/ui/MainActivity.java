@@ -1,221 +1,597 @@
 package vn.edu.ueh.baoho.ssharing.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.widget.ViewPager2;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import vn.edu.ueh.baoho.ssharing.R;
+import vn.edu.ueh.baoho.ssharing.adapter.BannerSliderAdapter;
 import vn.edu.ueh.baoho.ssharing.model.VoucherC2C;
 import vn.edu.ueh.baoho.ssharing.model.VoucherMall;
 import vn.edu.ueh.baoho.ssharing.viewmodel.VoucherViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
-    private LinearLayout tabMall, tabC2C;
-    private VoucherViewModel voucherViewModel;
+    private static boolean đãKhởiTạoDữLiệuMẫuXong = false;
+
+    private ViewPager2 bộTrượtBannerMain;
+    private LinearLayout khungChỉSốDotBanner;
+    private Handler bộLịchTrượtTựĐộng = new Handler(Looper.getMainLooper());
+    private Runnable côngViệcTựĐộngTrượtBanner;
+
+    private LinearLayout thẻGianHàngMall, thẻChợC2C;
+    private VoucherViewModel bộQuảnLýDữLiệuVoucher;
+    private TextView nhãnSốDưXuMànChính;
+    private TextView nhãnTiêuĐềKhuVực;
+    private LinearLayout khungLướiVoucherTrangChủ;
+    private LinearLayout khungVoucherGợiÝBottom;
+
+    private EditText ôNhậpTìmKiếmMànChính;
+    private TextView nútTìmKiếmMànChính;
+    private Button nútXemTấtCảKhoVoucher;
+
+    private String chuỗiTabĐangChọn = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // =========================================================================
-        // 1. KHỞI TẠO VIEWMODEL & LẮNG NGHE LIVEDATA (CHUẨN MVVM - SỐNG SÓT QUA XOAY MÀN HÌNH)
-        // =========================================================================
-        voucherViewModel = new ViewModelProvider(this).get(VoucherViewModel.class);
+        khởiTạoÁnhXạGiaoDiện();
+        khởiTạoViewModel();
+        càiĐặtBannerAutoSlider();
+        càiĐặtSựKiệnLắngNgheGiaoDiện();
+        cậpNhậtGiaoDiệnTab(true); // Mặc định hiển thị SSharing Mall
+        cậpNhậtKhungGợiÝDànhChoBạn();
+    }
 
-        // Lắng nghe dữ liệu Voucher từ Room Database
-        voucherViewModel.getAllVouchers().observe(this, vouchers -> {
-            if (vouchers == null || vouchers.isEmpty()) {
-                // Tự động nạp dữ liệu mẫu ban đầu nếu cơ sở dữ liệu Room đang trống
-                khoiTaoDuLieuMau();
+    private void khởiTạoÁnhXạGiaoDiện() {
+        bộTrượtBannerMain = findViewById(R.id.bannerViewPager);
+        khungChỉSốDotBanner = findViewById(R.id.layoutBannerDots);
+
+        nhãnSốDưXuMànChính = findViewById(R.id.tvCoins);
+        thẻGianHàngMall = findViewById(R.id.tabMall);
+        thẻChợC2C = findViewById(R.id.tabC2C);
+        nhãnTiêuĐềKhuVực = findViewById(R.id.tvHomeSectionTitle);
+        khungLướiVoucherTrangChủ = findViewById(R.id.containerVoucherHomeGrid);
+        khungVoucherGợiÝBottom = findViewById(R.id.containerSuggestedVouchers);
+
+        ôNhậpTìmKiếmMànChính = findViewById(R.id.etHomeSearch);
+        nútTìmKiếmMànChính = findViewById(R.id.btnDoSearchHome);
+        nútXemTấtCảKhoVoucher = findViewById(R.id.btnViewFullSearchResults);
+    }
+
+    private void càiĐặtBannerAutoSlider() {
+        if (bộTrượtBannerMain == null) return;
+
+        List<BannerSliderAdapter.ThôngTinBannerItem> danhSáchBanner = new ArrayList<>();
+        danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
+                "🔥 SIÊU DEAL SHOPEE FOOD", "Giảm 50% đơn từ 100K khi thanh toán qua SSharing", 120, "🛍", "SHOPEE", "SPFOOD50-SLIDER", Color.parseColor("#7C4DFF"), Color.parseColor("#FF4081"), true, "ShopeeFood Official", "SF"
+        ));
+        danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
+                "☕ STARBUCKS COFFEE WEEKEND", "Mua 1 Tặng 1 Trà/Cà phê tất cả chi nhánh", 160, "☕", "STARBUCKS", "SBUX-M1T1-SLIDER", Color.parseColor("#11998E"), Color.parseColor("#38EF7D"), true, "Starbucks Official Store", "SB"
+        ));
+        danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
+                "🚗 GRABCAR FREESHIP & GIẢM 50K", "Đồng giá 10 Xu - Săn deal khung giờ vàng", 100, "🚗", "GRAB", "GRAB50K-SLIDER", Color.parseColor("#00B4DB"), Color.parseColor("#0083B0"), true, "Grab Vietnam Store", "GR"
+        ));
+        danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
+                "📱 MOMO HOÀN XU 30K", "Nạp tiền ĐT & Data 4G Viettel, Mobifone, Vinaphone", 150, "📱", "MOMO", "MOMO30K-SLIDER", Color.parseColor("#FF416C"), Color.parseColor("#FF4B2B"), true, "MoMo Official Store", "MM"
+        ));
+
+        BannerSliderAdapter bộTrượtAdapter = new BannerSliderAdapter(danhSáchBanner, itemBanner ->
+                mởChiTiếtVoucher(
+                        itemBanner.tiêuĐề,
+                        itemBanner.tênThươngHiệu,
+                        itemBanner.giáXu,
+                        itemBanner.mãBíMật,
+                        itemBanner.làChínhHãng,
+                        itemBanner.tênNgườiBán,
+                        itemBanner.avatarNgườiBán
+                )
+        );
+
+        bộTrượtBannerMain.setAdapter(bộTrượtAdapter);
+
+        // Tạo dấu Dot chỉ số trang
+        tạoDấuDotChỉSốTrang(danhSáchBanner.size(), 0);
+
+        bộTrượtBannerMain.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                cậpNhậtDotChỉSốTrang(danhSáchBanner.size(), position);
             }
         });
 
-        // Lắng nghe trạng thái Tab đang chọn để khôi phục giao diện đúng tab khi xoay ngang/dọc
-        voucherViewModel.getSelectedFilter().observe(this, filter -> {
-            if ("MALL".equals(filter)) {
-                capNhatGiaoDienTab(true);
-            } else if ("C2C".equals(filter)) {
-                capNhatGiaoDienTab(false);
+        // Tự động trượt mỗi 5 giây
+        côngViệcTựĐộngTrượtBanner = new Runnable() {
+            @Override
+            public void run() {
+                if (bộTrượtBannerMain != null && danhSáchBanner.size() > 0) {
+                    int vịTríHiệnTại = bộTrượtBannerMain.getCurrentItem();
+                    int vịTríMới = (vịTríHiệnTại + 1) % danhSáchBanner.size();
+                    bộTrượtBannerMain.setCurrentItem(vịTríMới, true);
+                    bộLịchTrượtTựĐộng.postDelayed(this, 5000);
+                }
+            }
+        };
+
+        bộLịchTrượtTựĐộng.postDelayed(côngViệcTựĐộngTrượtBanner, 5000);
+    }
+
+    private void tạoDấuDotChỉSốTrang(int tổngSốTrang, int vịTríHiệnTại) {
+        if (khungChỉSốDotBanner == null) return;
+        khungChỉSốDotBanner.removeAllViews();
+
+        for (int i = 0; i < tổngSốTrang; i++) {
+            View dotView = new View(this);
+            LinearLayout.LayoutParams thôngSốDot = new LinearLayout.LayoutParams(
+                    i == vịTríHiệnTại ? 40 : 16, 12
+            );
+            thôngSốDot.leftMargin = 8;
+            thôngSốDot.rightMargin = 8;
+            dotView.setLayoutParams(thôngSốDot);
+
+            if (i == vịTríHiệnTại) {
+                dotView.setBackgroundResource(R.drawable.bg_tab_active);
+            } else {
+                dotView.setBackgroundColor(Color.parseColor("#60FFFFFF"));
+            }
+            khungChỉSốDotBanner.addView(dotView);
+        }
+    }
+
+    private void cậpNhậtDotChỉSốTrang(int tổngSốTrang, int vịTríHiệnTại) {
+        tạoDấuDotChỉSốTrang(tổngSốTrang, vịTríHiệnTại);
+    }
+
+    private void khởiTạoViewModel() {
+        bộQuảnLýDữLiệuVoucher = new ViewModelProvider(this).get(VoucherViewModel.class);
+
+        // Tránh vòng lặp vô tận trên UI Thread làm đơ ứng dụng (ANR)
+        bộQuảnLýDữLiệuVoucher.getAllVouchers().observe(this, danhSáchVoucher -> {
+            if (!đãKhởiTạoDữLiệuMẫuXong && (danhSáchVoucher == null || danhSáchVoucher.isEmpty())) {
+                đãKhởiTạoDữLiệuMẫuXong = true;
+                khởiTạoDữLiệuMẫu();
             }
         });
 
-        // =========================================================================
-        // 2. HEADER CLICKS
-        // =========================================================================
-        View imgAvatar = findViewById(R.id.imgAvatar);
-        View tvUsername = findViewById(R.id.tvUsername);
-        View btnCoinBadge = findViewById(R.id.btnCoinBadge);
-        View btnNotification = findViewById(R.id.btnNotification);
+        bộQuảnLýDữLiệuVoucher.getSelectedFilter().observe(this, bộLọc -> {
+            if ("MALL".equals(bộLọc)) {
+                cậpNhậtGiaoDiệnTab(true);
+            } else if ("C2C".equals(bộLọc)) {
+                cậpNhậtGiaoDiệnTab(false);
+            }
+        });
+    }
 
-        if (imgAvatar != null) {
-            imgAvatar.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
+    private void càiĐặtSựKiệnLắngNgheGiaoDiện() {
+        // HEADER CLICKS
+        View ảnhĐạiDiện = findViewById(R.id.imgAvatar);
+        View tênNgườiDùng = findViewById(R.id.tvUsername);
+        View thẻSốDưXu = findViewById(R.id.btnCoinBadge);
+        View nútThôngBáo = findViewById(R.id.btnNotification);
+
+        if (ảnhĐạiDiện != null) ảnhĐạiDiện.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
+        if (tênNgườiDùng != null) tênNgườiDùng.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
+        if (thẻSốDưXu != null) thẻSốDưXu.setOnClickListener(v -> startActivity(new Intent(this, WalletActivity.class)));
+        if (nútThôngBáo != null) nútThôngBáo.setOnClickListener(v -> Toast.makeText(this, "Không có thông báo mới", Toast.LENGTH_SHORT).show());
+
+        // THANH TÌM KIẾM MÀN HÌNH CHÍNH
+        if (nútTìmKiếmMànChính != null) {
+            nútTìmKiếmMànChính.setOnClickListener(v -> thựcHiệnMởTrangTìmKiếmMới());
         }
-        if (tvUsername != null) {
-            tvUsername.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
-        }
-        if (btnCoinBadge != null) {
-            btnCoinBadge.setOnClickListener(v -> startActivity(new Intent(this, WalletActivity.class)));
-        }
-        if (btnNotification != null) {
-            btnNotification.setOnClickListener(v -> Toast.makeText(this, "Không có thông báo mới", Toast.LENGTH_SHORT).show());
+        if (ôNhậpTìmKiếmMànChính != null) {
+            ôNhậpTìmKiếmMànChính.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    thựcHiệnMởTrangTìmKiếmMới();
+                    return true;
+                }
+                return false;
+            });
         }
 
-        // =========================================================================
-        // 3. ÁNH XẠ VÀ XỬ LÝ SỰ KIỆN QUICK ACTION HUB (4 NÚT TRÒN)
-        // =========================================================================
-        View btnQuickTram0D = findViewById(R.id.btnQuickTram0D);
-        View btnQuickFlashGrab = findViewById(R.id.btnQuickFlashGrab);
-        View btnQuickMall = findViewById(R.id.btnQuickMall);
-        View btnQuickCoinExchange = findViewById(R.id.btnQuickCoinExchange);
+        if (nútXemTấtCảKhoVoucher != null) {
+            nútXemTấtCảKhoVoucher.setOnClickListener(v -> {
+                Intent ýĐịnhMới = new Intent(this, SearchActivity.class);
+                startActivity(ýĐịnhMới);
+            });
+        }
 
-        if (btnQuickTram0D != null) {
-            btnQuickTram0D.setOnClickListener(v -> {
-                Toast.makeText(this, "Mở Trạm 0đ", Toast.LENGTH_SHORT).show();
+        // QUICK ACTION HUB (4 NÚT TRÒN)
+        View nútTrạm0Đ = findViewById(R.id.btnQuickTram0D);
+        View nútGiựtDeal = findViewById(R.id.btnQuickFlashGrab);
+        View nútMall = findViewById(R.id.btnQuickMall);
+        View nútĐổiXu = findViewById(R.id.btnQuickCoinExchange);
+
+        if (nútTrạm0Đ != null) {
+            nútTrạm0Đ.setOnClickListener(v -> {
+                Toast.makeText(this, "Mở Trạm Coupon Cộng Đồng 0đ", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, CommunityCouponsActivity.class));
             });
         }
-
-        if (btnQuickFlashGrab != null) {
-            btnQuickFlashGrab.setOnClickListener(v -> {
-                Toast.makeText(this, "Mở Giựt Deal Flash Grab", Toast.LENGTH_SHORT).show();
+        if (nútGiựtDeal != null) {
+            nútGiựtDeal.setOnClickListener(v -> {
+                Toast.makeText(this, "Mở Sự Kiện Giựt Deal Khung Giờ Vàng", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, FlashGrabActivity.class));
             });
         }
-
-        if (btnQuickMall != null) {
-            btnQuickMall.setOnClickListener(v -> {
-                Toast.makeText(this, "Mở SSharing Mall", Toast.LENGTH_SHORT).show();
+        if (nútMall != null) {
+            nútMall.setOnClickListener(v -> {
+                Toast.makeText(this, "Mở Gian Hàng SSharing Mall", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, activity_brand_mall.class));
             });
         }
-
-        if (btnQuickCoinExchange != null) {
-            btnQuickCoinExchange.setOnClickListener(v -> {
-                Toast.makeText(this, "Mở Đổi Voucher Lấy Xu", Toast.LENGTH_SHORT).show();
+        if (nútĐổiXu != null) {
+            nútĐổiXu.setOnClickListener(v -> {
+                Toast.makeText(this, "Mở Thu Mua Voucher Lấy Xu Tức Thì", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, InstantBuybackActivity.class));
             });
         }
 
-        // View All button
-        View btnViewAll = findViewById(R.id.btnViewAll);
-        if (btnViewAll != null) {
-            btnViewAll.setOnClickListener(v -> startActivity(new Intent(this, CommunityCouponsActivity.class)));
-        }
-
-        // =========================================================================
-        // 4. ÁNH XẠ VÀ XỬ LÝ SỰ KIỆN TAB SWITCHER (MALL / C2C MARKET)
-        // =========================================================================
-        tabMall = findViewById(R.id.tabMall);
-        tabC2C = findViewById(R.id.tabC2C);
-
-        if (tabMall != null) {
-            tabMall.setOnClickListener(v -> {
-                voucherViewModel.setFilter("MALL");
-                Toast.makeText(this, "Đang xem SSharing Mall", Toast.LENGTH_SHORT).show();
+        View nútXemTấtCả = findViewById(R.id.btnViewAll);
+        if (nútXemTấtCả != null) {
+            nútXemTấtCả.setOnClickListener(v -> {
+                Intent ýĐịnhSearch = new Intent(this, SearchActivity.class);
+                startActivity(ýĐịnhSearch);
             });
         }
 
-        if (tabC2C != null) {
-            tabC2C.setOnClickListener(v -> {
-                voucherViewModel.setFilter("C2C");
-                Toast.makeText(this, "Đang xem C2C Market", Toast.LENGTH_SHORT).show();
+        // TAB SWITCHER (SSHARING MALL / C2C MARKET)
+        if (thẻGianHàngMall != null) {
+            thẻGianHàngMall.setOnClickListener(v -> {
+                bộQuảnLýDữLiệuVoucher.setFilter("MALL");
+                cậpNhậtGiaoDiệnTab(true);
+                Toast.makeText(this, "Đang xem SSharing Mall (Thương hiệu chính hãng)", Toast.LENGTH_SHORT).show();
             });
         }
 
-        // =========================================================================
-        // 5. ÁNH XẠ VÀ XỬ LÝ SỰ KIỆN BOTTOM NAVIGATION BAR
-        // =========================================================================
-        View navHome = findViewById(R.id.navHome);
-        View navSearch = findViewById(R.id.navSearch);
-        View navSell = findViewById(R.id.navSell);
-        View navWallet = findViewById(R.id.navWallet);
-        View navProfile = findViewById(R.id.navProfile);
-
-        if (navHome != null) {
-            navHome.setOnClickListener(v ->
-                    Toast.makeText(this, "Trang chủ", Toast.LENGTH_SHORT).show()
-            );
+        if (thẻChợC2C != null) {
+            thẻChợC2C.setOnClickListener(v -> {
+                bộQuảnLýDữLiệuVoucher.setFilter("C2C");
+                cậpNhậtGiaoDiệnTab(false);
+                Toast.makeText(this, "Đang xem Chợ C2C Market (Giao dịch người dùng)", Toast.LENGTH_SHORT).show();
+            });
         }
 
-        if (navSearch != null) {
-            navSearch.setOnClickListener(v ->
-                    startActivity(new Intent(this, MapStoreLocatorActivity.class))
-            );
+        // BỘ LỌC DANH MỤC
+        View nútẨmThực = findViewById(R.id.btnCategoryAmThuc);
+        View nútMuaSắm = findViewById(R.id.btnCategoryMuaSam);
+        View nútDiChuyển = findViewById(R.id.btnCategoryDiChuyen);
+        View nútGiảiTrí = findViewById(R.id.btnCategoryGiaiTri);
+
+        if (nútẨmThực != null) {
+            nútẨmThực.setOnClickListener(v -> {
+                cậpNhậtDanhSáchẨmThực();
+                Toast.makeText(this, "Đã lọc danh mục Ẩm Thực (2 kết quả). Bấm 'Xem tất cả' để xem trọn kho!", Toast.LENGTH_SHORT).show();
+            });
+        }
+        if (nútMuaSắm != null) {
+            nútMuaSắm.setOnClickListener(v -> {
+                cậpNhậtDanhSáchMuaSắm();
+                Toast.makeText(this, "Đã lọc danh mục Mua Sắm (2 kết quả). Bấm 'Xem tất cả' để xem trọn kho!", Toast.LENGTH_SHORT).show();
+            });
+        }
+        if (nútDiChuyển != null) {
+            nútDiChuyển.setOnClickListener(v -> {
+                cậpNhậtDanhSáchDiChuyển();
+                Toast.makeText(this, "Đã lọc danh mục Di Chuyển (2 kết quả). Bấm 'Xem tất cả' để xem trọn kho!", Toast.LENGTH_SHORT).show();
+            });
+        }
+        if (nútGiảiTrí != null) {
+            nútGiảiTrí.setOnClickListener(v -> {
+                cậpNhậtDanhSáchGiảiTrí();
+                Toast.makeText(this, "Đã lọc danh mục Giải Trí (1 kết quả). Bấm 'Xem tất cả' để xem trọn kho!", Toast.LENGTH_SHORT).show();
+            });
         }
 
-        if (navSell != null) {
-            navSell.setOnClickListener(v ->
-                    startActivity(new Intent(this, PostVoucherActivity.class))
-            );
-        }
+        // BOTTOM NAVIGATION
+        càiĐặtThanhĐiềuHướngĐáy();
+    }
 
-        if (navWallet != null) {
-            navWallet.setOnClickListener(v ->
-                    startActivity(new Intent(this, WalletActivity.class))
-            );
+    private void thựcHiệnMởTrangTìmKiếmMới() {
+        String từKhóa = ôNhậpTìmKiếmMànChính != null ? ôNhậpTìmKiếmMànChính.getText().toString().trim() : "";
+        Intent ýĐịnhMởTìmKiếm = new Intent(this, SearchActivity.class);
+        if (!từKhóa.isEmpty()) {
+            ýĐịnhMởTìmKiếm.putExtra("EXTRA_SEARCH_QUERY", từKhóa);
         }
+        startActivity(ýĐịnhMởTìmKiếm);
+    }
 
-        if (navProfile != null) {
-            navProfile.setOnClickListener(v ->
-                    startActivity(new Intent(this, ProfileActivity.class))
-            );
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (bộLịchTrượtTựĐộng != null && côngViệcTựĐộngTrượtBanner != null) {
+            bộLịchTrượtTựĐộng.removeCallbacks(côngViệcTựĐộngTrượtBanner);
         }
     }
 
-    /**
-     * Đồng bộ màu nền active cho Tab Switcher
-     */
-    private void capNhatGiaoDienTab(boolean isMallSelected) {
-        if (tabMall == null || tabC2C == null) return;
-        if (isMallSelected) {
-            tabMall.setBackgroundResource(R.drawable.bg_tab_active);
-            tabC2C.setBackground(null);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cậpNhậtSốDưMànChính();
+        if (bộLịchTrượtTựĐộng != null && côngViệcTựĐộngTrượtBanner != null) {
+            bộLịchTrượtTựĐộng.postDelayed(côngViệcTựĐộngTrượtBanner, 5000);
+        }
+    }
+
+    private void cậpNhậtSốDưMànChính() {
+        SharedPreferences bộLưuTrữ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        int sốDưXu = bộLưuTrữ.getInt("SO_DU_XU_SS", 1250);
+        if (nhãnSốDưXuMànChính != null) {
+            nhãnSốDưXuMànChính.setText(String.format("%,d", sốDưXu) + " SS");
+        }
+    }
+
+    private void cậpNhậtGiaoDiệnTab(boolean làTabMallĐượcChọn) {
+        if (thẻGianHàngMall == null || thẻChợC2C == null) return;
+
+        String tabMới = làTabMallĐượcChọn ? "MALL" : "C2C";
+        if (tabMới.equals(chuỗiTabĐangChọn) && khungLướiVoucherTrangChủ != null && khungLướiVoucherTrangChủ.getChildCount() > 0) {
+            return; // Đã tải xong, tránh vẽ lại giao diện thừa làm giật lag
+        }
+        chuỗiTabĐangChọn = tabMới;
+
+        if (làTabMallĐượcChọn) {
+            thẻGianHàngMall.setBackgroundResource(R.drawable.bg_tab_active);
+            thẻChợC2C.setBackground(null);
+            if (nhãnTiêuĐềKhuVực != null) {
+                nhãnTiêuĐềKhuVực.setText("Gian Hàng SSharing Mall (Thương Hiệu)");
+            }
+            hiểnThịDanhSáchSSharingMall();
         } else {
-            tabC2C.setBackgroundResource(R.drawable.bg_tab_active);
-            tabMall.setBackground(null);
+            thẻChợC2C.setBackgroundResource(R.drawable.bg_tab_active);
+            thẻGianHàngMall.setBackground(null);
+            if (nhãnTiêuĐềKhuVực != null) {
+                nhãnTiêuĐềKhuVực.setText("Chợ C2C Market (Giao Dịch Người Dùng)");
+            }
+            hiểnThịDanhSáchChợC2CMarket();
         }
     }
 
-    /**
-     * Khởi tạo bản ghi mẫu ban đầu vào Room thông qua ViewModel
-     */
-    private void khoiTaoDuLieuMau() {
-        VoucherC2C v1 = new VoucherC2C(
-                "VC001",
-                "Giảm 50K ShopeeFood Đơn Từ 100K",
-                "ShopeeFood",
-                50000,
-                25,
-                "30/12/2026",
-                "USER_01",
-                "SPFOOD50K"
-        );
-        VoucherMall v2 = new VoucherMall(
-                "VM001",
-                "Voucher Phúc Long 30K Trà Sữa",
-                "Phuc Long Coffee & Tea",
-                30000,
-                15,
-                "15/11/2026",
-                "BRAND_PHUCLONG",
-                "PL30KSECRET"
-        );
-        voucherViewModel.themVoucher(v1);
-        voucherViewModel.themVoucher(v2);
+    private void hiểnThịDanhSáchSSharingMall() {
+        if (khungLướiVoucherTrangChủ == null) return;
+        khungLướiVoucherTrangChủ.removeAllViews();
+
+        // 1. Starbucks Official
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "STARBUCKS", "Voucher Starbucks Giảm 20K Đơn 50K", 160, "200 SS", "✓ Chính hãng", true, "Starbucks Coffee", "Starbucks Official Store", "SB", "SBUX20K-OCTOBER99");
+
+        // 2. MoMo Official
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "MOMO", "Voucher MoMo Hoàn 30K Nạp ĐT / Data 4G", 250, "300 SS", "✓ Chính hãng", true, "MoMo E-Wallet", "MoMo Official Store", "MM", "MOMO30K-OCTOBER77");
+
+        // 3. Lazada Official
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "LAZADA", "Voucher Lazada 50K Đơn Từ 150K", 420, "500 SS", "✓ Chính hãng", true, "Lazada Mall", "Lazada Official Store", "LZ", "LAZ50K-OFFICIAL66");
+
+        // 4. Phúc Long Official
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "PHÚC LONG", "Voucher Phúc Long 30K Trà Sữa", 200, "250 SS", "✓ Chính hãng", true, "Phúc Long Tea", "Phúc Long Official Store", "PL", "PL30K-OFFICIAL55");
     }
 
-    // =========================================================================
-    // 6. MENU 3 CHẤM ĐỂ TEST ĐIỀU HƯỚNG TẤT CẢ MÀN HÌNH
-    // =========================================================================
+    private void hiểnThịDanhSáchChợC2CMarket() {
+        if (khungLướiVoucherTrangChủ == null) return;
+        khungLướiVoucherTrangChủ.removeAllViews();
+
+        // 1. @minh.anh - Grab 50K
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "GRAB", "Giảm 50K chuyến xe GrabCar tiếp theo", 350, "500 SS", "👥 Cộng đồng", false, "Grab Vietnam", "Minh Anh (@minh.anh)", "MA", "GRAB50K-COMMUNITY88");
+
+        // 2. @bao.ngoc - ShopeeFood 50K
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "SHOPEE", "Voucher ShopeeFood Giảm 50K Đơn 100K", 500, "650 SS", "👥 Cộng đồng", false, "ShopeeFood", "Bảo Ngọc (@bao.ngoc)", "BN", "SPFOOD50K-USER22");
+
+        // 3. @khanh.trinh - Highlands Mua 1 Tặng 1
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "HIGHLANDS", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", 180, "250 SS", "👥 Cộng đồng", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-USER33");
+
+        // 4. @gia.bao - BeCar 30K
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "BE", "Voucher BeCar Giảm 30K Đơn Từ 60K", 220, "300 SS", "👥 Cộng đồng", false, "Be Group", "Gia Bảo (@gia.bao)", "GB", "BECAR30K-USER44");
+    }
+
+    private void cậpNhậtDanhSáchẨmThực() {
+        if (khungLướiVoucherTrangChủ == null) return;
+        chuỗiTabĐangChọn = "CATEGORY_FOOD";
+        khungLướiVoucherTrangChủ.removeAllViews();
+        if (nhãnTiêuĐềKhuVực != null) nhãnTiêuĐềKhuVực.setText("Kết Quả Lọc: Ẩm Thực & Đồ Uống");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "STARBUCKS", "Voucher Starbucks Giảm 20K Đơn 50K", 160, "200 SS", "✓ Chính hãng", true, "Starbucks Coffee", "Starbucks Official Store", "SB", "SBUX20K-OCTOBER99");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "HIGHLANDS", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", 180, "250 SS", "👥 Cộng đồng", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-USER33");
+    }
+
+    private void cậpNhậtDanhSáchMuaSắm() {
+        if (khungLướiVoucherTrangChủ == null) return;
+        chuỗiTabĐangChọn = "CATEGORY_SHOP";
+        khungLướiVoucherTrangChủ.removeAllViews();
+        if (nhãnTiêuĐềKhuVực != null) nhãnTiêuĐềKhuVực.setText("Kết Quả Lọc: Mua Sắm & Siêu Thị");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "LAZADA", "Voucher Lazada 50K Đơn Từ 150K", 420, "500 SS", "✓ Chính hãng", true, "Lazada Mall", "Lazada Official Store", "LZ", "LAZ50K-OFFICIAL66");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "SHOPEE", "Voucher ShopeeFood Giảm 50K Đơn 100K", 500, "650 SS", "👥 Cộng đồng", false, "ShopeeFood", "Bảo Ngọc (@bao.ngoc)", "BN", "SPFOOD50K-USER22");
+    }
+
+    private void cậpNhậtDanhSáchDiChuyển() {
+        if (khungLướiVoucherTrangChủ == null) return;
+        chuỗiTabĐangChọn = "CATEGORY_TRANSPORT";
+        khungLướiVoucherTrangChủ.removeAllViews();
+        if (nhãnTiêuĐềKhuVực != null) nhãnTiêuĐềKhuVực.setText("Kết Quả Lọc: Di Chuyển & Xe Công Nghệ");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "GRAB", "Giảm 50K chuyến xe GrabCar tiếp theo", 350, "500 SS", "👥 Cộng đồng", false, "Grab Vietnam", "Minh Anh (@minh.anh)", "MA", "GRAB50K-COMMUNITY88");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "BE", "Voucher BeCar Giảm 30K Đơn Từ 60K", 220, "300 SS", "👥 Cộng đồng", false, "Be Group", "Gia Bảo (@gia.bao)", "GB", "BECAR30K-USER44");
+    }
+
+    private void cậpNhậtDanhSáchGiảiTrí() {
+        if (khungLướiVoucherTrangChủ == null) return;
+        chuỗiTabĐangChọn = "CATEGORY_MOVIE";
+        khungLướiVoucherTrangChủ.removeAllViews();
+        if (nhãnTiêuĐềKhuVực != null) nhãnTiêuĐềKhuVực.setText("Kết Quả Lọc: Giải Trí & Xem Phim");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "CGV", "Vé Xem Phim CGV 2D Vé Đôi 100K", 280, "350 SS", "✓ Chính hãng", true, "CGV Cinemas", "CGV Official Store", "CGV", "CGV2D-OFFICIAL11");
+    }
+
+    private void cậpNhậtKhungGợiÝDànhChoBạn() {
+        if (khungVoucherGợiÝBottom == null || khungVoucherGợiÝBottom.getChildCount() > 0) return;
+
+        thêmThẻVoucherVàoKhung(khungVoucherGợiÝBottom, "HIGHLANDS", "Voucher Highlands Coffee Trà Sen Vàng 30K", 180, "250 SS", "👥 Hot Deal", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-HOT");
+        thêmThẻVoucherVàoKhung(khungVoucherGợiÝBottom, "STARBUCKS", "Giảm 20K cho đơn từ 50K Starbucks", 160, "200 SS", "✓ Gợi ý", true, "Starbucks Coffee", "Starbucks Official Store", "SB", "SBUX20K-HOT");
+        thêmThẻVoucherVàoKhung(khungVoucherGợiÝBottom, "GRAB", "Voucher GrabFood FreeShip 30K", 120, "180 SS", "✓ Đề xuất", true, "GrabFood Vietnam", "Grab Official Store", "GR", "GRABFS30K-HOT");
+    }
+
+    private void thêmThẻVoucherVàoKhung(LinearLayout containerMụcTiêu, String tênBadge, String tiêuĐề, int giáXu, String giáGốc, String nhãnBadgeHuyHiệu, boolean làChínhHãng, String thươngHiệu, String tênNgườiBán, String avatarNgườiBán, String mãBíMật) {
+        CardView thẻCard = new CardView(this);
+        thẻCard.setCardBackgroundColor(Color.parseColor("#16141E"));
+        thẻCard.setRadius(28);
+        thẻCard.setCardElevation(0);
+        thẻCard.setClickable(true);
+        thẻCard.setFocusable(true);
+
+        LinearLayout.LayoutParams thôngSốThẻ = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        thôngSốThẻ.bottomMargin = 20;
+        thẻCard.setLayoutParams(thôngSốThẻ);
+
+        LinearLayout khungToànBộ = new LinearLayout(this);
+        khungToànBộ.setOrientation(LinearLayout.HORIZONTAL);
+        khungToànBộ.setPadding(24, 24, 24, 24);
+
+        // Badge Thương Hiệu
+        TextView badgeThươngHiệu = new TextView(this);
+        badgeThươngHiệu.setText(tênBadge);
+        badgeThươngHiệu.setTextColor(Color.WHITE);
+        badgeThươngHiệu.setTextSize(11);
+        badgeThươngHiệu.setTypeface(null, android.graphics.Typeface.BOLD);
+        badgeThươngHiệu.setGravity(Gravity.CENTER);
+        badgeThươngHiệu.setBackgroundResource(R.drawable.bg_badge_pink);
+        LinearLayout.LayoutParams thôngSốBadge = new LinearLayout.LayoutParams(130, 130);
+        badgeThươngHiệu.setLayoutParams(thôngSốBadge);
+
+        // Khung Thông Tin
+        LinearLayout khungThôngTin = new LinearLayout(this);
+        khungThôngTin.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams thôngSốMôTả = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        thôngSốMôTả.leftMargin = 20;
+        khungThôngTin.setLayoutParams(thôngSốMôTả);
+
+        TextView nhãnHuyHiệu = new TextView(this);
+        nhãnHuyHiệu.setText(nhãnBadgeHuyHiệu);
+        nhãnHuyHiệu.setTextColor(Color.parseColor(làChínhHãng ? "#6EE7B7" : "#FFD54F"));
+        nhãnHuyHiệu.setTextSize(10);
+        nhãnHuyHiệu.setTypeface(null, android.graphics.Typeface.BOLD);
+
+        TextView nhãnTiêuĐề = new TextView(this);
+        nhãnTiêuĐề.setText(tiêuĐề);
+        nhãnTiêuĐề.setTextColor(Color.WHITE);
+        nhãnTiêuĐề.setTextSize(13);
+        nhãnTiêuĐề.setTypeface(null, android.graphics.Typeface.BOLD);
+
+        LinearLayout khungGiá = new LinearLayout(this);
+        khungGiá.setOrientation(LinearLayout.HORIZONTAL);
+        khungGiá.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams thôngSốKhungGiá = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        thôngSốKhungGiá.topMargin = 6;
+        khungGiá.setLayoutParams(thôngSốKhungGiá);
+
+        TextView nhãnGiáXu = new TextView(this);
+        nhãnGiáXu.setText(String.format("%,d", giáXu) + " SS");
+        nhãnGiáXu.setTextColor(Color.parseColor("#00E676"));
+        nhãnGiáXu.setTextSize(14);
+        nhãnGiáXu.setTypeface(null, android.graphics.Typeface.BOLD);
+
+        TextView nhãnGiáGốc = new TextView(this);
+        nhãnGiáGốc.setText(giáGốc);
+        nhãnGiáGốc.setTextColor(Color.parseColor("#666666"));
+        nhãnGiáGốc.setTextSize(11);
+        LinearLayout.LayoutParams thôngSốGiáGốc = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        thôngSốGiáGốc.leftMargin = 12;
+        nhãnGiáGốc.setLayoutParams(thôngSốGiáGốc);
+
+        khungGiá.addView(nhãnGiáXu);
+        khungGiá.addView(nhãnGiáGốc);
+
+        TextView nhãnNgườiBán = new TextView(this);
+        nhãnNgườiBán.setText("👤 " + tênNgườiBán);
+        nhãnNgườiBán.setTextColor(Color.parseColor("#9E9DA8"));
+        nhãnNgườiBán.setTextSize(10);
+        LinearLayout.LayoutParams thôngSốNgườiBán = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        thôngSốNgườiBán.topMargin = 4;
+        nhãnNgườiBán.setLayoutParams(thôngSốNgườiBán);
+
+        khungThôngTin.addView(nhãnHuyHiệu);
+        khungThôngTin.addView(nhãnTiêuĐề);
+        khungThôngTin.addView(khungGiá);
+        khungThôngTin.addView(nhãnNgườiBán);
+
+        khungToànBộ.addView(badgeThươngHiệu);
+        khungToànBộ.addView(khungThôngTin);
+
+        thẻCard.addView(khungToànBộ);
+
+        thẻCard.setOnClickListener(v -> mởChiTiếtVoucher(
+                tiêuĐề, thươngHiệu, giáXu, mãBíMật, làChínhHãng, tênNgườiBán, avatarNgườiBán
+        ));
+
+        if (containerMụcTiêu != null) {
+            containerMụcTiêu.addView(thẻCard);
+        }
+    }
+
+    private void mởChiTiếtVoucher(String tiêuĐề, String thươngHiệu, int giáXu, String mãBíMật, boolean làChínhHãng, String tênNgườiBán, String avatarNgườiBán) {
+        Intent ýĐịnhChiTiết = new Intent(this, VoucherDetailActivity.class);
+        ýĐịnhChiTiết.putExtra("EXTRA_VOUCHER_TITLE", tiêuĐề);
+        ýĐịnhChiTiết.putExtra("EXTRA_BRAND_NAME", thươngHiệu);
+        ýĐịnhChiTiết.putExtra("EXTRA_PRICE_SS", giáXu);
+        ýĐịnhChiTiết.putExtra("EXTRA_SECRET_CODE", mãBíMật);
+        ýĐịnhChiTiết.putExtra("EXTRA_IS_OFFICIAL", làChínhHãng);
+        ýĐịnhChiTiết.putExtra("EXTRA_SELLER_NAME", tênNgườiBán);
+        ýĐịnhChiTiết.putExtra("EXTRA_SELLER_AVATAR", avatarNgườiBán);
+        startActivity(ýĐịnhChiTiết);
+    }
+
+    private void càiĐặtThanhĐiềuHướngĐáy() {
+        View nútTrangChủ = findViewById(R.id.navHome);
+        View nútTìmKiếm = findViewById(R.id.navSearch);
+        View nútĐăngBán = findViewById(R.id.navSell);
+        View nútVíXu = findViewById(R.id.navWallet);
+        View nútTrangCáNhân = findViewById(R.id.navProfile);
+
+        if (nútTrangChủ != null) nútTrangChủ.setOnClickListener(v -> Toast.makeText(this, "Trang chủ SSharing", Toast.LENGTH_SHORT).show());
+        if (nútTìmKiếm != null) nútTìmKiếm.setOnClickListener(v -> startActivity(new Intent(this, MapStoreLocatorActivity.class)));
+        if (nútĐăngBán != null) nútĐăngBán.setOnClickListener(v -> startActivity(new Intent(this, PostVoucherActivity.class)));
+        if (nútVíXu != null) nútVíXu.setOnClickListener(v -> startActivity(new Intent(this, WalletActivity.class)));
+        if (nútTrangCáNhân != null) nútTrangCáNhân.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
+    }
+
+    private void khởiTạoDữLiệuMẫu() {
+        VoucherC2C v1 = new VoucherC2C("VC001", "Giảm 50K ShopeeFood Đơn Từ 100K", "ShopeeFood", 50000, 25, "30/12/2026", "USER_01", "SPFOOD50K");
+        VoucherMall v2 = new VoucherMall("VM001", "Voucher Phúc Long 30K Trà Sữa", "Phuc Long Coffee & Tea", 30000, 15, "15/11/2026", "BRAND_PHUCLONG", "PL30KSECRET");
+        bộQuảnLýDữLiệuVoucher.themVoucher(v1);
+        bộQuảnLýDữLiệuVoucher.themVoucher(v2);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 0, "1. Kênh Người Bán (Hồ Gia Bảo)");

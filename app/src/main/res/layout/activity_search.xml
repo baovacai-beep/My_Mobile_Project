@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0D0A17"
+    android:padding="16dp">
+
+    <!-- Top Bar Search Input -->
+    <LinearLayout
+        android:id="@+id/layoutTopSearch"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/btnBackSearch"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Quay lại"
+            android:padding="10dp"
+            android:src="@android:drawable/ic_menu_revert"
+            app:tint="#FFFFFF" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="12dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="Icon Tìm Kiếm"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="#A09CAB" />
+
+            <EditText
+                android:id="@+id/etFullSearchQuery"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:background="@null"
+                android:hint="Nhập tên voucher, thương hiệu..."
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:importantForAutofill="no"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#726B85"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Horizontal Filter Chips -->
+    <HorizontalScrollView
+        android:id="@+id/scrollSearchChips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutTopSearch"
+        android:layout_marginTop="12dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/chipAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tab_active"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
+                android:text="Tất cả kho"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/chipMall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_card_dark"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
+                android:text="SSharing Mall"
+                android:textColor="#A09CAB"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/chipC2C"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_card_dark"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
+                android:text="Chợ C2C"
+                android:textColor="#A09CAB"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/chipFood"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_card_dark"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
+                android:text="Ẩm thực"
+                android:textColor="#A09CAB"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/chipShop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_card_dark"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
+                android:text="Mua sắm"
+                android:textColor="#A09CAB"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/chipTransport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_card_dark"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
+                android:text="Di chuyển"
+                android:textColor="#A09CAB"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/chipMovie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_card_dark"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
+                android:text="Giải trí"
+                android:textColor="#A09CAB"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Search Results Container -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/scrollSearchChips"
+        android:layout_marginTop="14dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/containerFullSearchResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+</RelativeLayout>
