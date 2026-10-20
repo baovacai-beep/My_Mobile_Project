@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A0814">
+
+    <!-- Top Bar -->
+    <RelativeLayout
+        android:id="@+id/layoutBarScanner"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/btnBackScanner"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Quay lại"
+            android:focusable="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="#FFFFFF" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Quét Mã Voucher / QR Code Smart OCR"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnToggleFlash"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="Đèn Flash"
+            android:focusable="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_info"
+            app:tint="#FFD54F" />
+    </RelativeLayout>
+
+    <!-- Center Scanner Finder Reticle với Live Camera Preview -->
+    <RelativeLayout
+        android:id="@+id/layoutScannerFinder"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_card_dark">
+
+        <!-- Live Camera View / Texture Surface -->
+        <TextureView
+            android:id="@+id/textureCameraPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Ảnh Xem Trước Đã Quét -->
+        <ImageView
+            android:id="@+id/imgScannedPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Xem trước ảnh quét"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_centerInParent="true"
+            android:background="#815BF5" />
+
+        <TextView
+            android:id="@+id/tvCameraGuideText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:padding="20dp"
+            android:text="📷\nChạm 'Chụp Camera' để bóc tách mã thực tế"
+            android:textColor="#A09CAB"
+            android:textSize="13sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvScannerGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutScannerFinder"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="✨ Smart OCR tự động bóc tách thương hiệu &amp; mã giảm giá"
+        android:textColor="#6EE7B7"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <!-- Bottom Scanner Controls & Result Card -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#120E22"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Scanned Result Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="#1B1632"
+            app:cardCornerRadius="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📌 DỮ LIỆU VOUCHER BÓC TÁCH ĐƯỢC:"
+                    android:textColor="#FFD54F"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvScannedTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Highlands Coffee - Giảm 20K Trà Sen Vàng MoMo"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvScannedCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Mã Code: HL-MOMO-TEA2026"
+                    android:textColor="#43E5A0"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvScannedTerms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Điều kiện: Áp dụng khi thanh toán bằng ví MoMo tại cửa hàng Highlands Coffee toàn quốc."
+                    android:textColor="#A09CAB"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Control Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btnScanCameraLive"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_outline_button"
+                android:text="📷 Chụp Camera"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btnPickGalleryLive"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_outline_button"
+                android:text="🖼 Chọn Từ Gallery"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                app:backgroundTint="@null" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnUseScannedCode"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_btn_purple"
+            android:text="✅ DÙNG MÃ NÀY ĐỂ ĐĂNG BÁN"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</RelativeLayout>

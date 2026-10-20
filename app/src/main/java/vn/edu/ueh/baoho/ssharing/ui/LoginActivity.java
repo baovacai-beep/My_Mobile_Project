@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button nútĐăngNhậpXácNhận, nútĐăngKýXácNhận;
     private TextView nútĐiềnNhanhTàiKhoảnMẫu;
     private ImageView nútẨnHiệnMậtKhẩu;
+    private CheckBox ôChọnGhiNhớTàiKhoản;
 
     private boolean làMậtKhẩuĐangHiện = false;
     private boolean làChếĐộĐăngKý = false;
@@ -41,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
 
         khởiTạoTàiKhoảnMẫuMặcĐịnh();
         khởiTạoÁnhXạGiaoDiện();
+        tựĐộngĐiềnTàiKhoảnĐãGhiNhớTrướcĐó();
         càiĐặtSựKiệnLắngNghe();
     }
 
@@ -60,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         nútĐăngKýXácNhận = findViewById(R.id.btnRegisterSubmit);
         nútĐiềnNhanhTàiKhoảnMẫu = findViewById(R.id.btnQuickFillAdmin);
         nútẨnHiệnMậtKhẩu = findViewById(R.id.btnTogglePassword);
+        ôChọnGhiNhớTàiKhoản = findViewById(R.id.cbRememberMe);
     }
 
     private void khởiTạoTàiKhoảnMẫuMặcĐịnh() {
@@ -72,7 +75,24 @@ public class LoginActivity extends AppCompatActivity {
 
         if (danhSáchTàiKhoản.isEmpty() || !danhSáchTàiKhoản.contains("baoho123")) {
             String danhSáchMới = tàiKhoảnMẫuAdmin + (danhSáchTàiKhoản.isEmpty() ? "" : ";;" + danhSáchTàiKhoản);
-            bộLưuTrữCụcBộ.edit().putString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", danhSáchMới).apply();
+            bộLưuTrữCụcBộ.edit()
+                    .putString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", danhSáchMới)
+                    .putString("SAVED_USERNAME", "baoho123")
+                    .putString("SAVED_PASSWORD", "admin123")
+                    .apply();
+        }
+    }
+
+    private void tựĐộngĐiềnTàiKhoảnĐãGhiNhớTrướcĐó() {
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String tênĐãLưu = bộLưuTrữVí.getString("SAVED_USERNAME", "baoho123");
+        String mậtKhẩuĐãLưu = bộLưuTrữVí.getString("SAVED_PASSWORD", "admin123");
+
+        if (ôTênĐăngNhậpHoặcEmail != null && tênĐãLưu != null && !tênĐãLưu.isEmpty()) {
+            ôTênĐăngNhậpHoặcEmail.setText(tênĐãLưu);
+        }
+        if (ôMậtKhẩu != null && mậtKhẩuĐãLưu != null && !mậtKhẩuĐãLưu.isEmpty()) {
+            ôMậtKhẩu.setText(mậtKhẩuĐãLưu);
         }
     }
 
@@ -208,13 +228,22 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (đăngNhậpThànhCông) {
-            bộLưuTrữVí.edit()
-                    .putBoolean("IS_LOGGED_IN", true)
-                    .putString("CURRENT_USERNAME", tênĐăngNhậpNhập)
-                    .putString("CURRENT_USER_NAME", họTênĐăngNhậpThànhCông)
-                    .putString("CURRENT_USER_EMAIL", emailThànhCông)
-                    .putString("CURRENT_USER_PHONE", sốĐiệnThoạiThànhCông)
-                    .apply();
+            SharedPreferences.Editor trìnhSửa = bộLưuTrữVí.edit();
+            trìnhSửa.putBoolean("IS_LOGGED_IN", true);
+            trìnhSửa.putString("CURRENT_USERNAME", tênĐăngNhậpNhập);
+            trìnhSửa.putString("CURRENT_USER_NAME", họTênĐăngNhậpThànhCông);
+            trìnhSửa.putString("CURRENT_USER_EMAIL", emailThànhCông);
+            trìnhSửa.putString("CURRENT_USER_PHONE", sốĐiệnThoạiThànhCông);
+
+            // Ghi nhớ thông tin tài khoản & mật khẩu nếu có chọn Checkbox
+            if (ôChọnGhiNhớTàiKhoản != null && ôChọnGhiNhớTàiKhoản.isChecked()) {
+                trìnhSửa.putString("SAVED_USERNAME", tênĐăngNhậpNhập);
+                trìnhSửa.putString("SAVED_PASSWORD", mậtKhẩuGốcNhập);
+            } else {
+                trìnhSửa.remove("SAVED_USERNAME");
+                trìnhSửa.remove("SAVED_PASSWORD");
+            }
+            trìnhSửa.apply();
 
             Toast.makeText(this, "🎉 Đăng nhập thành công! Chào mừng " + họTênĐăngNhậpThànhCông, Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, MainActivity.class));
@@ -261,6 +290,8 @@ public class LoginActivity extends AppCompatActivity {
 
         bộLưuTrữVí.edit()
                 .putString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", danhSáchMới)
+                .putString("SAVED_USERNAME", tênĐăngNhậpHoặcEmail)
+                .putString("SAVED_PASSWORD", mậtKhẩuGốc)
                 .apply();
 
         // Đồng bộ lưu tài khoản lên Firebase Firestore

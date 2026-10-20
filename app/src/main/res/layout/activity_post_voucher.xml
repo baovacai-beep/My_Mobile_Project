@@ -63,8 +63,9 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Card Tải ảnh Voucher OCR viền đứt -->
+            <!-- Card Tải ảnh Voucher Smart OCR -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardSmartOcrScan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -79,11 +80,11 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="28dp">
+                    android:padding="20dp">
 
                     <RelativeLayout
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
                         android:background="@drawable/bg_circle_dark_purple">
 
                         <ImageView
@@ -98,11 +99,101 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Tải ảnh Voucher bóc tách Smart OCR"
+                        android:layout_marginTop="10dp"
+                        android:text="✨ Tải ảnh/Quét Smart OCR bóc tách voucher"
                         android:textColor="#FFFFFF"
-                        android:textSize="15sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Tự động nhận diện thương hiệu, mã code, giảm giá &amp; điều kiện"
+                        android:textColor="#A09CAB"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card Tải Ảnh Sản Phẩm (Tối đa 10 ảnh) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#161327"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📸 Hình ảnh sản phẩm voucher"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvImageCountBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:text="0/10 ảnh"
+                            android:textColor="#FF4D8D"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:id="@+id/containerProductThumbnails"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <!-- Nút Thêm Ảnh -->
+                            <LinearLayout
+                                android:id="@+id/btnAddProductImage"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:background="@drawable/bg_input_field"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="+"
+                                    android:textColor="#815BF5"
+                                    android:textSize="28sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Thêm ảnh"
+                                    android:textColor="#A09CAB"
+                                    android:textSize="10sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </HorizontalScrollView>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -175,7 +266,7 @@
                             android:layout_toStartOf="@id/badgeFB"
                             android:background="@null"
                             android:completionThreshold="1"
-                            android:hint="Thương hiệu (Ví dụ: Shopee, Grab, Tiki...)"
+                            android:hint="Thương hiệu (Shopee, Grab, Highlands...)"
                             android:importantForAutofill="no"
                             android:inputType="text"
                             android:minHeight="48dp"
@@ -268,7 +359,7 @@
                             android:id="@+id/lblDiscount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="GIẢM GIÁ"
+                            android:text="GIẢM GIÁ (VNĐ)"
                             android:textColor="#A09CAB"
                             android:textSize="11sp" />
 
@@ -335,7 +426,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Card Thông tin bán hàng -->
+            <!-- Card Thông tin bán hàng & Điều khoản -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -354,9 +445,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:text="Thông tin bán hàng"
+                        android:text="Thông tin bán hàng &amp; Điều khoản áp dụng"
                         android:textColor="#FFFFFF"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <RelativeLayout
@@ -370,7 +461,7 @@
                             android:id="@+id/lblSellingPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Giá bán mong muốn"
+                            android:text="Giá bán mong muốn (Xu)"
                             android:textColor="#A09CAB"
                             android:textSize="11sp" />
 
@@ -419,9 +510,11 @@
                         </LinearLayout>
                     </RelativeLayout>
 
+                    <!-- Mô tả ngắn -->
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                         android:background="@drawable/bg_input_field"
                         android:padding="12dp">
 
@@ -438,18 +531,51 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/lblDescription"
-                            android:layout_marginTop="6dp"
+                            android:layout_marginTop="4dp"
                             android:background="@null"
                             android:gravity="top"
-                            android:hint="Nhập mô tả..."
+                            android:hint="Nhập tiêu đề / mô tả ngắn..."
                             android:importantForAutofill="no"
                             android:inputType="textMultiLine"
                             android:minHeight="48dp"
-                            android:minLines="3"
                             android:textColor="#FFFFFF"
                             android:textColorHint="#A09CAB"
                             android:textSize="13sp" />
                     </RelativeLayout>
+
+                    <!-- Thanh thông tin chi tiết & Điều kiện sử dụng -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input_field"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/lblTerms"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ĐIỀU KIỆN &amp; CHI TIẾT ÁP DỤNG VOUCHER"
+                            android:textColor="#A09CAB"
+                            android:textSize="11sp" />
+
+                        <EditText
+                            android:id="@+id/etTermsAndConditions"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/lblTerms"
+                            android:layout_marginTop="4dp"
+                            android:background="@null"
+                            android:gravity="top"
+                            android:hint="Smart OCR tự bóc tách điều kiện áp dụng (Ví dụ: Áp dụng khi thanh toán bằng ví MoMo tại cửa hàng Highlands Coffee...)"
+                            android:importantForAutofill="no"
+                            android:inputType="textMultiLine"
+                            android:minHeight="72dp"
+                            android:minLines="3"
+                            android:textColor="#6EE7B7"
+                            android:textColorHint="#A09CAB"
+                            android:textSize="13sp" />
+                    </RelativeLayout>
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

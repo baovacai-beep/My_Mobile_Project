@@ -247,16 +247,34 @@
                             app:tint="#888888" />
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvForgotPassword"
-                        android:layout_width="wrap_content"
+                    <!-- Checkbox Ghi nhớ tài khoản -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginTop="10dp"
-                        android:text="Quên mật khẩu / 2FA?"
-                        android:textColor="#7C4DFF"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/cbRememberMe"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="true"
+                            android:text="Ghi nhớ thông tin đăng nhập"
+                            android:textColor="#A09CAB"
+                            android:textSize="12sp"
+                            app:buttonTint="#815BF5" />
+
+                        <TextView
+                            android:id="@+id/tvForgotPassword"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Quên mật khẩu / 2FA?"
+                            android:textColor="#7C4DFF"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                     <!-- Nút Đăng Nhập -->
                     <androidx.appcompat.widget.AppCompatButton
