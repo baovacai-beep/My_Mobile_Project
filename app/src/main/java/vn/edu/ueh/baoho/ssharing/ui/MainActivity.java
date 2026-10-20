@@ -11,8 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.net.Uri;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,9 +81,39 @@ public class MainActivity extends AppCompatActivity {
 
     private void cậpNhậtTênNgườiDùngMànChính(SharedPreferences bộLưuTrữ) {
         TextView nhãnTênUser = findViewById(R.id.tvUsername);
+        ImageView ảnhĐạiDiệnHome = findViewById(R.id.imgAvatar);
+
         if (nhãnTênUser != null) {
             String tênNgườiDùng = bộLưuTrữ.getString("CURRENT_USER_NAME", "Gia Bảo Hồ");
             nhãnTênUser.setText(tênNgườiDùng);
+        }
+
+        if (ảnhĐạiDiệnHome != null) {
+            String đườngDẫnẢnh = bộLưuTrữ.getString("CURRENT_USER_AVATAR_PATH", "");
+            String uriẢnhStr = bộLưuTrữ.getString("CURRENT_USER_AVATAR_URI", "");
+
+            boolean đãĐặtẢnh = false;
+
+            if (đườngDẫnẢnh != null && !đườngDẫnẢnh.isEmpty() && new java.io.File(đườngDẫnẢnh).exists()) {
+                try {
+                    android.graphics.Bitmap bitmapAvatar = android.graphics.BitmapFactory.decodeFile(đườngDẫnẢnh);
+                    if (bitmapAvatar != null) {
+                        ảnhĐạiDiệnHome.setImageBitmap(bitmapAvatar);
+                        đãĐặtẢnh = true;
+                    }
+                } catch (Throwable ignored) {}
+            }
+
+            if (!đãĐặtẢnh && uriẢnhStr != null && !uriẢnhStr.isEmpty()) {
+                try {
+                    ảnhĐạiDiệnHome.setImageURI(android.net.Uri.parse(uriẢnhStr));
+                    đãĐặtẢnh = true;
+                } catch (Throwable ignored) {}
+            }
+
+            if (!đãĐặtẢnh) {
+                ảnhĐạiDiệnHome.setImageResource(R.drawable.ic_user);
+            }
         }
     }
 
@@ -349,7 +381,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        SharedPreferences bộLưuTrữ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         cậpNhậtSốDưMànChính();
+        cậpNhậtTênNgườiDùngMànChính(bộLưuTrữ);
         if (bộLịchTrượtTựĐộng != null && côngViệcTựĐộngTrượtBanner != null) {
             bộLịchTrượtTựĐộng.postDelayed(côngViệcTựĐộngTrượtBanner, 5000);
         }

@@ -46,75 +46,169 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Vòng tròn Trust Score -->
-            <RelativeLayout
+            <!-- THẺ TRUST SCORE & CỘT MỐC DANH HIỆU TÍN NHIỆM (MỖI 20 ĐIỂM) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardTrustScoreBadge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="10dp">
-
-                <ProgressBar
-                    android:id="@+id/progressTrustScore"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
-                    android:progressDrawable="@drawable/bg_rounded_card"
-                    android:progress="96"
-                    android:max="100" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:gravity="center"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="96"
-                        android:textColor="@color/text_white"
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Trust Score"
-                        android:textColor="@color/text_gray"
-                        android:textSize="11sp" />
-                </LinearLayout>
-            </RelativeLayout>
-
-            <!-- Thông tin cá nhân -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_rounded_card"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="14dp">
-
-                <TextView
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_rounded_card"
-                    android:gravity="center"
-                    android:text="GB"
-                    android:textColor="#FFFFFF"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="#161327"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <!-- Khung Tín Nhiệm Emoji / Khung Ảnh Top -->
+                        <FrameLayout
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            android:background="@drawable/bg_circle_dark_purple">
+
+                            <TextView
+                                android:id="@+id/tvTrustTierEmoji"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="💎"
+                                android:textSize="32sp" />
+
+                            <ImageView
+                                android:id="@+id/imgTopBigAvatarPhoto"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:contentDescription="Ảnh đại diện top"
+                                android:scaleType="centerCrop"
+                                android:visibility="gone" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvTrustScoreValue"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="96 / 100"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:background="@drawable/bg_badge_pink"
+                                    android:paddingHorizontal="6dp"
+                                    android:paddingVertical="2dp"
+                                    android:text="Trust Score"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tvTrustTierTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:text="Tín Nhiệm Kim Cương (Tuyệt Vời)"
+                                android:textColor="#00E676"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvTrustTierDesc"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Tài khoản eKYC chính chủ, 100% giao dịch Escrow thành công"
+                                android:textColor="#9E9AA9"
+                                android:textSize="10sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/progressTrustScore"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_marginTop="14dp"
+                        android:max="100"
+                        android:progress="96"
+                        android:progressDrawable="@drawable/bg_input_field" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Thông tin cá nhân (Bấm vào để Chỉnh sửa & Đổi avatar) -->
+            <LinearLayout
+                android:id="@+id/cardUserProfileInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_rounded_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <!-- Avatar Frame: Initials or Custom Photo -->
+                <FrameLayout
+                    android:layout_width="56dp"
+                    android:layout_height="56dp">
+
+                    <TextView
+                        android:id="@+id/tvAvatarInitials"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_circle_purple"
+                        android:gravity="center"
+                        android:text="GB"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/imgProfileAvatarPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Ảnh đại diện"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/tvProfileFullName"
@@ -138,10 +232,23 @@
                         android:id="@+id/tvProfileEmailPhone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="\@baoho123 • Đã xác minh CCCD (eKYC)"
+                        android:layout_marginTop="2dp"
+                        android:text="\@baoho123 • baoho123@ssharing.vn • Đã eKYC"
                         android:textColor="#9E9AA9"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnEditProfileIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_chip_gold_dark"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="6dp"
+                    android:text="✎ Sửa"
+                    android:textColor="#FFD54F"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <!-- Menu Chức Năng Quản Lý -->
