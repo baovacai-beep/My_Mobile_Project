@@ -1,6 +1,7 @@
 package vn.edu.ueh.baoho.ssharing.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -70,6 +71,43 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void khởiTạoKhoVoucherMẫu() {
+        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String danhSáchC2CChung = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_C2C_CHUNG", "");
+        String usernameHiệnTại = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123");
+        String họTênHiệnTại = bộLưuTrữCụcBộ.getString("CURRENT_USER_NAME", "Gia Bảo Hồ");
+
+        if (!danhSáchC2CChung.isEmpty()) {
+            String[] cácBàiC2C = danhSáchC2CChung.split(";;");
+            for (String bài : cácBàiC2C) {
+                if (bài.trim().isEmpty()) continue;
+                String[] mảngTrường = bài.split("\\|\\|");
+                if (mảngTrường.length < 5) continue;
+
+                String môTả = mảngTrường[1];
+                String thươngHiệu = mảngTrường[2];
+                String mãVoucher = mảngTrường[3];
+                int giáXu = 180;
+                try {
+                    giáXu = Integer.parseInt(mảngTrường[4]);
+                } catch (Exception ignored) {}
+
+                String tênNgườiBán = mảngTrường.length > 7 ? mảngTrường[7] : "Người dùng SSharing";
+                String avatarInitials = mảngTrường.length > 8 ? mảngTrường[8] : "SS";
+                String usernameNgườiBán = mảngTrường.length > 9 ? mảngTrường[9] : "";
+
+                // Bỏ qua sản phẩm do chính tài khoản này đăng bán
+                if (usernameHiệnTại.equalsIgnoreCase(usernameNgườiBán) ||
+                        tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()) ||
+                        tênNgườiBán.equalsIgnoreCase(họTênHiệnTại)) {
+                    continue;
+                }
+
+                khoTấtCảVoucher.add(new ThôngTinVoucher(
+                        thươngHiệu.toUpperCase(), môTả, giáXu, "C2C Market", "👥 Cộng đồng", false, thươngHiệu, tênNgườiBán, avatarInitials, mãVoucher, "C2C"
+                ));
+            }
+        }
+
         khoTấtCảVoucher.add(new ThôngTinVoucher("STARBUCKS", "Voucher Starbucks Giảm 20K Đơn 50K", 160, "200 SS", "✓ Chính hãng", true, "Starbucks Coffee", "Starbucks Official Store", "SB", "SBUX20K-OCTOBER99", "FOOD"));
         khoTấtCảVoucher.add(new ThôngTinVoucher("MOMO", "Voucher MoMo Hoàn 30K Nạp ĐT / Data 4G", 250, "300 SS", "✓ Chính hãng", true, "MoMo E-Wallet", "MoMo Official Store", "MM", "MOMO30K-OCTOBER77", "SHOP"));
         khoTấtCảVoucher.add(new ThôngTinVoucher("LAZADA", "Voucher Lazada 50K Đơn Từ 150K", 420, "500 SS", "✓ Chính hãng", true, "Lazada Mall", "Lazada Official Store", "LZ", "LAZ50K-OFFICIAL66", "SHOP"));

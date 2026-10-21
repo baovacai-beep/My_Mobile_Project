@@ -438,7 +438,7 @@ public class PostVoucherActivity extends AppCompatActivity {
         String hạnDùng = ôHạnDùng != null ? ôHạnDùng.getText().toString().trim() : "31/12/2026";
         String môTả = ôMôTảChiTiết != null && !ôMôTảChiTiết.getText().toString().trim().isEmpty()
                 ? ôMôTảChiTiết.getText().toString().trim()
-                : "Giảm 50K đơn từ 250K - Điện tử";
+                : "Voucher " + thươngHiệu + " Ưu Đãi Hấp Dẫn";
 
         if (mãVoucher.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập mã voucher!", Toast.LENGTH_SHORT).show();
@@ -446,40 +446,105 @@ public class PostVoucherActivity extends AppCompatActivity {
         }
 
         SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        String danhSáchĐăngBánGốc = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_DANG_BAN", "");
+
+        // Đọc thông tin người bán đăng bài hiện tại
+        String họTênNgườiBán = bộLưuTrữCụcBộ.getString("CURRENT_USER_NAME", "Gia Bảo Hồ");
+        String usernameNgườiBán = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123");
+        String sđtNgườiBán = bộLưuTrữCụcBộ.getString("CURRENT_USER_PHONE", "0908123456");
+        String avatarInitials = "GB";
+        if (họTênNgườiBán != null && họTênNgườiBán.length() >= 2) {
+            String[] mảngTừ = họTênNgườiBán.trim().split(" ");
+            if (mảngTừ.length >= 2) {
+                avatarInitials = (mảngTừ[0].substring(0, 1) + mảngTừ[mảngTừ.length - 1].substring(0, 1)).toUpperCase();
+            } else {
+                avatarInitials = họTênNgườiBán.substring(0, 2).toUpperCase();
+            }
+        }
+        String tênNgườiBánĐầyĐủ = họTênNgườiBán + " (@" + usernameNgườiBán + ")";
 
         String mãBàiĐăng = làChếĐộChỉnhSửa ? mãBàiĐăngCầnSửa : "POS_" + System.currentTimeMillis();
-        String bảnGhiMới = mãBàiĐăng + "||" + môTả + "||" + thươngHiệu + "||" + mãVoucher + "||" + giáBánChuỗi + "||" + hạnDùng + "||" + môTả;
 
-        StringBuilder danhSáchMới = new StringBuilder();
+        // Bản ghi 1: Dành cho Shop Người Bán Cụ Thể
+        String bảnGhiShop = mãBàiĐăng + "||" + môTả + "||" + thươngHiệu + "||" + mãVoucher + "||" + giáBánChuỗi + "||" + hạnDùng + "||" + môTả;
+
+        // Bản ghi 2: Dành cho Chợ C2C Chung Toàn Sàn
+        String bảnGhiC2CChung = mãBàiĐăng + "||" + môTả + "||" + thươngHiệu + "||" + mãVoucher + "||" + giáBánChuỗi + "||" + hạnDùng + "||" + môTả + "||" + tênNgườiBánĐầyĐủ + "||" + avatarInitials + "||" + usernameNgườiBán + "||" + sđtNgườiBán;
+
+        String keyShopCáNhân = "DANH_SACH_VOUCHER_DANG_BAN_" + usernameNgườiBán;
+
+        String danhSáchĐăngBánGốc = bộLưuTrữCụcBộ.getString(keyShopCáNhân, "");
+        String danhSáchC2CGốc = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_C2C_CHUNG", "");
+
+        StringBuilder danhSáchMớiShop = new StringBuilder();
+        StringBuilder danhSáchMớiC2C = new StringBuilder();
 
         if (làChếĐộChỉnhSửa) {
             String[] cácBài = danhSáchĐăngBánGốc.split(";;");
             for (String bài : cácBài) {
                 if (bài.trim().isEmpty()) continue;
                 if (bài.startsWith(mãBàiĐăngCầnSửa)) {
-                    if (danhSáchMới.length() > 0) danhSáchMới.append(";;");
-                    danhSáchMới.append(bảnGhiMới);
+                    if (danhSáchMớiShop.length() > 0) danhSáchMớiShop.append(";;");
+                    danhSáchMớiShop.append(bảnGhiShop);
                 } else {
-                    if (danhSáchMới.length() > 0) danhSáchMới.append(";;");
-                    danhSáchMới.append(bài);
+                    if (danhSáchMớiShop.length() > 0) danhSáchMớiShop.append(";;");
+                    danhSáchMớiShop.append(bài);
+                }
+            }
+
+            String[] cácBàiC2C = danhSáchC2CGốc.split(";;");
+            for (String bài : cácBàiC2C) {
+                if (bài.trim().isEmpty()) continue;
+                if (bài.startsWith(mãBàiĐăngCầnSửa)) {
+                    if (danhSáchMớiC2C.length() > 0) danhSáchMớiC2C.append(";;");
+                    danhSáchMớiC2C.append(bảnGhiC2CChung);
+                } else {
+                    if (danhSáchMớiC2C.length() > 0) danhSáchMớiC2C.append(";;");
+                    danhSáchMớiC2C.append(bài);
                 }
             }
             Toast.makeText(this, "Đã cập nhật bài đăng voucher thành công!", Toast.LENGTH_LONG).show();
         } else {
             if (danhSáchĐăngBánGốc.isEmpty()) {
-                danhSáchMới.append(bảnGhiMới);
+                danhSáchMớiShop.append(bảnGhiShop);
             } else {
-                danhSáchMới.append(bảnGhiMới).append(";;").append(danhSáchĐăngBánGốc);
+                danhSáchMớiShop.append(bảnGhiShop).append(";;").append(danhSáchĐăngBánGốc);
             }
-            Toast.makeText(this, "Đã đăng bán Voucher thành công! Bài đăng đang hiển thị trên sàn.", Toast.LENGTH_LONG).show();
+
+            if (danhSáchC2CGốc.isEmpty()) {
+                danhSáchMớiC2C.append(bảnGhiC2CChung);
+            } else {
+                danhSáchMớiC2C.append(bảnGhiC2CChung).append(";;").append(danhSáchC2CGốc);
+            }
+            Toast.makeText(this, "🎉 Đăng bán Voucher thành công! Bài đã liên kết kênh C2C chung toàn sàn.", Toast.LENGTH_LONG).show();
         }
 
         bộLưuTrữCụcBộ.edit()
-                .putString("DANH_SACH_VOUCHER_DANG_BAN", danhSáchMới.toString())
+                .putString(keyShopCáNhân, danhSáchMớiShop.toString())
+                .putString("DANH_SACH_VOUCHER_C2C_CHUNG", danhSáchMớiC2C.toString())
                 .apply();
+
+        // Đồng bộ đẩy thông tin voucher mới lên Firebase Firestore
+        đẩyVoucherMớiLênFirebaseFirestore(mãBàiĐăng, thươngHiệu, môTả, mãVoucher, giáBánChuỗi, hạnDùng, tênNgườiBánĐầyĐủ);
 
         startActivity(new Intent(this, SellerDashboardActivity.class));
         finish();
+    }
+
+    private void đẩyVoucherMớiLênFirebaseFirestore(String mãBài, String thươngHiệu, String tiêuĐề, String mãVoucher, String giáXu, String hạnDùng, String tênNgườiBán) {
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            java.util.Map<String, Object> voucherData = new java.util.HashMap<>();
+            voucherData.put("id", mãBài);
+            voucherData.put("ten_thuong_hieu", thươngHiệu);
+            voucherData.put("tieu_de_voucher", tiêuĐề);
+            voucherData.put("ma_code_bi_mat", mãVoucher);
+            voucherData.put("gia_ban_xu", Double.parseDouble(giáXu));
+            voucherData.put("ngay_het_han", hạnDùng);
+            voucherData.put("ten_nguoi_ban", tênNgườiBán);
+            voucherData.put("danh_muc", "C2C");
+            voucherData.put("created_at", System.currentTimeMillis());
+
+            db.collection("c2c_vouchers").document(mãBài).set(voucherData);
+        } catch (Exception ignored) {}
     }
 }

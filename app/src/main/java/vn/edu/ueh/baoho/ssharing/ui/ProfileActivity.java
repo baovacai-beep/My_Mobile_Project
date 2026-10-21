@@ -78,7 +78,11 @@ public class ProfileActivity extends AppCompatActivity {
         String emailUser = bộLưuTrữCụcBộ.getString("CURRENT_USER_EMAIL", "baoho123@ssharing.vn");
         String usernameUser = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123");
         String sđtUser = bộLưuTrữCụcBộ.getString("CURRENT_USER_PHONE", "0908123456");
-        String đườngDẫnẢnhLưu = bộLưuTrữCụcBộ.getString("CURRENT_USER_AVATAR_PATH", "");
+
+        String usernameClean = usernameUser.toLowerCase().trim();
+        // Đọc đường dẫn tệp Avatar riêng theo từng tài khoản (Tách biệt độc lập 100%)
+        String keyAvatarCáNhân = "CURRENT_USER_AVATAR_PATH_" + usernameClean;
+        String đườngDẫnẢnhLưu = bộLưuTrữCụcBộ.getString(keyAvatarCáNhân, "");
         int điểmTrustScore = bộLưuTrữCụcBộ.getInt("USER_TRUST_SCORE", 96);
 
         if (nhãnHọTênTàiKhoản != null) {
@@ -91,23 +95,32 @@ public class ProfileActivity extends AppCompatActivity {
         // Cập nhật Danh hiệu & Biểu tượng Trust Score theo mốc 20 điểm
         cậpNhậtTrustScoreVàDanhHiệu(điểmTrustScore);
 
-        // Cập nhật Avatar Ảnh hoặc Chữ cái
+        // Cập nhật Avatar Ảnh hoặc Chữ cái riêng của tài khoản hiện tại
         if (đườngDẫnẢnhLưu != null && !đườngDẫnẢnhLưu.isEmpty() && new File(đườngDẫnẢnhLưu).exists()) {
             tảiẢnhAvatarAnToàn(ảnhĐạiDiệnDướiPhoto, đườngDẫnẢnhLưu, họTênUser);
         } else {
+            if (ảnhĐạiDiệnDướiPhoto != null) {
+                ảnhĐạiDiệnDướiPhoto.setImageDrawable(null);
+                ảnhĐạiDiệnDướiPhoto.setVisibility(View.GONE);
+            }
             đặtChữCáiAvatarChung(họTênUser);
         }
     }
 
     private void tảiẢnhAvatarAnToàn(ImageView viewTarget, String đườngDẫnTệp, String họTên) {
-        try {
-            Bitmap bitmapAvatar = BitmapFactory.decodeFile(đườngDẫnTệp);
-            if (bitmapAvatar != null && viewTarget != null) {
-                viewTarget.setImageBitmap(bitmapAvatar);
-                viewTarget.setVisibility(View.VISIBLE);
-                return;
-            }
-        } catch (Throwable ignored) {}
+        if (viewTarget == null) return;
+        viewTarget.setImageDrawable(null);
+        if (đườngDẫnTệp != null && !đườngDẫnTệp.isEmpty() && new File(đườngDẫnTệp).exists()) {
+            try {
+                Bitmap bitmapAvatar = BitmapFactory.decodeFile(đườngDẫnTệp);
+                if (bitmapAvatar != null) {
+                    viewTarget.setImageBitmap(bitmapAvatar);
+                    viewTarget.setVisibility(View.VISIBLE);
+                    return;
+                }
+            } catch (Throwable ignored) {}
+        }
+        viewTarget.setVisibility(View.GONE);
         đặtChữCáiAvatarChung(họTên);
     }
 
@@ -328,7 +341,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (requestCode == MÃ_CHỌN_ẢNH_ĐẠI_DIỆN_AVATAR && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uriAvatarChọn = data.getData();
-            File tệpAvatarNộiBộ = new File(getFilesDir(), "user_avatar.jpg");
+
+            SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+            String usernameUser = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123");
+            String usernameClean = usernameUser.toLowerCase().trim();
+            String keyAvatarCáNhân = "CURRENT_USER_AVATAR_PATH_" + usernameClean;
+
+            File tệpAvatarNộiBộ = new File(getFilesDir(), "user_avatar_" + usernameClean + ".jpg");
 
             try (InputStream inputStream = getContentResolver().openInputStream(uriAvatarChọn);
                  FileOutputStream outputStream = new FileOutputStream(tệpAvatarNộiBộ)) {
@@ -339,13 +358,12 @@ public class ProfileActivity extends AppCompatActivity {
                     outputStream.write(buffer, 0, bytesRead);
                 }
 
-                SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
                 bộLưuTrữCụcBộ.edit()
-                        .putString("CURRENT_USER_AVATAR_PATH", tệpAvatarNộiBộ.getAbsolutePath())
+                        .putString(keyAvatarCáNhân, tệpAvatarNộiBộ.getAbsolutePath())
                         .apply();
 
                 cậpNhậtThôngTinCáNhân();
-                Toast.makeText(this, "📷 Đã cập nhật & lưu ảnh đại diện thành công!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "📷 Đã cập nhật ảnh đại diện riêng cho tài khoản " + usernameUser + " thành công!", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Toast.makeText(this, "Không thể lưu ảnh đại diện vào bộ nhớ.", Toast.LENGTH_SHORT).show();
             }

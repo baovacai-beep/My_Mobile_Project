@@ -138,11 +138,16 @@ public class SellerDashboardActivity extends AppCompatActivity {
         containerVoucherĐangBán.removeAllViews();
 
         SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        String danhSáchChuỗiĐăngBán = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_DANG_BAN", "");
+        String usernameHiệnTại = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123");
+        String keyShopCáNhân = "DANH_SACH_VOUCHER_DANG_BAN_" + usernameHiệnTại;
+
+        String danhSáchChuỗiĐăngBán = bộLưuTrữCụcBộ.getString(keyShopCáNhân, "");
 
         if (danhSáchChuỗiĐăngBán.isEmpty()) {
-            danhSáchChuỗiĐăngBán = "POS_DEFAULT_1||Giảm 50K đơn từ 250K - Điện tử||Shopee||SP250K||1500||31/12/2026||Mô tả Shopee";
-            bộLưuTrữCụcBộ.edit().putString("DANH_SACH_VOUCHER_DANG_BAN", danhSáchChuỗiĐăngBán).apply();
+            if ("baoho123".equals(usernameHiệnTại)) {
+                danhSáchChuỗiĐăngBán = "POS_DEFAULT_1||Giảm 50K đơn từ 250K - Điện tử||Shopee||SP250K||1500||31/12/2026||Mô tả Shopee";
+                bộLưuTrữCụcBộ.edit().putString(keyShopCáNhân, danhSáchChuỗiĐăngBán).apply();
+            }
         }
 
         String[] cácBàiĐăng = danhSáchChuỗiĐăngBán.split(";;");
@@ -476,23 +481,39 @@ public class SellerDashboardActivity extends AppCompatActivity {
 
     private void thựcHiệnXóaBàiĐăng(String mãBàiĐăngCầnXóa) {
         SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        String danhSáchChuỗiĐăngBán = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_DANG_BAN", "");
+        String usernameHiệnTại = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123");
+        String keyShopCáNhân = "DANH_SACH_VOUCHER_DANG_BAN_" + usernameHiệnTại;
 
-        if (danhSáchChuỗiĐăngBán.isEmpty()) return;
+        String danhSáchChuỗiĐăngBán = bộLưuTrữCụcBộ.getString(keyShopCáNhân, "");
+        String danhSáchC2CGốc = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_C2C_CHUNG", "");
 
-        String[] cácBài = danhSáchChuỗiĐăngBán.split(";;");
-        StringBuilder danhSáchMới = new StringBuilder();
+        StringBuilder danhSáchMớiShop = new StringBuilder();
+        if (!danhSáchChuỗiĐăngBán.isEmpty()) {
+            String[] cácBài = danhSáchChuỗiĐăngBán.split(";;");
+            for (String bài : cácBài) {
+                if (bài.trim().isEmpty()) continue;
+                if (!bài.startsWith(mãBàiĐăngCầnXóa)) {
+                    if (danhSáchMớiShop.length() > 0) danhSáchMớiShop.append(";;");
+                    danhSáchMớiShop.append(bài);
+                }
+            }
+        }
 
-        for (String bài : cácBài) {
-            if (bài.trim().isEmpty()) continue;
-            if (!bài.startsWith(mãBàiĐăngCầnXóa)) {
-                if (danhSáchMới.length() > 0) danhSáchMới.append(";;");
-                danhSáchMới.append(bài);
+        StringBuilder danhSáchMớiC2C = new StringBuilder();
+        if (!danhSáchC2CGốc.isEmpty()) {
+            String[] cácBàiC2C = danhSáchC2CGốc.split(";;");
+            for (String bài : cácBàiC2C) {
+                if (bài.trim().isEmpty()) continue;
+                if (!bài.startsWith(mãBàiĐăngCầnXóa)) {
+                    if (danhSáchMớiC2C.length() > 0) danhSáchMớiC2C.append(";;");
+                    danhSáchMớiC2C.append(bài);
+                }
             }
         }
 
         bộLưuTrữCụcBộ.edit()
-                .putString("DANH_SACH_VOUCHER_DANG_BAN", danhSáchMới.toString())
+                .putString(keyShopCáNhân, danhSáchMớiShop.toString())
+                .putString("DANH_SACH_VOUCHER_C2C_CHUNG", danhSáchMớiC2C.toString())
                 .apply();
 
         cậpNhậtDanhSáchVoucherĐăngBán();

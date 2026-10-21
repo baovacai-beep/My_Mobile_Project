@@ -83,37 +83,62 @@ public class MainActivity extends AppCompatActivity {
         TextView nhãnTênUser = findViewById(R.id.tvUsername);
         ImageView ảnhĐạiDiệnHome = findViewById(R.id.imgAvatar);
 
+        String usernameClean = bộLưuTrữ.getString("CURRENT_USERNAME", "baoho123").toLowerCase().trim();
+
         if (nhãnTênUser != null) {
             String tênNgườiDùng = bộLưuTrữ.getString("CURRENT_USER_NAME", "Gia Bảo Hồ");
             nhãnTênUser.setText(tênNgườiDùng);
         }
 
         if (ảnhĐạiDiệnHome != null) {
-            String đườngDẫnẢnh = bộLưuTrữ.getString("CURRENT_USER_AVATAR_PATH", "");
-            String uriẢnhStr = bộLưuTrữ.getString("CURRENT_USER_AVATAR_URI", "");
+            // Reset ảnh mặc định ban đầu để xóa bộ nhớ đệm ảnh cũ khi chuyển đổi giữa các tài khoản
+            ảnhĐạiDiệnHome.setImageResource(R.drawable.ic_user);
 
-            boolean đãĐặtẢnh = false;
+            String keyAvatarCáNhân = "CURRENT_USER_AVATAR_PATH_" + usernameClean;
+            String đườngDẫnẢnh = bộLưuTrữ.getString(keyAvatarCáNhân, "");
 
             if (đườngDẫnẢnh != null && !đườngDẫnẢnh.isEmpty() && new java.io.File(đườngDẫnẢnh).exists()) {
                 try {
                     android.graphics.Bitmap bitmapAvatar = android.graphics.BitmapFactory.decodeFile(đườngDẫnẢnh);
                     if (bitmapAvatar != null) {
                         ảnhĐạiDiệnHome.setImageBitmap(bitmapAvatar);
-                        đãĐặtẢnh = true;
                     }
                 } catch (Throwable ignored) {}
             }
+        }
 
-            if (!đãĐặtẢnh && uriẢnhStr != null && !uriẢnhStr.isEmpty()) {
-                try {
-                    ảnhĐạiDiệnHome.setImageURI(android.net.Uri.parse(uriẢnhStr));
-                    đãĐặtẢnh = true;
-                } catch (Throwable ignored) {}
-            }
+        cậpNhậtSốLượngTinNhắnBongBóngChat(bộLưuTrữ);
+    }
 
-            if (!đãĐặtẢnh) {
-                ảnhĐạiDiệnHome.setImageResource(R.drawable.ic_user);
+    private void cậpNhậtSốLượngTinNhắnBongBóngChat(SharedPreferences bộLưuTrữ) {
+        TextView nútBongBóngChatNổi = findViewById(R.id.btnFloatingChatBubble);
+        if (nútBongBóngChatNổi == null) return;
+
+        String usernameHiệnTại = bộLưuTrữ.getString("CURRENT_USERNAME", "baoho123");
+        String danhSáchPhòngChatTấtCả = bộLưuTrữ.getString("DANH_SACH_PHONG_CHAT_TAT_CA", "");
+
+        int sốLượngNgườiNhắnThựcTế = 0;
+
+        if (!danhSáchPhòngChatTấtCả.isEmpty()) {
+            String[] cácPhòng = danhSáchPhòngChatTấtCả.split(";;;");
+            for (String phòng : cácPhòng) {
+                if (phòng.trim().isEmpty()) continue;
+                String[] mảngTrường = phòng.split("\\|\\|");
+                if (mảngTrường.length < 8) continue;
+
+                String buyerUser = mảngTrường[3];
+                String sellerName = mảngTrường[5];
+
+                if (usernameHiệnTại.equalsIgnoreCase(buyerUser) || sellerName.toLowerCase().contains(usernameHiệnTại.toLowerCase())) {
+                    sốLượngNgườiNhắnThựcTế++;
+                }
             }
+        }
+
+        if (sốLượngNgườiNhắnThựcTế > 0) {
+            nútBongBóngChatNổi.setText("💬 Chat Box (" + sốLượngNgườiNhắnThựcTế + ") 🔴");
+        } else {
+            nútBongBóngChatNổi.setText("💬 Chat Box");
         }
     }
 
@@ -248,6 +273,12 @@ public class MainActivity extends AppCompatActivity {
         if (tênNgườiDùng != null) tênNgườiDùng.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         if (thẻSốDưXu != null) thẻSốDưXu.setOnClickListener(v -> startActivity(new Intent(this, WalletActivity.class)));
         if (nútThôngBáo != null) nútThôngBáo.setOnClickListener(v -> Toast.makeText(this, "Không có thông báo mới", Toast.LENGTH_SHORT).show());
+
+        // BONG BÓNG CHAT NỔI FLOATING CHAT BUBBLE
+        View nútBongBóngChatNổi = findViewById(R.id.btnFloatingChatBubble);
+        if (nútBongBóngChatNổi != null) {
+            nútBongBóngChatNổi.setOnClickListener(v -> startActivity(new Intent(this, ChatInboxActivity.class)));
+        }
 
         // THANH TÌM KIẾM MÀN HÌNH CHÍNH
         if (nútTìmKiếmMànChính != null) {
@@ -443,6 +474,62 @@ public class MainActivity extends AppCompatActivity {
     private void hiểnThịDanhSáchChợC2CMarket() {
         if (khungLướiVoucherTrangChủ == null) return;
         khungLướiVoucherTrangChủ.removeAllViews();
+
+        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String danhSáchC2CChung = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_C2C_CHUNG", "");
+        String danhSáchĐãBánHệThống = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
+
+        if (!danhSáchC2CChung.isEmpty()) {
+            String[] cácBàiC2C = danhSáchC2CChung.split(";;");
+            for (String bài : cácBàiC2C) {
+                if (bài.trim().isEmpty()) continue;
+                String[] mảngTrường = bài.split("\\|\\|");
+                if (mảngTrường.length < 5) continue;
+
+                String môTả = mảngTrường[1];
+                String thươngHiệu = mảngTrường[2];
+                String mãVoucher = mảngTrường[3];
+
+                // Nếu mặt hàng đã BÁN xong -> Ẩn khỏi Sàn C2C Market
+                if (danhSáchĐãBánHệThống.contains(mãVoucher)) {
+                    continue;
+                }
+
+                int giáXu = 180;
+                try {
+                    giáXu = Integer.parseInt(mảngTrường[4]);
+                } catch (Exception ignored) {}
+
+                String tênNgườiBán = mảngTrường.length > 7 ? mảngTrường[7] : "Người dùng SSharing";
+                String avatarInitials = mảngTrường.length > 8 ? mảngTrường[8] : "SS";
+                String usernameNgườiBán = mảngTrường.length > 9 ? mảngTrường[9] : "";
+
+                String usernameHiệnTại = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123");
+                String họTênHiệnTại = bộLưuTrữCụcBộ.getString("CURRENT_USER_NAME", "Gia Bảo Hồ");
+
+                // NẾU LÀ VOUCHER DO CHÍNH BẢN THÂN ĐĂNG BÁN -> KHÔNG HIỂN THỊ TRÊN SÀN C2C CỦA CHÍNH MÌNH DÙNG MUA (Chỉ quản lý trong Shop cá nhân!)
+                if (usernameHiệnTại.equalsIgnoreCase(usernameNgườiBán) ||
+                        (!usernameNgườiBán.isEmpty() && usernameHiệnTại.equalsIgnoreCase(usernameNgườiBán)) ||
+                        tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()) ||
+                        tênNgườiBán.equalsIgnoreCase(họTênHiệnTại)) {
+                    continue;
+                }
+
+                thêmThẻVoucherVàoKhung(
+                        khungLướiVoucherTrangChủ,
+                        thươngHiệu.toUpperCase(),
+                        môTả,
+                        giáXu,
+                        "C2C Market",
+                        "👥 Cộng đồng",
+                        false,
+                        thươngHiệu,
+                        tênNgườiBán,
+                        avatarInitials,
+                        mãVoucher
+                );
+            }
+        }
 
         // 1. @minh.anh - Grab 50K
         thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "GRAB", "Giảm 50K chuyến xe GrabCar tiếp theo", 350, "500 SS", "👥 Cộng đồng", false, "Grab Vietnam", "Minh Anh (@minh.anh)", "MA", "GRAB50K-COMMUNITY88");

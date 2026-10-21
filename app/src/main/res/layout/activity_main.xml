@@ -669,4 +669,26 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- BONG BÓNG CHAT NỔI FLOATING CHAT BUBBLE (MỞ HỘP THOẠI QUẢN LÝ CHAT P2P) -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/btnFloatingChatBubble"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="76dp"
+        android:backgroundTint="#815BF5"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="💬 Chat Box (3)"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        app:cornerRadius="24dp"
+        app:elevation="8dp"
+        app:icon="@drawable/ic_user"
+        app:iconTint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

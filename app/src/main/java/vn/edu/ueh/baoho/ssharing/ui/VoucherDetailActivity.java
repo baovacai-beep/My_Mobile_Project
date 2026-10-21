@@ -83,7 +83,25 @@ public class VoucherDetailActivity extends AppCompatActivity {
             nhãnCấpĐộTínNhiệm.setText(làGianHàngChínhHãng ? "✓ Đối Tác Chính Hãng (Trust Score: 100%)" : "👥 Thành viên cộng đồng (Trust Score: 98%)");
         }
         if (nhãnMãCheMờ != null) nhãnMãCheMờ.setText("Mã bảo mật: " + cheMờMãBíMật(mãBíMậtKíchHoạt));
-        if (nútMuaVoucher != null) nútMuaVoucher.setText("Mua Ngay " + String.format("%,d", giáXuVoucher) + " SS");
+
+        // Kiểm tra xem đây có phải voucher do chính tài khoản này đăng bán không
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String usernameHiệnTại = bộLưuTrữVí.getString("CURRENT_USERNAME", "baoho123");
+        String họTênHiệnTại = bộLưuTrữVí.getString("CURRENT_USER_NAME", "Gia Bảo Hồ");
+
+        boolean làVoucherChínhMìnhBán = !làGianHàngChínhHãng && (
+                tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()) ||
+                        tênNgườiBán.equalsIgnoreCase(họTênHiệnTại)
+        );
+
+        if (nútMuaVoucher != null) {
+            if (làVoucherChínhMìnhBán) {
+                nútMuaVoucher.setText("✎ Chỉnh Sửa Trong Shop Của Bạn");
+                nútMuaVoucher.setBackgroundResource(R.drawable.bg_outline_button);
+            } else {
+                nútMuaVoucher.setText("Mua Ngay " + String.format("%,d", giáXuVoucher) + " SS");
+            }
+        }
     }
 
     private String cheMờMãBíMật(String mãGốc) {
@@ -109,6 +127,21 @@ public class VoucherDetailActivity extends AppCompatActivity {
 
     private void xửLýGiaoDịchMua() {
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String usernameHiệnTại = bộLưuTrữVí.getString("CURRENT_USERNAME", "baoho123");
+        String họTênHiệnTại = bộLưuTrữVí.getString("CURRENT_USER_NAME", "Gia Bảo Hồ");
+
+        boolean làVoucherChínhMìnhBán = !làGianHàngChínhHãng && (
+                tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()) ||
+                        tênNgườiBán.equalsIgnoreCase(họTênHiệnTại)
+        );
+
+        if (làVoucherChínhMìnhBán) {
+            Toast.makeText(this, "⚠️ Đây là voucher do chính bạn đăng bán! Bạn chỉ có thể quản lý bài trong Kênh Người Bán.", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(this, SellerDashboardActivity.class));
+            finish();
+            return;
+        }
+
         int sốDưXuHiệnTại = bộLưuTrữVí.getInt("SO_DU_XU_SS", 1250);
 
         if (sốDưXuHiệnTại < giáXuVoucher) {
