@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- THẺ TRUST SCORE & CỘT MỐC DANH HIỆU TÍN NHIỆM (MỖI 20 ĐIỂM) -->
+            <!-- Thẻ Trust Score và Cột mốc danh hiệu tín nhiệm (mỗi 20 điểm) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardTrustScoreBadge"
                 android:layout_width="match_parent"

@@ -171,7 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="Điều Khoản &amp; Điều Kiện Áp Dụng"
+                    android:text="Điều Khoản và Điều Kiện Áp Dụng"
                     android:textColor="@color/text_white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
