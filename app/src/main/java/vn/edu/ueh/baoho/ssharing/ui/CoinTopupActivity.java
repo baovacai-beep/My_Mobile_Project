@@ -38,7 +38,7 @@ public class CoinTopupActivity extends AppCompatActivity {
     private android.widget.EditText ôMãGiaoDịchNgânHàng;
 
     private int sốSốTiềnVND = 200000;
-    private int sốXuCầnNạp = 220; // Gói 200k = 220 SS xu (thưởng +10%)
+    private int sốXuCầnNạp = 220;
     private String usernameHiệnTại = "baoho123";
 
     private final String SỐ_TÀI_KHOẢN_MBBANK = "0913672861";
@@ -48,7 +48,11 @@ public class CoinTopupActivity extends AppCompatActivity {
     private Handler bộXửLýThreadBảnĐồ = new Handler(Looper.getMainLooper());
     private boolean đãXácNhậnNạpThànhCông = false;
     private com.google.firebase.firestore.ListenerRegistration bộLắngNgheFirestoreRealtime;
-    private long thờiGianKhởiTạoMànHình = System.currentTimeMillis();
+
+    private static final String CASSO_API_KEY_CHUẨN = "AK_CS.bffaf5c0d0b111f1929a0f0fa79e0aca.FEnaqVSUWDRx4DcRyp1bfYJLmzJOTlZy8D8vdztEEUc6CW34AjxYvmWrh4pFWZdlTZiwqUh4";
+    private Handler bộXửLýQuétCassoAPI = new Handler(Looper.getMainLooper());
+    private boolean đangQuétCassoAPI = false;
+    private long mốcThờiGianKhởiTạoMànHình = System.currentTimeMillis();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,54 @@ public class CoinTopupActivity extends AppCompatActivity {
         càiĐặtSựKiệnLắngNghe();
         cậpNhậtMãVietQRThựcTế();
         kíchHoạtLắngNgheChuyểnKhoảnTựĐộngRealtime();
+    }
+
+    private void đốiSoátLịchSửChặnNạpLạiMãCũBanĐầu() {
+        new Thread(() -> {
+            try {
+                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new URL("https://oauth.casso.vn/v2/transactions?pageSize=20&sort=DESC").openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Authorization", "Apikey " + CASSO_API_KEY_CHUẨN);
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setConnectTimeout(3000);
+                conn.setReadTimeout(3000);
+
+                if (conn.getResponseCode() == 200) {
+                    InputStream in = conn.getInputStream();
+                    java.util.Scanner scanner = new java.util.Scanner(in).useDelimiter("\\A");
+                    String responseBody = scanner.hasNext() ? scanner.next() : "";
+
+                    org.json.JSONObject jsonRoot = new org.json.JSONObject(responseBody);
+                    if (jsonRoot.optInt("error") == 0) {
+                        org.json.JSONObject dataObj = jsonRoot.getJSONObject("data");
+                        org.json.JSONArray records = dataObj.getJSONArray("records");
+                        SharedPreferences prefTx = getSharedPreferences("LICH_SU_GIAO_DICH_DA_XU_LY", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefTx.edit();
+
+                        for (int i = 0; i < records.length(); i++) {
+                            org.json.JSONObject trans = records.getJSONObject(i);
+                            String idGiaoDich = String.valueOf(trans.optLong("id", 0));
+                            if (!idGiaoDich.equals("0")) {
+                                editor.putBoolean(idGiaoDich, true);
+                            }
+                        }
+                        editor.apply();
+                    }
+                }
+            } catch (Exception ignored) {}
+        }).start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bắtĐầuQuétGiaoDịchCassoTựĐộng();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dừngQuétGiaoDịchCasso();
     }
 
     private void đọcThôngTinTàiKhoản() {
@@ -84,12 +136,10 @@ public class CoinTopupActivity extends AppCompatActivity {
             findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         }
 
-        // Nút Sao chép STK
         if (findViewById(R.id.btnCopyAccount) != null) {
             findViewById(R.id.btnCopyAccount).setOnClickListener(v -> thựcHiệnSaoChépVănBản("STK MBBank", SỐ_TÀI_KHOẢN_MBBANK));
         }
 
-        // Nút Sao chép Nội dung CK
         if (findViewById(R.id.btnCopyContent) != null) {
             findViewById(R.id.btnCopyContent).setOnClickListener(v -> thựcHiệnSaoChépVănBản("Nội dung CK", "SSHARING NAP XU " + usernameHiệnTại));
         }
@@ -124,12 +174,10 @@ public class CoinTopupActivity extends AppCompatActivity {
             });
         }
 
-        // Nút Xác nhận đã chuyển khoản
         if (findViewById(R.id.btnVerifyTopupPayment) != null) {
             findViewById(R.id.btnVerifyTopupPayment).setOnClickListener(v -> thựcHiệnXácNhậnThanhToánNạpTiền(false));
         }
 
-        // Nút Giả lập thanh toán Sandbox
         if (findViewById(R.id.btnSandboxTest) != null) {
             findViewById(R.id.btnSandboxTest).setOnClickListener(v -> thựcHiệnXácNhậnThanhToánNạpTiền(true));
         }
@@ -145,7 +193,6 @@ public class CoinTopupActivity extends AppCompatActivity {
     }
 
     private void cậpNhậtMãVietQRThựcTế() {
-        // Đường dẫn API VietQR Napas247 chuẩn cho MBBank STK 0913672861 - HO GIA BAO
         String urlVietQR = "https://img.vietqr.io/image/" + TÊN_NGÂN_HÀNG + "-" + SỐ_TÀI_KHOẢN_MBBANK + "-compact2.png" +
                 "?amount=" + sốSốTiềnVND +
                 "&addInfo=SSHARING%20NAP%20XU%20" + usernameHiệnTại +
@@ -168,15 +215,10 @@ public class CoinTopupActivity extends AppCompatActivity {
         SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         String mãGDNhập = ôMãGiaoDịchNgânHàng != null ? ôMãGiaoDịchNgânHàng.getText().toString().trim() : "";
 
-        // Kiểm tra đối soát nếu người dùng bấm "Tôi Đã Chuyển Khoản"
         if (!làSandboxDemo) {
             if (mãGDNhập.isEmpty()) {
-                Toast.makeText(this, "⚠️ Vui lòng nhập Mã giao dịch MoMo/MBBank (Ví dụ: 153385709872) từ biên lai chuyển tiền để đối soát nạp xu!", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if (mãGDNhập.length() < 6) {
-                Toast.makeText(this, "⚠️ Mã giao dịch ngân hàng/MoMo không hợp lệ (Phải có ít nhất 6 chữ số)!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "🔍 Đang kết nối trực tiếp Casso API đối soát chuyển khoản cho @" + usernameHiệnTại + "...", Toast.LENGTH_SHORT).show();
+                thựcHiệnGọiAPICassoBắtBuộcThaoTácThủCông();
                 return;
             }
 
@@ -211,10 +253,7 @@ public class CoinTopupActivity extends AppCompatActivity {
                 .putString("DANH_SACH_GIAO_DICH", danhSáchGiaoDịchMới)
                 .apply();
 
-        // Đồng bộ cập nhật số dư nguyên tử FieldValue.increment() lên Firebase Firestore
         đồngBộNạpXuLênFirebaseFirestore(usernameHiệnTại, sốXuCầnNạp, mãGiaoDịchChính);
-
-        // Hiển thị Hóa Đơn Xác Nhận Giao Dịch Đầy Đủ Thông Tin
         hiểnThịHóaĐơnNạpTiềnThànhCông(mãGiaoDịchChính, sốSốTiềnVND, sốXuCầnNạp, thờiGianThực, làSandboxDemo);
     }
 
@@ -246,7 +285,6 @@ public class CoinTopupActivity extends AppCompatActivity {
     private void đồngBộNạpXuLênFirebaseFirestore(String username, int sốXu, String mãTX) {
         try {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            // Giao dịch nguyên tử FieldValue.increment
             db.collection("users").document(username).update("so_du_xu", FieldValue.increment(sốXu));
 
             Map<String, Object> txData = new HashMap<>();
@@ -268,21 +306,209 @@ public class CoinTopupActivity extends AppCompatActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             bộLắngNgheFirestoreRealtime = db.collection("transactions")
                     .whereEqualTo("username", usernameHiệnTại)
-                    .whereGreaterThanOrEqualTo("created_at", thờiGianKhởiTạoMànHình)
+                    .whereGreaterThanOrEqualTo("created_at", mốcThờiGianKhởiTạoMànHình)
                     .addSnapshotListener((snapshot, e) -> {
                         if (e != null || snapshot == null || snapshot.isEmpty()) return;
                         for (com.google.firebase.firestore.DocumentSnapshot doc : snapshot.getDocuments()) {
-                            String status = doc.getString("status");
-                            if ("SUCCESS".equalsIgnoreCase(status) && !đãXácNhậnNạpThànhCông) {
-                                String txId = doc.getId();
-                                Double amount = doc.getDouble("amount_ss");
-                                int xuAmount = amount != null ? amount.intValue() : sốXuCầnNạp;
+                            String status = doc.getString("trangThai");
+                            if (status == null) status = doc.getString("status");
+
+                            boolean làThànhCông = "THANH_CONG".equalsIgnoreCase(status) || "SUCCESS".equalsIgnoreCase(status);
+
+                            if (làThànhCông && !đãXácNhậnNạpThànhCông) {
+                                String txId = doc.getString("maGiaoDich");
+                                if (txId == null) txId = doc.getId();
+
+                                SharedPreferences prefTx = getSharedPreferences("LICH_SU_GIAO_DICH_DA_XU_LY", MODE_PRIVATE);
+                                if (prefTx.getBoolean(txId.replace("TX-", ""), false)) continue;
+
+                                Long soXuObj = doc.getLong("soXuCong");
+                                int xuAmount;
+                                if (soXuObj != null) {
+                                    xuAmount = soXuObj.intValue();
+                                } else {
+                                    Double amount = doc.getDouble("amount_ss");
+                                    xuAmount = amount != null ? amount.intValue() : sốXuCầnNạp;
+                                }
+
+                                Long soTienObj = doc.getLong("soTienVnd");
+                                if (soTienObj != null) {
+                                    sốSốTiềnVND = soTienObj.intValue();
+                                }
+
                                 thựcHiệnXửLýTựĐộngCộngXuKhiTínHiệuVề(txId, xuAmount);
                                 break;
                             }
                         }
                     });
         } catch (Exception ignored) {}
+    }
+
+    private void bắtĐầuQuétGiaoDịchCassoTựĐộng() {
+        đangQuétCassoAPI = true;
+        bộXửLýQuétCassoAPI.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!đangQuétCassoAPI || đãXácNhậnNạpThànhCông) return;
+                thựcHiệnGọiAPICassoKiểmTraBiếnĐộngSốDư();
+                bộXửLýQuétCassoAPI.postDelayed(this, 2000);
+            }
+        });
+    }
+
+    private void dừngQuétGiaoDịchCasso() {
+        đangQuétCassoAPI = false;
+        if (bộXửLýQuétCassoAPI != null) {
+            bộXửLýQuétCassoAPI.removeCallbacksAndMessages(null);
+        }
+    }
+
+    private void thựcHiệnGọiAPICassoKiểmTraBiếnĐộngSốDư() {
+        new Thread(() -> {
+            try {
+                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new URL("https://oauth.casso.vn/v2/transactions?pageSize=10&sort=DESC").openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Authorization", "Apikey " + CASSO_API_KEY_CHUẨN);
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setConnectTimeout(3000);
+                conn.setReadTimeout(3000);
+
+                if (conn.getResponseCode() == 200) {
+                    InputStream in = conn.getInputStream();
+                    java.util.Scanner scanner = new java.util.Scanner(in).useDelimiter("\\A");
+                    String jsonString = scanner.hasNext() ? scanner.next() : "";
+
+                    org.json.JSONObject jsonRoot = new org.json.JSONObject(jsonString);
+                    if (jsonRoot.optInt("error") == 0) {
+                        org.json.JSONObject dataObj = jsonRoot.getJSONObject("data");
+                        org.json.JSONArray records = dataObj.getJSONArray("records");
+                        String userCầnTìm = usernameHiệnTại.toUpperCase().trim();
+
+                        SharedPreferences prefTx = getSharedPreferences("GIAO_DICH_DA_NAP_XU_DANH_SACH", MODE_PRIVATE);
+
+                        for (int i = 0; i < records.length(); i++) {
+                            org.json.JSONObject trans = records.getJSONObject(i);
+                            String môTả = trans.optString("description", "").toUpperCase();
+                            long sốTiềnVND = trans.optLong("amount", 0);
+                            String idGiaoDich = String.valueOf(trans.optLong("id", 0));
+
+                            if (prefTx.getBoolean("TX_" + idGiaoDich, false)) continue;
+
+                            boolean làGiaoDịchThỏaMãn = môTả.contains(userCầnTìm)
+                                    || môTả.contains("SSHARING")
+                                    || môTả.contains("NAP XU")
+                                    || môTả.contains("SSH");
+
+                            if (làGiaoDịchThỏaMãn && sốTiềnVND > 0) {
+                                prefTx.edit().putBoolean("TX_" + idGiaoDich, true).apply();
+                                runOnUiThread(() -> {
+                                    dừngQuétGiaoDịchCasso();
+                                    xửLýCộngTiềnVàHiểnThịHóaĐơnCasso(idGiaoDich, sốTiềnVND, usernameHiệnTại, môTả);
+                                });
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                android.util.Log.e("CassoPolling", "Lỗi kiểm tra API Casso: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    private void thựcHiệnGọiAPICassoBắtBuộcThaoTácThủCông() {
+        new Thread(() -> {
+            try {
+                java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new URL("https://oauth.casso.vn/v2/transactions?pageSize=10&sort=DESC").openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Authorization", "Apikey " + CASSO_API_KEY_CHUẨN);
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setConnectTimeout(4000);
+                conn.setReadTimeout(4000);
+
+                if (conn.getResponseCode() == 200) {
+                    InputStream in = conn.getInputStream();
+                    java.util.Scanner scanner = new java.util.Scanner(in).useDelimiter("\\A");
+                    String responseBody = scanner.hasNext() ? scanner.next() : "";
+
+                    org.json.JSONObject jsonRoot = new org.json.JSONObject(responseBody);
+                    if (jsonRoot.optInt("error") == 0) {
+                        org.json.JSONObject dataObj = jsonRoot.getJSONObject("data");
+                        org.json.JSONArray records = dataObj.getJSONArray("records");
+                        String userCầnTìm = usernameHiệnTại.toUpperCase().trim();
+
+                        boolean tìmThấy = false;
+                        for (int i = 0; i < records.length(); i++) {
+                            org.json.JSONObject trans = records.getJSONObject(i);
+                            String môTả = trans.optString("description", "").toUpperCase();
+                            long sốTiềnVND = trans.optLong("amount", 0);
+                            String mãGiaoDịchCasso = String.valueOf(trans.optLong("id", 0));
+
+                            if (môTả.contains(userCầnTìm) || môTả.contains("SSHARING") || môTả.contains("NAP XU") || môTả.contains("SSH")) {
+                                tìmThấy = true;
+                                runOnUiThread(() -> {
+                                    dừngQuétGiaoDịchCasso();
+                                    xửLýCộngTiềnVàHiểnThịHóaĐơnCasso(mãGiaoDịchCasso, sốTiềnVND, usernameHiệnTại, môTả);
+                                });
+                                break;
+                            }
+                        }
+
+                        if (!tìmThấy) {
+                            runOnUiThread(() -> Toast.makeText(this, "⚠️ Casso API chưa nhận được tin báo từ ngân hàng cho @" + usernameHiệnTại + ". Vui lòng đợi 3 giây rồi bấm lại!", Toast.LENGTH_LONG).show());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                runOnUiThread(() -> Toast.makeText(CoinTopupActivity.this, "⚠️ Kết nối mạng chập chờn. Bạn có thể bấm [Giả Lập Thanh Toán Sandbox] bên dưới!", Toast.LENGTH_SHORT).show());
+            }
+        }).start();
+    }
+
+    private void xửLýCộngTiềnVàHiểnThịHóaĐơnCasso(String idGiaoDich, long sốTiềnVnd, String username, String môTả) {
+        SharedPreferences prefTx = getSharedPreferences("LICH_SU_GIAO_DICH_DA_XU_LY", MODE_PRIVATE);
+        if (prefTx.getBoolean(idGiaoDich, false)) return;
+        prefTx.edit().putBoolean(idGiaoDich, true).apply();
+
+        if (đãXácNhậnNạpThànhCông) return;
+        đãXácNhậnNạpThànhCông = true;
+
+        long sốXuCộng = sốTiềnVnd / 1000;
+        if (sốTiềnVnd == 2000) sốXuCộng = 2;
+        else if (sốTiềnVnd >= 1000000) sốXuCộng += (long)(sốXuCộng * 0.20);
+        else if (sốTiềnVnd >= 500000)  sốXuCộng += (long)(sốXuCộng * 0.15);
+        else if (sốTiềnVnd >= 200000)  sốXuCộng += (long)(sốXuCộng * 0.10);
+        else if (sốTiềnVnd >= 100000)  sốXuCộng += (long)(sốXuCộng * 0.05);
+
+        int sốXuInt = (int) sốXuCộng;
+
+        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        int sốDưHiệnTại = bộLưuTrữCụcBộ.getInt("SO_DU_XU_SS", 1250);
+        int sốDưMới = sốDưHiệnTại + sốXuInt;
+        String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        String mãTX = "TX-" + idGiaoDich;
+        String bảnGhiGiaoDịchMới = mãTX + "||Nạp xu VietQR Napas247 MBBank (+" + sốXuInt + " SS)||+\n" + sốXuInt + " SS||" + thờiGianThực + "||VietQR Napas247||Thành công||Hệ thống tự động phát hiện số dư Casso MBBank 0913672861 HO GIA BAO (Mã GD: " + mãTX + ")";
+
+        String danhSáchGiaoDịchĐãLưu = bộLưuTrữCụcBộ.getString("DANH_SACH_GIAO_DICH", "");
+        String danhSáchGiaoDịchMới = bảnGhiGiaoDịchMới + (danhSáchGiaoDịchĐãLưu.isEmpty() ? "" : ";;" + danhSáchGiaoDịchĐãLưu);
+
+        bộLưuTrữCụcBộ.edit()
+                .putInt("SO_DU_XU_SS", sốDưMới)
+                .putString("DANH_SACH_GIAO_DICH", danhSáchGiaoDịchMới)
+                .apply();
+
+        đồngBộNạpXuLênFirebaseFirestore(username, sốXuInt, mãTX);
+
+        String tbMới = "🎉 [NẠP XU THÀNH CÔNG] Hệ thống Casso vừa ghi nhận giao dịch chuyển khoản " + String.format(Locale.getDefault(), "%,d VNĐ", sốTiềnVnd) + "! +" + sốXuInt + " SS đã được cộng vào Ví.||" + thờiGianThực;
+        String tbGốc = bộLưuTrữCụcBộ.getString("DANH_SACH_THONG_BAO_" + username.toLowerCase().trim(), "");
+        bộLưuTrữCụcBộ.edit()
+                .putString("DANH_SACH_THONG_BAO_" + username.toLowerCase().trim(), tbMới + (tbGốc.isEmpty() ? "" : ";;" + tbGốc))
+                .putBoolean("HAS_UNREAD_NOTIFICATIONS_" + username.toLowerCase().trim(), true)
+                .apply();
+
+        Toast.makeText(this, "🎉 Nạp tiền thành công! Bạn nhận được +" + sốXuInt + " Xu", Toast.LENGTH_LONG).show();
+        hiểnThịHóaĐơnNạpTiềnThànhCông(mãTX, (int) sốTiềnVnd, sốXuInt, thờiGianThực, false);
     }
 
     private void thựcHiệnXửLýTựĐộngCộngXuKhiTínHiệuVề(String mãTX, int sốXu) {
@@ -310,6 +536,7 @@ public class CoinTopupActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        dừngQuétGiaoDịchCasso();
         if (bộLắngNgheFirestoreRealtime != null) {
             bộLắngNgheFirestoreRealtime.remove();
         }
