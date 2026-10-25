@@ -324,33 +324,6 @@ public class MainActivity extends AppCompatActivity {
         càiĐặtCụmNútThaoTácNhanh();
     }
 
-    private void hiểnThịTrungTâmThôngBáoHệThống() {
-        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        String userClean = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123").toLowerCase().trim();
-        String danhSáchTB = bộLưuTrữCụcBộ.getString("DANH_SACH_THONG_BAO_" + userClean, "");
-
-        if (danhSáchTB.isEmpty()) {
-            Toast.makeText(this, "🔔 Hộp thư thông báo trống. Chưa có thông báo mới!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        String[] mảngTB = danhSáchTB.split(";;");
-        for (String item : mảngTB) {
-            if (item.trim().isEmpty()) continue;
-            String[] t = item.split("\\|\\|");
-            String nộiDung = t[0];
-            String thờiGian = t.length > 1 ? t[1] : "";
-            sb.append("📌 ").append(nộiDung).append("\n⏱ ").append(thờiGian).append("\n───────────────\n");
-        }
-
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("🔔 THÔNG BÁO HỆ THỐNG SSHARING")
-                .setMessage(sb.toString().trim())
-                .setPositiveButton("Đã đọc", null)
-                .show();
-    }
-
     private void càiĐặtCụmNútThaoTácNhanh() {
         // QUICK ACTION HUB (4 NÚT TRÒN)
         View nútTrạm0Đ = findViewById(R.id.btnQuickTram0D);
