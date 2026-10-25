@@ -426,7 +426,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Card Thông tin bán hàng & Điều khoản -->
+            <!-- Card Thông tin bán hàng và Điều khoản -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
