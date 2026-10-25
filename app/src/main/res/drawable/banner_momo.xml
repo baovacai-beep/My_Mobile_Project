@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:layout_width="200dp"
+    android:height="100dp"
+    android:layout_height="100dp"
+    android:viewportWidth="200"
+    android:viewportHeight="100">
+
+    <path
+        android:pathData="M0,0h200v100h-200z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="200"
+                android:endY="100"
+                android:startX="0"
+                android:startY="0"
+                android:type="linear">
+                <item android:color="#FFA50064" android:offset="0.0" />
+                <item android:color="#FFD82D8B" android:offset="0.6" />
+                <item android:color="#FFFF416C" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path
+        android:fillColor="#33FFFFFF"
+        android:pathData="M140,50a35,35 0,1 0,70 0a35,35 0,1 0,-70 0" />
+
+    <!-- MoMo Wallet Icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M140,40h30v25h-30z" />
+    <path
+        android:fillColor="#A50064"
+        android:pathData="M152,48a5,5 0,1 0,10 0a5,5 0,1 0,-10 0" />
+</vector>

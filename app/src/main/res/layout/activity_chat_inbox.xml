@@ -32,7 +32,23 @@
             android:layout_centerInParent="true"
             android:text="Hộp Thoại &amp; Quản Lý Đoạn Chat"
             android:textColor="#FFFFFF"
-            android:textSize="17sp"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnOpenP2PTrade"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_outline_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:text="🤝 Bàn Trade"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
             android:textStyle="bold" />
     </RelativeLayout>
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:layout_width="200dp"
+    android:height="100dp"
+    android:layout_height="100dp"
+    android:viewportWidth="200"
+    android:viewportHeight="100">
+
+    <path
+        android:pathData="M0,0h200v100h-200z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="200"
+                android:endY="100"
+                android:startX="0"
+                android:startY="0"
+                android:type="linear">
+                <item android:color="#FF00B140" android:offset="0.0" />
+                <item android:color="#FF0083B0" android:offset="0.7" />
+                <item android:color="#FF00B4DB" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path
+        android:fillColor="#33FFFFFF"
+        android:pathData="M140,50a35,35 0,1 0,70 0a35,35 0,1 0,-70 0" />
+
+    <!-- Car Graphic Icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M130,55l10,-15h20l10,15h5v15h-50z" />
+    <path
+        android:fillColor="#00B140"
+        android:pathData="M138,68a4,4 0,1 0,8 0a4,4 0,1 0,-8 0" />
+    <path
+        android:fillColor="#00B140"
+        android:pathData="M162,68a4,4 0,1 0,8 0a4,4 0,1 0,-8 0" />
+</vector>

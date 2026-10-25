@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0B0914"
-    android:padding="16dp">
+    android:background="#0B0914">
 
     <!-- Header Toolbar -->
     <RelativeLayout
         android:id="@+id/headerTopup"
         android:layout_width="match_parent"
-        android:layout_height="56dp">
+        android:layout_height="56dp"
+        android:paddingHorizontal="16dp">
 
         <ImageView
             android:id="@+id/btnBack"
@@ -19,8 +19,8 @@
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:focusable="true"
             android:contentDescription="Quay lại"
+            android:focusable="true"
             android:padding="10dp"
             android:src="@drawable/ic_arrow_back"
             app:tint="#FFFFFF" />
@@ -29,9 +29,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Nạp Tiền VietQR"
+            android:text="Cổng Nạp VietQR Napas247 MBBank"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
     </RelativeLayout>
 
@@ -39,36 +39,172 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/btnSandboxTest"
-        android:layout_below="@id/headerTopup">
+        android:layout_below="@id/headerTopup"
+        android:paddingHorizontal="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
+
+            <!-- Thẻ Thông Tin Ngân Hàng Kênh Chính -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#161327"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🏦 Ngân hàng Quân Đội MB Bank"
+                            android:textColor="#FFD54F"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/bg_badge_pink"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="3dp"
+                            android:text="VietQR 24/7"
+                            android:textColor="#FFFFFF"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Số tài khoản chính thức:"
+                                android:textColor="#A09CAB"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:id="@+id/tvAccountNumber"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="0913672861"
+                                android:textColor="#FFFFFF"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvAccountName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Chủ TK: HO GIA BAO"
+                                android:textColor="#43E5A0"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/btnCopyAccount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_outline_button"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="6dp"
+                            android:text="📋 Sao chép STK"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="10dp">
+
+                        <TextView
+                            android:id="@+id/tvTransferContent"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Nội dung: SSHARING NAP XU baoho123"
+                            android:textColor="#6EE7B7"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/btnCopyContent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📋 Sao chép"
+                            android:textColor="#815BF5"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:text="CHỌN GÓI NẠP XU (THƯỞNG LÊN ĐẾN +20%)"
                 android:textColor="#A09CAB"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
-            <!-- 5 Gói Nạp -->
+            <!-- 6 Gói Nạp -->
             <RadioGroup
                 android:id="@+id/rgPackages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="10dp">
+
+                <RadioButton
+                    android:id="@+id/rbGoi2k"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="44dp"
+                    android:text="🧪 2.000 VNĐ (Gói Test Chuyển Tiền Lỗi = 2 SS)"
+                    android:textColor="#FFD54F"
+                    android:textStyle="bold" />
 
                 <RadioButton
                     android:id="@+id/rbGoi50k"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:paddingVertical="8dp"
+                    android:minHeight="44dp"
                     android:text="50.000 VNĐ (+0% Xu thưởng = 50 SS)"
                     android:textColor="#FFFFFF" />
 
@@ -76,8 +212,7 @@
                     android:id="@+id/rbGoi100k"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:paddingVertical="8dp"
+                    android:minHeight="44dp"
                     android:text="100.000 VNĐ (+5% Xu thưởng = 105 SS)"
                     android:textColor="#FFFFFF" />
 
@@ -85,9 +220,8 @@
                     android:id="@+id/rbGoi200k"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:paddingVertical="8dp"
                     android:checked="true"
+                    android:minHeight="44dp"
                     android:text="200.000 VNĐ (+10% Xu thưởng = 220 SS)"
                     android:textColor="#FFFFFF" />
 
@@ -95,8 +229,7 @@
                     android:id="@+id/rbGoi500k"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:paddingVertical="8dp"
+                    android:minHeight="44dp"
                     android:text="500.000 VNĐ (+15% Xu thưởng = 575 SS)"
                     android:textColor="#FFFFFF" />
 
@@ -104,9 +237,8 @@
                     android:id="@+id/rbGoi1000k"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:paddingVertical="8dp"
-                    android:text="1.000.000 VNĐ (+20% Xu thưởng = 1200 SS)"
+                    android:minHeight="44dp"
+                    android:text="1.000.000 VNĐ (+20% Xu thưởng = 1,200 SS)"
                     android:textColor="#43E5A0"
                     android:textStyle="bold" />
             </RadioGroup>
@@ -115,7 +247,7 @@
                 android:id="@+id/tvThongTinGoiNap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_card_dark"
                 android:gravity="center"
                 android:padding="12dp"
@@ -125,25 +257,67 @@
                 android:textStyle="bold" />
 
             <!-- Khung Mã VietQR -->
-            <ImageView
-                android:id="@+id/imgVietQR"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="#161327"
-                android:contentDescription="Mã VietQR Napas247"
-                android:padding="16dp"
-                android:src="@drawable/ic_document_file"
-                app:tint="#815BF5" />
+                android:background="@drawable/bg_card_dark"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/imgVietQR"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:contentDescription="Mã VietQR Napas247 MBBank HO GIA BAO"
+                    android:scaleType="fitCenter" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Mã QR Napas247 - MB Bank HO GIA BAO"
+                    android:textColor="#43E5A0"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etBankTransactionCode"
+                    android:layout_width="260dp"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Nhập mã GD MoMo/MB (VD: 153385709872)"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:paddingHorizontal="12dp"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#A09CAB"
+                    android:textSize="12sp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnVerifyTopupPayment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_btn_purple"
+                    android:paddingHorizontal="16dp"
+                    android:text="🔍 Tôi Đã Chuyển Khoản (Kiểm Tra Nạp Xu)"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
-                android:text="Quét mã VietQR Napas247 để tự động cộng xu"
+                android:gravity="center"
+                android:text="Dùng App Ngân Hàng bất kỳ (MBBank, Vietcombank, MoMo...) quét QR để chuyển khoản tự động"
                 android:textColor="#A09CAB"
-                android:textSize="12sp" />
+                android:textSize="11sp" />
         </LinearLayout>
     </ScrollView>
 
@@ -153,10 +327,12 @@
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="#815BF5"
-        android:text="Giả Lập Thanh Toán Sandbox"
+        android:text="⚡ Giả Lập Thanh Toán VietQR Thành Công (Sandbox Demo)"
         android:textColor="#FFFFFF"
-        android:textSize="15sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:cornerRadius="12dp" />
 </RelativeLayout>

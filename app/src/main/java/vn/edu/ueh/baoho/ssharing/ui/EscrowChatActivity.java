@@ -136,8 +136,13 @@ public class EscrowChatActivity extends AppCompatActivity {
 
         idPhòngChat = "CHAT_ROOM_" + mãBíMậtVoucher;
 
-        // Chống tự nhắn tin giao dịch Ký quỹ với chính bản thân
-        if (tênNgườiBán != null && (tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()) || tênNgườiBán.equalsIgnoreCase(họTênHiệnTại))) {
+        // Đánh dấu người dùng hiện tại ĐÃ ĐỌC phòng chat này
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        bộLưuTrữVí.edit().putBoolean("IS_READ_ROOM_" + idPhòngChat + "_" + usernameHiệnTại.toLowerCase().trim(), true).apply();
+
+        // Chống tự nhắn tin giao dịch Ký quỹ với chính bản thân (ngoại trừ Kênh Hỗ Trợ CSKH Hotline)
+        boolean làKênhHỗTrợCSKH = "HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher) || giáXuEscrow == 0;
+        if (!làKênhHỗTrợCSKH && tênNgườiBán != null && (tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()) || tênNgườiBán.equalsIgnoreCase(họTênHiệnTại))) {
             Toast.makeText(this, "⚠️ Bạn không thể tự mở phòng Chat Ký quỹ với chính mình!", Toast.LENGTH_LONG).show();
             finish();
             return;
@@ -151,7 +156,6 @@ public class EscrowChatActivity extends AppCompatActivity {
         // Nạp ảnh đại diện thật của đối tác lên Header phòng Chat nếu có
         ImageView imgPartnerHeader = findViewById(R.id.imgPartnerAvatarHeader);
         if (imgPartnerHeader != null) {
-            SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
             String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
             String pathAvatarPartner = bộLưuTrữVí.getString("CURRENT_USER_AVATAR_PATH_" + partnerClean, "");
             if (!pathAvatarPartner.isEmpty() && new File(pathAvatarPartner).exists()) {
@@ -172,7 +176,6 @@ public class EscrowChatActivity extends AppCompatActivity {
         }
 
         // Kiểm tra xem giao dịch đã hoàn tất chưa
-        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         String danhSáchĐãBánHệThống = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
 
         if (danhSáchĐãBánHệThống.contains(mãBíMậtVoucher)) {
@@ -347,6 +350,12 @@ public class EscrowChatActivity extends AppCompatActivity {
 
         // Đăng ký/cập nhật phòng chat vào danh sách Hộp Thoại Inbox dùng chung
         đăngKýPhòngChatVàoDanhSáchChung(idPhòngChat, mãBíMậtVoucher, tênVoucher, usernameHiệnTại, họTênHiệnTại, tênNgườiBán, avatarNgườiBán, giáXuEscrow, hiểnThịHiệuỨngInbox, thờiGianThực);
+
+        // Đánh dấu CHƯA ĐỌC cho đối tác nhận tin nhắn
+        String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
+        if (!partnerClean.isEmpty()) {
+            bộLưuTrữVí.edit().putBoolean("IS_READ_ROOM_" + idPhòngChat + "_" + partnerClean, false).apply();
+        }
 
         // Đồng bộ tin nhắn mới lên Firebase Firestore cho phòng chat P2P
         đồngBộTinNhắnLênFirebaseFirestore(idPhòngChat, usernameHiệnTại, họTênHiệnTại, avatarInitials, nộiDungGói, thờiGianThực);

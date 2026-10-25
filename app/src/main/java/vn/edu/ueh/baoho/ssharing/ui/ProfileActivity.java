@@ -105,6 +105,37 @@ public class ProfileActivity extends AppCompatActivity {
             }
             đặtChữCáiAvatarChung(họTênUser);
         }
+
+        cậpNhậtThốngKêBạnBèProfile(bộLưuTrữCụcBộ, usernameClean);
+    }
+
+    private void cậpNhậtThốngKêBạnBèProfile(SharedPreferences bộLưuTrữCụcBộ, String usernameUser) {
+        TextView tvFollowing = findViewById(R.id.tvProfileFollowingCount);
+        TextView tvFriends = findViewById(R.id.tvProfileFriendsCount);
+        View btnStats = findViewById(R.id.btnProfileSocialStats);
+
+        String chuỗiĐangTheoDõi = bộLưuTrữCụcBộ.getString("FOLLOWING_LIST_" + usernameUser, "Beo123;;minh.triet");
+        int sốTheoDõi = 0;
+        int sốBạnBè = 0;
+
+        if (!chuỗiĐangTheoDõi.isEmpty()) {
+            String[] mảng = chuỗiĐangTheoDõi.split(";;");
+            for (String u : mảng) {
+                if (!u.trim().isEmpty()) {
+                    sốTheoDõi++;
+                    if ("beo123".equalsIgnoreCase(u.trim()) || "minh.triet".equalsIgnoreCase(u.trim())) {
+                        sốBạnBè++;
+                    }
+                }
+            }
+        }
+
+        if (tvFollowing != null) tvFollowing.setText(String.valueOf(sốTheoDõi));
+        if (tvFriends != null) tvFriends.setText(String.valueOf(sốBạnBè));
+
+        if (btnStats != null) {
+            btnStats.setOnClickListener(v -> startActivity(new Intent(this, SocialFriendsActivity.class)));
+        }
     }
 
     private void tảiẢnhAvatarAnToàn(ImageView viewTarget, String đườngDẫnTệp, String họTên) {
@@ -208,6 +239,13 @@ public class ProfileActivity extends AppCompatActivity {
         if (nútMenu2FA != null) {
             nútMenu2FA.setOnClickListener(v ->
                     startActivity(new Intent(this, TwoFactorAuthActivity.class))
+            );
+        }
+
+        View nútMenuSocialFriends = findViewById(R.id.btnMenuSocialFriends);
+        if (nútMenuSocialFriends != null) {
+            nútMenuSocialFriends.setOnClickListener(v ->
+                    startActivity(new Intent(this, SocialFriendsActivity.class))
             );
         }
 

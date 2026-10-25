@@ -32,8 +32,18 @@ public class BannerSliderAdapter extends RecyclerView.Adapter<BannerSliderAdapte
         public boolean làChínhHãng;
         public String tênNgườiBán;
         public String avatarNgườiBán;
+        public String urlHìnhẢnhThật;
+        public int resDrawableLocal;
 
         public ThôngTinBannerItem(String nhãnBadge, String tiêuĐề, int giáXu, String emojiPoster, String tênThươngHiệu, String mãBíMật, int màuNềnStart, int màuNềnEnd, boolean làChínhHãng, String tênNgườiBán, String avatarNgườiBán) {
+            this(nhãnBadge, tiêuĐề, giáXu, emojiPoster, tênThươngHiệu, mãBíMật, màuNềnStart, màuNềnEnd, làChínhHãng, tênNgườiBán, avatarNgườiBán, "", 0);
+        }
+
+        public ThôngTinBannerItem(String nhãnBadge, String tiêuĐề, int giáXu, String emojiPoster, String tênThươngHiệu, String mãBíMật, int màuNềnStart, int màuNềnEnd, boolean làChínhHãng, String tênNgườiBán, String avatarNgườiBán, String urlHìnhẢnhThật) {
+            this(nhãnBadge, tiêuĐề, giáXu, emojiPoster, tênThươngHiệu, mãBíMật, màuNềnStart, màuNềnEnd, làChínhHãng, tênNgườiBán, avatarNgườiBán, urlHìnhẢnhThật, 0);
+        }
+
+        public ThôngTinBannerItem(String nhãnBadge, String tiêuĐề, int giáXu, String emojiPoster, String tênThươngHiệu, String mãBíMật, int màuNềnStart, int màuNềnEnd, boolean làChínhHãng, String tênNgườiBán, String avatarNgườiBán, String urlHìnhẢnhThật, int resDrawableLocal) {
             this.nhãnBadge = nhãnBadge;
             this.tiêuĐề = tiêuĐề;
             this.giáXu = giáXu;
@@ -45,6 +55,8 @@ public class BannerSliderAdapter extends RecyclerView.Adapter<BannerSliderAdapte
             this.làChínhHãng = làChínhHãng;
             this.tênNgườiBán = tênNgườiBán;
             this.avatarNgườiBán = avatarNgườiBán;
+            this.urlHìnhẢnhThật = urlHìnhẢnhThật;
+            this.resDrawableLocal = resDrawableLocal;
         }
     }
 
@@ -80,8 +92,8 @@ public class BannerSliderAdapter extends RecyclerView.Adapter<BannerSliderAdapte
         private final TextView nhãnBadge;
         private final TextView nhãnTiêuĐề;
         private final TextView nhãnGiáXu;
-        private final TextView nhãnEmoji;
-        private final TextView nhãnThươngHiệu;
+        private final android.widget.ImageView ảnhFullBannerThật;
+        private final android.os.Handler bộXửLýThreadUI = new android.os.Handler(android.os.Looper.getMainLooper());
 
         public BannerViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -89,16 +101,41 @@ public class BannerSliderAdapter extends RecyclerView.Adapter<BannerSliderAdapte
             nhãnBadge = itemView.findViewById(R.id.tvBannerBadge);
             nhãnTiêuĐề = itemView.findViewById(R.id.tvBannerTitle);
             nhãnGiáXu = itemView.findViewById(R.id.tvBannerPriceSS);
-            nhãnEmoji = itemView.findViewById(R.id.tvPosterEmoji);
-            nhãnThươngHiệu = itemView.findViewById(R.id.tvPosterBrand);
+            ảnhFullBannerThật = itemView.findViewById(R.id.imgFullBannerBackground);
         }
 
         public void gắnDữLiệu(ThôngTinBannerItem item, LắngNgheSựKiệnBấmBanner bộLắngNgheBấm) {
             if (nhãnBadge != null) nhãnBadge.setText(item.nhãnBadge);
             if (nhãnTiêuĐề != null) nhãnTiêuĐề.setText(item.tiêuĐề);
             if (nhãnGiáXu != null) nhãnGiáXu.setText(item.giáXu + " SS");
-            if (nhãnEmoji != null) nhãnEmoji.setText(item.emojiPoster);
-            if (nhãnThươngHiệu != null) nhãnThươngHiệu.setText(item.tênThươngHiệu);
+
+            if (ảnhFullBannerThật != null) {
+                if (item.resDrawableLocal != 0) {
+                    ảnhFullBannerThật.setImageResource(item.resDrawableLocal);
+                    ảnhFullBannerThật.setVisibility(View.VISIBLE);
+                } else if (item.urlHìnhẢnhThật != null && !item.urlHìnhẢnhThật.isEmpty()) {
+                    String urlTệp = item.urlHìnhẢnhThật;
+                    new Thread(() -> {
+                        try {
+                            java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(urlTệp).openConnection();
+                            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+                            conn.setConnectTimeout(8000);
+                            conn.setReadTimeout(8000);
+                            conn.setInstanceFollowRedirects(true);
+                            java.io.InputStream inputStream = conn.getInputStream();
+                            android.graphics.Bitmap bitmapPoster = android.graphics.BitmapFactory.decodeStream(inputStream);
+                            bộXửLýThreadUI.post(() -> {
+                                if (bitmapPoster != null) {
+                                    ảnhFullBannerThật.setImageBitmap(bitmapPoster);
+                                    ảnhFullBannerThật.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        } catch (Throwable ignored) {}
+                    }).start();
+                } else {
+                    ảnhFullBannerThật.setVisibility(View.GONE);
+                }
+            }
 
             // Đổi màu Gradient nền tương ứng từng Poster
             if (khungNềnBackground != null) {

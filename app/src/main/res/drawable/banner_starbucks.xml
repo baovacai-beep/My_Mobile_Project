@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:layout_width="200dp"
+    android:height="100dp"
+    android:layout_height="100dp"
+    android:viewportWidth="200"
+    android:viewportHeight="100">
+
+    <path
+        android:pathData="M0,0h200v100h-200z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="200"
+                android:endY="100"
+                android:startX="0"
+                android:startY="0"
+                android:type="linear">
+                <item android:color="#FF006241" android:offset="0.0" />
+                <item android:color="#FF008955" android:offset="0.6" />
+                <item android:color="#FF38EF7D" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path
+        android:fillColor="#33FFFFFF"
+        android:pathData="M150,50a40,40 0,1 0,80 0a40,40 0,1 0,-80 0" />
+
+    <!-- Coffee Cup Graphic -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M140,40h30l-5,40h-20z" />
+    <path
+        android:fillColor="#006241"
+        android:pathData="M150,55a5,5 0,1 0,10 0a5,5 0,1 0,-10 0" />
+</vector>

@@ -19,9 +19,10 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:focusable="true"
             android:contentDescription="Quay lại"
+            android:focusable="true"
             android:padding="4dp"
             android:src="@drawable/ic_arrow_back"
             app:tint="#FFFFFF" />
@@ -30,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Bàn Làm Việc Trọng Tài CS"
+            android:text="Bàn Làm Việc Trọng Tài CSKH"
             android:textColor="@color/text_white"
             android:textSize="17sp"
             android:textStyle="bold" />
@@ -42,10 +43,72 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CHỌN HỒ SƠ TRANH CHẤP CẦN XỬ LÝ (ONLINE 24/7):"
+            android:textColor="#A09CAB"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <!-- Spinner Chọn Hồ Sơ Ca Tranh Chấp -->
+        <Spinner
+            android:id="@+id/spDisputeCases"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input_field"
+            android:paddingHorizontal="12dp" />
+
+        <!-- Thẻ Thông Tin Hồ Sơ -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="#161327"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/tvCaseDetailHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📌 Mã Hồ Sơ: [TK-98012] | 🔒 Ký quỹ Escrow: 220 SS"
+                    android:textColor="#FFD54F"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvCaseDetailParties"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="👤 Mua: baoho123 (Hồ Gia Bảo)  ➜  🏪 Bán: Beo123 (Gia Beo)"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvCaseDetailTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="⏱ Thời gian khiếu nại: 25/10/2026 15:45:10"
+                    android:textColor="#A09CAB"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
         <!-- Khu vực đối soát bằng chứng -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="12dp"
             android:layout_weight="1"
             android:orientation="horizontal">
 
@@ -53,77 +116,109 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
                 android:background="@drawable/bg_rounded_card"
-                android:layout_marginEnd="8dp"
-                android:padding="8dp">
+                android:orientation="vertical"
+                android:padding="10dp">
+
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="Bằng chứng Lỗi\n(Người mua)"
                     android:textColor="@color/pin_pink"
-                    android:gravity="center"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvBuyerStatement"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="#221122"
+                    android:padding="8dp"
+                    android:text="💬 baoho123: Mã BeCar báo đã được sử dụng từ trước. Nhờ Trọng tài hoàn xu cho mình!"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp" />
+
                 <ImageView
+                    android:id="@+id/imgBuyerEvidence"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/bg_card_dark"
-                    android:scaleType="centerInside" />
+                    android:contentDescription="Ảnh bằng chứng người mua"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg_card_dark" />
             </LinearLayout>
 
             <!-- Voucher gốc của người bán -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
                 android:background="@drawable/bg_rounded_card"
-                android:layout_marginStart="8dp"
-                android:padding="8dp">
+                android:orientation="vertical"
+                android:padding="10dp">
+
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="Voucher Gốc\n(Người bán)"
                     android:textColor="@color/green_trust"
-                    android:gravity="center"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvSellerStatement"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="#112211"
+                    android:padding="8dp"
+                    android:text="💬 Beo123: Mã BECAR30K-USER44 mới mua sáng nay chưa dùng. Nhờ Trọng tài kiểm tra!"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp" />
+
                 <ImageView
+                    android:id="@+id/imgSellerEvidence"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/bg_card_dark"
-                    android:scaleType="centerInside" />
+                    android:contentDescription="Ảnh bằng chứng người bán"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg_card_dark" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Nút Phán Quyết -->
+        <!-- Nút Phán Quyết Trọng Tài -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/btnRefundBuyer"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="52dp"
                 android:backgroundTint="@color/pin_pink"
                 android:text="Chấp Thuận - Hoàn Tiền Người Mua"
                 android:textColor="@color/text_white"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnReleaseSeller"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="12dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
                 android:backgroundTint="@color/green_trust"
                 android:text="Bác Khiếu Nại - Giải Ngân Người Bán"
                 android:textColor="@color/text_white"
+                android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>

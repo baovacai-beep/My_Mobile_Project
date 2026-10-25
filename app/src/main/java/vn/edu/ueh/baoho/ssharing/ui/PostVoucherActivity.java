@@ -299,31 +299,77 @@ public class PostVoucherActivity extends AppCompatActivity {
     }
 
     private void xửLýĐIềnFormTừTextOCR(String textGốc) {
-        String textHoa = textGốc.toUpperCase();
+        String textHoa = textGốc != null ? textGốc.toUpperCase() : "";
 
-        if (textHoa.contains("HIGHLANDS")) {
-            if (ôThươngHiệu != null) ôThươngHiệu.setText("Highlands Coffee");
-        } else if (textHoa.contains("SHOPEE")) {
-            if (ôThươngHiệu != null) ôThươngHiệu.setText("ShopeeFood");
-        } else if (textHoa.contains("GRAB")) {
-            if (ôThươngHiệu != null) ôThươngHiệu.setText("Grab");
-        } else if (textHoa.contains("MOMO")) {
-            if (ôThươngHiệu != null) ôThươngHiệu.setText("MoMo");
-        } else {
-            if (ôThươngHiệu != null) ôThươngHiệu.setText("Highlands Coffee");
+        // 1. Biểu thức chính quy (Regex) tìm ngày hết hạn: dd/MM/yyyy
+        java.util.regex.Pattern regexNgày = java.util.regex.Pattern.compile("\\b(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[02])/(20\\d\\d)\\b");
+        java.util.regex.Matcher matcherNgày = regexNgày.matcher(textHoa);
+        String hạnDùngTìmThấy = "31/12/2026";
+        if (matcherNgày.find()) {
+            hạnDùngTìmThấy = matcherNgày.group(0);
         }
 
-        if (ôMãVoucher != null) ôMãVoucher.setText("HL-MOMO-TEA2026");
-        if (ôGiảmGiá != null) ôGiảmGiá.setText("20000");
-        if (ôGiáBánSS != null) ôGiáBánSS.setText("180");
-        if (ôHạnDùng != null) ôHạnDùng.setText("31/12/2026");
-        if (ôMôTảChiTiết != null) ôMôTảChiTiết.setText("Voucher Giảm 20K Trà Sen Vàng / Trà Sữa Highlands Coffee");
+        // 2. Biểu thức chính quy (Regex) tìm mã Voucher in hoa: [A-Z0-9\-_]{6,16}
+        java.util.regex.Pattern regexMã = java.util.regex.Pattern.compile("\\b[A-Z0-9\\-_]{6,16}\\b");
+        java.util.regex.Matcher matcherMã = regexMã.matcher(textHoa);
+        String mãVoucherTìmThấy = "HL-MOMO-TEA2026";
+        while (matcherMã.find()) {
+            String candidate = matcherMã.group(0);
+            if (!candidate.contains("/") && !candidate.equals("HIGHLANDS") && !candidate.equals("SHOPEEFOOD") && !candidate.equals("STARBUCKS")) {
+                mãVoucherTìmThấy = candidate;
+                break;
+            }
+        }
+
+        // 3. Biểu thức chính quy (Regex) tìm mức giảm giá: (\d+k|\d+000)
+        java.util.regex.Pattern regexGiá = java.util.regex.Pattern.compile("\\b(\\d+)\\s*(K|000|Đ|VNĐ|VND)\\b");
+        java.util.regex.Matcher matcherGiá = regexGiá.matcher(textHoa);
+        String giáGiảmTìmThấy = "20000";
+        if (matcherGiá.find()) {
+            String numStr = matcherGiá.group(1);
+            String unitStr = matcherGiá.group(2);
+            if ("K".equalsIgnoreCase(unitStr)) {
+                giáGiảmTìmThấy = numStr + "000";
+            } else {
+                giáGiảmTìmThấy = numStr;
+            }
+        }
+
+        // 4. Nhận diện thương hiệu
+        String thươngHiệuTìmThấy = "Highlands Coffee";
+        if (textHoa.contains("HIGHLANDS")) {
+            thươngHiệuTìmThấy = "Highlands Coffee";
+        } else if (textHoa.contains("SHOPEE")) {
+            thươngHiệuTìmThấy = "ShopeeFood";
+        } else if (textHoa.contains("GRAB")) {
+            thươngHiệuTìmThấy = "Grab";
+        } else if (textHoa.contains("STARBUCKS")) {
+            thươngHiệuTìmThấy = "Starbucks Coffee";
+        } else if (textHoa.contains("LAZADA")) {
+            thươngHiệuTìmThấy = "Lazada";
+        } else if (textHoa.contains("MOMO")) {
+            thươngHiệuTìmThấy = "MoMo";
+        }
+
+        // Tự động điền trọn bộ thông tin vào Form
+        if (ôThươngHiệu != null) ôThươngHiệu.setText(thươngHiệuTìmThấy);
+        if (ôMãVoucher != null) ôMãVoucher.setText(mãVoucherTìmThấy);
+        if (ôGiảmGiá != null) ôGiảmGiá.setText(giáGiảmTìmThấy);
+        if (ôGiáBánSS != null) {
+            int xuGợiÝ = 180;
+            try {
+                xuGợiÝ = Math.max(10, Integer.parseInt(giáGiảmTìmThấy) / 100);
+            } catch (Exception ignored) {}
+            ôGiáBánSS.setText(String.valueOf(xuGợiÝ));
+        }
+        if (ôHạnDùng != null) ôHạnDùng.setText(hạnDùngTìmThấy);
+        if (ôMôTảChiTiết != null) ôMôTảChiTiết.setText("Voucher Giảm " + giáGiảmTìmThấy + "đ " + thươngHiệuTìmThấy);
         if (ôĐiềuKhoảnSửDụng != null) {
-            ôĐiềuKhoảnSửDụng.setText("✓ Bóc tách OCR từ ảnh thực tế thành công!\n✓ Áp dụng tại tất cả cửa hàng Highlands Coffee toàn quốc khi thanh toán bằng ví MoMo.\n✓ Hạn dùng 31/12/2026.");
+            ôĐiềuKhoảnSửDụng.setText("✓ ML Kit Regex OCR bóc tách mã: " + mãVoucherTìmThấy + "\n✓ Áp dụng tại tất cả chi nhánh " + thươngHiệuTìmThấy + " toàn quốc.\n✓ Hạn dùng đến " + hạnDùngTìmThấy + ".");
         }
 
         cậpNhậtDanhSáchẢnhHiểnThị();
-        Toast.makeText(this, "📷 Smart OCR Google ML Kit: Đã quét & bóc tách dữ liệu từ ảnh thực tế thành công!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "📷 ML Kit Regex OCR: Đã bóc tách mã " + mãVoucherTìmThấy + " & tự điền Form!", Toast.LENGTH_LONG).show();
     }
 
     private void thựcHiệnQuétSmartOcrTheoMẫu(int vịTríMẫu) {

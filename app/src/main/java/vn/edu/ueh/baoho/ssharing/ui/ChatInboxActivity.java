@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +68,13 @@ public class ChatInboxActivity extends AppCompatActivity {
     private void càiĐặtSựKiệnLắngNghe() {
         if (findViewById(R.id.btnBackChatInbox) != null) {
             findViewById(R.id.btnBackChatInbox).setOnClickListener(v -> finish());
+        }
+
+        View nútBànTradeP2P = findViewById(R.id.btnOpenP2PTrade);
+        if (nútBànTradeP2P != null) {
+            nútBànTradeP2P.setOnClickListener(v ->
+                    startActivity(new Intent(this, P2PVoucherTradeActivity.class))
+            );
         }
 
         if (tabĐangGiaoDịch != null) {
@@ -298,6 +306,9 @@ public class ChatInboxActivity extends AppCompatActivity {
         thẻCard.addView(khungToànBộ);
 
         thẻCard.setOnClickListener(v -> {
+            String idPhòng = "CHAT_ROOM_" + mãBíMật;
+            bộLưuTrữVí.edit().putBoolean("IS_READ_ROOM_" + idPhòng + "_" + usernameHiệnTại.toLowerCase().trim(), true).apply();
+
             Intent ýĐịnhEscrowChat = new Intent(this, EscrowChatActivity.class);
             ýĐịnhEscrowChat.putExtra("EXTRA_SELLER_NAME", tênĐốiTác);
             ýĐịnhEscrowChat.putExtra("EXTRA_SELLER_AVATAR", avatarText);
@@ -376,8 +387,13 @@ public class ChatInboxActivity extends AppCompatActivity {
         thẻCard.addView(khungToànBộ);
 
         thẻCard.setOnClickListener(v -> {
-            Toast.makeText(this, "Mở Bàn Làm Việc Trọng Tài CSKH", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, activity_staff_arbiter.class));
+            Intent ýĐịnhChatCSKH = new Intent(this, EscrowChatActivity.class);
+            ýĐịnhChatCSKH.putExtra("EXTRA_SELLER_NAME", "Gia Bảo Hồ (@baoho123)");
+            ýĐịnhChatCSKH.putExtra("EXTRA_SELLER_AVATAR", "CS");
+            ýĐịnhChatCSKH.putExtra("EXTRA_VOUCHER_TITLE", "Tổng Đài Hỗ Trợ Khách Hàng & Trọng Tài SSharing");
+            ýĐịnhChatCSKH.putExtra("EXTRA_SECRET_CODE", "HOTLINE-CSKH-SUPPORT");
+            ýĐịnhChatCSKH.putExtra("EXTRA_PRICE_SS", 0);
+            startActivity(ýĐịnhChatCSKH);
         });
 
         if (containerDanhSáchĐoạnChat != null) {

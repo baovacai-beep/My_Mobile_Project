@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="400dp"
+    android:layout_width="400dp"
+    android:height="180dp"
+    android:layout_height="180dp"
+    android:viewportWidth="400"
+    android:viewportHeight="180">
+
+    <!-- Background Gradient -->
+    <path
+        android:pathData="M0,0h400v180h-400z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="400"
+                android:endY="180"
+                android:startX="0"
+                android:startY="0"
+                android:type="linear">
+                <item android:color="#FFEE3224" android:offset="0.0" />
+                <item android:color="#FFFA5400" android:offset="0.5" />
+                <item android:color="#FFFF8C00" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Decorative Circles -->
+    <path
+        android:fillColor="#33FFFFFF"
+        android:pathData="M320,20a60,60 0,1 0,120 0a60,60 0,1 0,-120 0" />
+    <path
+        android:fillColor="#22FFFFFF"
+        android:pathData="M260,100a80,80 0,1 0,160 0a80,80 0,1 0,-160 0" />
+
+    <!-- Shopee Bag Graphic Icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M310,60h40v50h-40z" />
+    <path
+        android:fillColor="#FA5400"
+        android:pathData="M320,70h20v30h-20z" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4"
+        android:pathData="M320,60c0,-10 20,-10 20,0" />
+</vector>

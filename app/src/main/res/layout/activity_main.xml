@@ -66,16 +66,31 @@
 
                 <ImageView
                     android:id="@+id/btnNotification"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:contentDescription="Thông báo"
                     android:focusable="true"
-                    android:padding="10dp"
+                    android:padding="9dp"
                     android:src="@drawable/ic_bell" />
+
+                <ImageView
+                    android:id="@+id/btnSocialFriendsHeader"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="4dp"
+                    android:layout_toStartOf="@id/btnNotification"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Tìm kiếm bạn bè"
+                    android:focusable="true"
+                    android:padding="9dp"
+                    android:src="@drawable/ic_user"
+                    app:tint="#815BF5" />
 
                 <LinearLayout
                     android:id="@+id/btnCoinBadge"
@@ -669,25 +684,23 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- BONG BÓNG CHAT NỔI FLOATING CHAT BUBBLE (MỞ HỘP THOẠI QUẢN LÝ CHAT P2P) -->
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <!-- BONG BÓNG CHAT NỔI COMPACT CHAT BUBBLE (MỞ HỘP THOẠI QUẢN LÝ CHAT P2P) -->
+    <TextView
         android:id="@+id/btnFloatingChatBubble"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_height="38dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="76dp"
-        android:backgroundTint="#815BF5"
+        android:background="@drawable/bg_btn_purple"
         android:clickable="true"
+        android:elevation="6dp"
         android:focusable="true"
-        android:text="💬 Chat Box (3)"
-        android:textAllCaps="false"
+        android:gravity="center"
+        android:paddingHorizontal="14dp"
+        android:text="💬 Chat"
         android:textColor="#FFFFFF"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:textStyle="bold"
-        app:cornerRadius="24dp"
-        app:elevation="8dp"
-        app:icon="@drawable/ic_user"
-        app:iconTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

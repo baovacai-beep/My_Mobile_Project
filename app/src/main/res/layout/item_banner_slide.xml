@@ -6,106 +6,74 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="18dp"
     app:cardElevation="0dp">
 
     <RelativeLayout
         android:id="@+id/layoutBannerBackground"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg_btn_purple"
-        android:padding="16dp">
+        android:layout_height="match_parent">
 
+        <!-- Full-Width Horizontal Promo Banner Image -->
+        <ImageView
+            android:id="@+id/imgFullBannerBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Banner khuyến mãi nhãn hàng"
+            android:scaleType="centerCrop" />
+
+        <!-- Bottom Translucent Dark Overlay for Text -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="12dp"
-            android:layout_toStartOf="@id/layoutPosterRight"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvBannerBadge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_tag_dark"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="3dp"
-                android:text="🔥 SIÊU DEAL SHOPEE FOOD"
-                android:textColor="#FFD54F"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvBannerTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:text="Giảm 50% đơn từ 100K khi thanh toán qua SSharing"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+            android:layout_alignParentBottom="true"
+            android:background="#B30B0914"
+            android:orientation="vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvBannerBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_tag_dark"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:text="🔥 SIÊU DEAL SHOPEE FOOD"
+                    android:textColor="#FFD54F"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvBannerPriceSS"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:background="@drawable/bg_badge_pink"
                     android:paddingHorizontal="8dp"
-                    android:paddingVertical="3dp"
+                    android:paddingVertical="2dp"
                     android:text="120 SS"
                     android:textColor="#FFFFFF"
-                    android:textSize="11sp"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="⚡ Bấm để mua ngay"
-                    android:textColor="#E0D7FF"
-                    android:textSize="11sp" />
             </LinearLayout>
-        </LinearLayout>
-
-        <!-- Right Poster Icon Badge -->
-        <LinearLayout
-            android:id="@+id/layoutPosterRight"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bg_card_dark"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="8dp">
 
             <TextView
-                android:id="@+id/tvPosterEmoji"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🛍"
-                android:textSize="32sp" />
-
-            <TextView
-                android:id="@+id/tvPosterBrand"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvBannerTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="SHOPEE"
-                android:textColor="#FF4081"
-                android:textSize="11sp"
+                android:text="Giảm 50% đơn từ 100K khi thanh toán qua SSharing"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </RelativeLayout>

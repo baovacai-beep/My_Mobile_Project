@@ -144,8 +144,30 @@ public class WalletActivity extends AppCompatActivity {
             nhãnSốDưXu.setText(String.format("%,d", sốDưXuHiệnTại) + " SS");
         }
 
+        cậpNhậtẢnhĐạiDiệnVí(bộLưuTrữVí);
         tảiLịchSửGiaoDịchĐộng(bộLưuTrữVí);
         tảiDanhSáchVoucherĐãLưu(bộLưuTrữVí);
+    }
+
+    private void cậpNhậtẢnhĐạiDiệnVí(SharedPreferences bộLưuTrữVí) {
+        ImageView ảnhĐạiDiệnWallet = findViewById(R.id.imgAvatar);
+        if (ảnhĐạiDiệnWallet == null) return;
+
+        // Reset ảnh mặc định ban đầu để xóa bộ nhớ đệm ảnh cũ
+        ảnhĐạiDiệnWallet.setImageResource(R.drawable.ic_user);
+
+        String usernameUser = bộLưuTrữVí.getString("CURRENT_USERNAME", "baoho123").toLowerCase().trim();
+        String keyAvatarCáNhân = "CURRENT_USER_AVATAR_PATH_" + usernameUser;
+        String đườngDẫnẢnh = bộLưuTrữVí.getString(keyAvatarCáNhân, "");
+
+        if (đườngDẫnẢnh != null && !đườngDẫnẢnh.isEmpty() && new java.io.File(đườngDẫnẢnh).exists()) {
+            try {
+                android.graphics.Bitmap bitmapAvatar = android.graphics.BitmapFactory.decodeFile(đườngDẫnẢnh);
+                if (bitmapAvatar != null) {
+                    ảnhĐạiDiệnWallet.setImageBitmap(bitmapAvatar);
+                }
+            } catch (Throwable ignored) {}
+        }
     }
 
     private void tảiLịchSửGiaoDịchĐộng(SharedPreferences bộLưuTrữVí) {

@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         String usernameHiệnTại = bộLưuTrữ.getString("CURRENT_USERNAME", "baoho123");
         String danhSáchPhòngChatTấtCả = bộLưuTrữ.getString("DANH_SACH_PHONG_CHAT_TAT_CA", "");
 
-        int sốLượngNgườiNhắnThựcTế = 0;
+        int sốTinChưaĐọcThựcTế = 0;
 
         if (!danhSáchPhòngChatTấtCả.isEmpty()) {
             String[] cácPhòng = danhSáchPhòngChatTấtCả.split(";;;");
@@ -126,19 +126,24 @@ public class MainActivity extends AppCompatActivity {
                 String[] mảngTrường = phòng.split("\\|\\|");
                 if (mảngTrường.length < 8) continue;
 
+                String idPhòng = mảngTrường[0];
                 String buyerUser = mảngTrường[3];
                 String sellerName = mảngTrường[5];
 
                 if (usernameHiệnTại.equalsIgnoreCase(buyerUser) || sellerName.toLowerCase().contains(usernameHiệnTại.toLowerCase())) {
-                    sốLượngNgườiNhắnThựcTế++;
+                    // Kiểm tra trạng thái đã đọc/chưa đọc của phòng chat này
+                    boolean làĐãĐọc = bộLưuTrữ.getBoolean("IS_READ_ROOM_" + idPhòng + "_" + usernameHiệnTại.toLowerCase().trim(), false);
+                    if (!làĐãĐọc) {
+                        sốTinChưaĐọcThựcTế++;
+                    }
                 }
             }
         }
 
-        if (sốLượngNgườiNhắnThựcTế > 0) {
-            nútBongBóngChatNổi.setText("💬 Chat Box (" + sốLượngNgườiNhắnThựcTế + ") 🔴");
+        if (sốTinChưaĐọcThựcTế > 0) {
+            nútBongBóngChatNổi.setText("💬 Chat (" + sốTinChưaĐọcThựcTế + ") 🔴");
         } else {
-            nútBongBóngChatNổi.setText("💬 Chat Box");
+            nútBongBóngChatNổi.setText("💬 Chat");
         }
     }
 
@@ -163,16 +168,20 @@ public class MainActivity extends AppCompatActivity {
 
         List<BannerSliderAdapter.ThôngTinBannerItem> danhSáchBanner = new ArrayList<>();
         danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
-                "🔥 SIÊU DEAL SHOPEE FOOD", "Giảm 50% đơn từ 100K khi thanh toán qua SSharing", 120, "🛍", "SHOPEE", "SPFOOD50-SLIDER", Color.parseColor("#7C4DFF"), Color.parseColor("#FF4081"), true, "ShopeeFood Official", "SF"
+                "🔥 SIÊU DEAL SHOPEE FOOD", "Giảm 50% đơn từ 100K khi thanh toán qua SSharing", 120, "🛍", "SHOPEE", "SPFOOD50-SLIDER", Color.parseColor("#7C4DFF"), Color.parseColor("#FF4081"), true, "ShopeeFood Official", "SF",
+                "https://cdn-media.sforum.vn/storage/app/media/wp-content/uploads/2024/04/shopee-rewards-thumbnail.jpg", R.drawable.banner_shopeefood
         ));
         danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
-                "☕ STARBUCKS COFFEE WEEKEND", "Mua 1 Tặng 1 Trà/Cà phê tất cả chi nhánh", 160, "☕", "STARBUCKS", "SBUX-M1T1-SLIDER", Color.parseColor("#11998E"), Color.parseColor("#38EF7D"), true, "Starbucks Official Store", "SB"
+                "☕ STARBUCKS COFFEE WEEKEND", "Mua 1 Tặng 1 Trà/Cà phê tất cả chi nhánh", 160, "☕", "STARBUCKS", "SBUX-M1T1-SLIDER", Color.parseColor("#11998E"), Color.parseColor("#38EF7D"), true, "Starbucks Official Store", "SB",
+                "", R.drawable.banner_starbucks
         ));
         danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
-                "🚗 GRABCAR FREESHIP & GIẢM 50K", "Đồng giá 10 Xu - Săn deal khung giờ vàng", 100, "🚗", "GRAB", "GRAB50K-SLIDER", Color.parseColor("#00B4DB"), Color.parseColor("#0083B0"), true, "Grab Vietnam Store", "GR"
+                "🚗 GRABCAR FREESHIP & GIẢM 50K", "Đồng giá 10 Xu - Săn deal khung giờ vàng", 100, "🚗", "GRAB", "GRAB50K-SLIDER", Color.parseColor("#00B4DB"), Color.parseColor("#0083B0"), true, "Grab Vietnam Store", "GR",
+                "", R.drawable.banner_grab
         ));
         danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
-                "📱 MOMO HOÀN XU 30K", "Nạp tiền ĐT & Data 4G Viettel, Mobifone, Vinaphone", 150, "📱", "MOMO", "MOMO30K-SLIDER", Color.parseColor("#FF416C"), Color.parseColor("#FF4B2B"), true, "MoMo Official Store", "MM"
+                "📱 MOMO HOÀN XU 30K", "Nạp tiền ĐT & Data 4G Viettel, Mobifone, Vinaphone", 150, "📱", "MOMO", "MOMO30K-SLIDER", Color.parseColor("#FF416C"), Color.parseColor("#FF4B2B"), true, "MoMo Official Store", "MM",
+                "", R.drawable.banner_momo
         ));
 
         BannerSliderAdapter bộTrượtAdapter = new BannerSliderAdapter(danhSáchBanner, itemBanner ->
@@ -273,6 +282,11 @@ public class MainActivity extends AppCompatActivity {
         if (tênNgườiDùng != null) tênNgườiDùng.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         if (thẻSốDưXu != null) thẻSốDưXu.setOnClickListener(v -> startActivity(new Intent(this, WalletActivity.class)));
         if (nútThôngBáo != null) nútThôngBáo.setOnClickListener(v -> Toast.makeText(this, "Không có thông báo mới", Toast.LENGTH_SHORT).show());
+
+        View nútBạnBèHeader = findViewById(R.id.btnSocialFriendsHeader);
+        if (nútBạnBèHeader != null) {
+            nútBạnBèHeader.setOnClickListener(v -> startActivity(new Intent(this, SocialFriendsActivity.class)));
+        }
 
         // BONG BÓNG CHAT NỔI FLOATING CHAT BUBBLE
         View nútBongBóngChatNổi = findViewById(R.id.btnFloatingChatBubble);
