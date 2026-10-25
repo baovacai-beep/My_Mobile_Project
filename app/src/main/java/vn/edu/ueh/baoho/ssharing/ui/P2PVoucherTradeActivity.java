@@ -111,10 +111,29 @@ public class P2PVoucherTradeActivity extends AppCompatActivity {
         View nútMờiTrade = findViewById(R.id.btnSendTradeInvite);
         if (nútMờiTrade != null) {
             nútMờiTrade.setOnClickListener(v -> {
+                SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+                String partnerClean = tênĐốiTácHiệnTại.toLowerCase().replaceAll("[^a-z0-9]", "").trim();
+                if (partnerClean.isEmpty()) partnerClean = "beo123";
+
+                String thờiGianThực = new SimpleDateFormat("HH:mm dd/MM", Locale.getDefault()).format(new Date());
+                String tbMới = "🤝 [BÀN TRADE P2P] Thành viên @" + usernameHiệnTại + " đã gửi lời mời tham gia Bàn Trao Đổi Voucher trực tiếp!||" + thờiGianThực;
+                String tbGốc = bộLưuTrữVí.getString("DANH_SACH_THONG_BAO_" + partnerClean, "");
+                bộLưuTrữVí.edit()
+                        .putString("DANH_SACH_THONG_BAO_" + partnerClean, tbMới + (tbGốc.isEmpty() ? "" : ";;" + tbGốc))
+                        .putBoolean("HAS_UNREAD_NOTIFICATIONS_" + partnerClean, true)
+                        .apply();
+
+                // Đăng ký thẻ Giao Dịch vào ChatInbox dưới tab Giao Dịch
+                String idPhòng = "CHAT_ROOM_SWAP_" + System.currentTimeMillis();
+                String bảnGhiBànTrade = idPhòng + "||TRADE-INVITE||Thương lượng Bàn Trade Voucher||" + usernameHiệnTại + "||Gia Bảo Hồ||" + tênĐốiTácHiệnTại + "||TR||0||🔒 Yêu cầu trao đổi Voucher P2P đang chờ xác nhận||" + thờiGianThực;
+                String phòngGốc = bộLưuTrữVí.getString("DANH_SACH_PHONG_CHAT_TAT_CA", "");
+                bộLưuTrữVí.edit().putString("DANH_SACH_PHONG_CHAT_TAT_CA", bảnGhiBànTrade + (phòngGốc.isEmpty() ? "" : ";;;" + phòngGốc)).apply();
+
                 new AlertDialog.Builder(this)
                         .setTitle("📩 Gửi Lời Mời Bàn Trade P2P")
-                        .setMessage("Đã gửi lời mời tham gia Bàn Trade Voucher tới " + tênĐốiTácHiệnTại + ". Đối tác đã bấm [ĐỒNG Ý] và tham gia bàn trade trực tiếp!")
+                        .setMessage("Đã gửi thông báo lời mời Bàn Trade Voucher tới " + tênĐốiTácHiệnTại + "! Thẻ [Yêu cầu trao đổi] đã xuất hiện ở Hộp Thoại Chat Giao Dịch và Chuông Báo của đối tác.")
                         .setPositiveButton("Bắt đầu Trade", null)
+                        .setNegativeButton("Từ Chối Trade", (dialog, which) -> finish())
                         .show();
             });
         }
@@ -281,7 +300,18 @@ public class P2PVoucherTradeActivity extends AppCompatActivity {
                 .setTitle("🎉 HÓA ĐƠN TRAO ĐỔI VOUCHER P2P THÀNH CÔNG")
                 .setMessage(nộiDungHóaĐơn)
                 .setCancelable(false)
-                .setPositiveButton("Xem Ví Voucher", (dialog, which) -> finish())
+                .setPositiveButton("💬 Mở Escrow Chat Voucher", (dialog, which) -> {
+                    android.content.Intent ýĐịnhEscrow = new android.content.Intent(this, EscrowChatActivity.class);
+                    ýĐịnhEscrow.putExtra("EXTRA_SELLER_NAME", tênĐốiTácHiệnTại);
+                    ýĐịnhEscrow.putExtra("EXTRA_SELLER_AVATAR", "SW");
+                    ýĐịnhEscrow.putExtra("EXTRA_VOUCHER_TITLE", "Voucher GrabCar Giảm 50K & Highlands M1T1");
+                    ýĐịnhEscrow.putExtra("EXTRA_SECRET_CODE", "GRAB50K-SWAP");
+                    ýĐịnhEscrow.putExtra("EXTRA_PRICE_SS", 0);
+                    ýĐịnhEscrow.putExtra("EXTRA_IS_SOCIAL_CHAT", false);
+                    startActivity(ýĐịnhEscrow);
+                    finish();
+                })
+                .setNegativeButton("Xem Ví Xu", (dialog, which) -> finish())
                 .show();
     }
 

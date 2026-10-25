@@ -422,6 +422,38 @@
                         android:textColor="#9E9AA9" />
                 </LinearLayout>
 
+                <!-- Bàn Trao Đổi Voucher P2P (Live Swap) -->
+                <LinearLayout
+                    android:id="@+id/btnMenuP2PTrade"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="10dp">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_market"
+                        app:tint="#FFD54F" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="🤝 Bàn Trao Đổi Voucher P2P (Live Swap)"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="❯"
+                        android:textColor="#9E9AA9" />
+                </LinearLayout>
+
                 <!-- Kênh người bán -->
                 <LinearLayout
                     android:id="@+id/btnMenuSeller"

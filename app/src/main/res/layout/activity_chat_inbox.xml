@@ -52,7 +52,7 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
-    <!-- Header Tabs Filter -->
+    <!-- Header 4 Tabs Filter (Phân tách Rạch Ròi Chat Giao Dịch & Chat Bạn Bè) -->
     <LinearLayout
         android:id="@+id/layoutChatInboxTabs"
         android:layout_width="match_parent"
@@ -69,9 +69,20 @@
             android:layout_weight="1"
             android:background="@drawable/bg_tab_active"
             android:gravity="center"
-            android:text="🛒 Đang Giao Dịch"
+            android:text="🛒 Giao Dịch"
             android:textColor="#FFFFFF"
-            android:textSize="12sp"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tabSocialFriendChats"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="💬 Bạn Bè"
+            android:textColor="#888888"
+            android:textSize="11sp"
             android:textStyle="bold" />
 
         <TextView
@@ -80,9 +91,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="🎧 Hỗ Trợ CSKH"
+            android:text="🎧 CSKH"
             android:textColor="#888888"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textStyle="bold" />
 
         <TextView
@@ -91,9 +102,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="📜 Lịch Sử Chat"
+            android:text="📜 Lịch Sử"
             android:textColor="#888888"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textStyle="bold" />
     </LinearLayout>
 

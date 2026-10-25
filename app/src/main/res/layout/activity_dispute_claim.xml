@@ -60,10 +60,10 @@
                 android:id="@+id/rb_da_su_dung"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:minHeight="48dp"
                 android:text="Mã đã có người sử dụng trước đó (MA_DA_SU_DUNG)"
-                android:textColor="#FFFFFF"
-                android:checked="true" />
+                android:textColor="#FFFFFF" />
 
             <RadioButton
                 android:id="@+id/rb_sai_menh_gia"
@@ -101,8 +101,8 @@
             android:background="@drawable/bg_input_field"
             android:gravity="top|start"
             android:hint="Ví dụ: Áp dụng mã trên app Shopee lúc 10h15 thì hệ thống báo mã đã dùng..."
-            android:inputType="textMultiLine"
             android:importantForAutofill="no"
+            android:inputType="textMultiLine"
             android:padding="12dp"
             android:textColor="#FFFFFF"
             android:textColorHint="#6C638A"
@@ -114,23 +114,177 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Đính kèm ảnh chụp màn hình báo lỗi (Bằng chứng):"
+            android:text="Đính kèm ảnh chụp màn hình báo lỗi (Tối đa 5 bằng chứng):"
             android:textColor="#E9D5FF"
             android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/et_mo_ta_chi_tiet"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:id="@+id/iv_bang_chung_preview"
+        <!-- Khung 5 Ô Dấu + Chọn/Chụp Ảnh Bằng Chứng -->
+        <HorizontalScrollView
+            android:id="@+id/scrollEvidenceSlots"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_card_dark"
-            android:contentDescription="Bằng chứng khiếu nại"
-            android:scaleType="centerInside"
-            android:src="@android:drawable/ic_menu_camera"
-            app:tint="#8B5CF6"
-            app:layout_constraintTop_toBottomOf="@id/tv_label_evidence" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:scrollbars="none"
+            app:layout_constraintTop_toBottomOf="@id/tv_label_evidence">
+
+            <LinearLayout
+                android:id="@+id/containerEvidenceSlots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- Ô 1 -->
+                <FrameLayout
+                    android:id="@+id/slotEvidence1"
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tvPlusSlot1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="📷\n+ Ảnh 1"
+                        android:textColor="#815BF5"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/imgSlot1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Bằng chứng 1"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <!-- Ô 2 -->
+                <FrameLayout
+                    android:id="@+id/slotEvidence2"
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tvPlusSlot2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="📷\n+ Ảnh 2"
+                        android:textColor="#815BF5"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/imgSlot2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Bằng chứng 2"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <!-- Ô 3 -->
+                <FrameLayout
+                    android:id="@+id/slotEvidence3"
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tvPlusSlot3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="📷\n+ Ảnh 3"
+                        android:textColor="#815BF5"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/imgSlot3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Bằng chứng 3"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <!-- Ô 4 -->
+                <FrameLayout
+                    android:id="@+id/slotEvidence4"
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tvPlusSlot4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="📷\n+ Ảnh 4"
+                        android:textColor="#815BF5"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/imgSlot4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Bằng chứng 4"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <!-- Ô 5 -->
+                <FrameLayout
+                    android:id="@+id/slotEvidence5"
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:background="@drawable/bg_card_dark"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tvPlusSlot5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="📷\n+ Ảnh 5"
+                        android:textColor="#815BF5"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/imgSlot5"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Bằng chứng 5"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </FrameLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <Button
             android:id="@+id/btn_gui_khieu_nai"
@@ -144,8 +298,8 @@
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/iv_bang_chung_preview"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/scrollEvidenceSlots" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -77,12 +77,48 @@ public class SocialFriendsActivity extends AppCompatActivity {
 
     private void khởiTạoKhoThànhViênMẫu() {
         danhSáchTấtCảThànhViên.clear();
-        danhSáchTấtCảThànhViên.add(new ThôngTinThànhViênSocial("Beo123", "Gia Beo", "GB", 98, true));
-        danhSáchTấtCảThànhViên.add(new ThôngTinThànhViênSocial("minh.triet", "Minh Triết", "MT", 96, true));
-        danhSáchTấtCảThànhViên.add(new ThôngTinThànhViênSocial("bao.ngoc", "Bảo Ngọc", "BN", 94, true));
-        danhSáchTấtCảThànhViên.add(new ThôngTinThànhViênSocial("khanh.trinh", "Khánh Trình", "KT", 92, true));
-        danhSáchTấtCảThànhViên.add(new ThôngTinThànhViênSocial("gia.bao", "Gia Bảo", "GB", 90, false));
-        danhSáchTấtCảThànhViên.add(new ThôngTinThànhViênSocial("hoang.long", "Hoàng Long", "HL", 88, false));
+
+        // 1. Nạp từ bộ nhớ dùng chung SharedPreferences DANH_SACH_TAI_KHOAN_NGUOI_DUNG
+        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String danhSáchTàiKhoảnHệThống = bộLưuTrữCụcBộ.getString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", "");
+
+        if (!danhSáchTàiKhoảnHệThống.isEmpty()) {
+            String[] cácTàiKhoản = danhSáchTàiKhoảnHệThống.split(";;");
+            for (String chuỗiTàiKhoản : cácTàiKhoản) {
+                if (chuỗiTàiKhoản.trim().isEmpty()) continue;
+                String[] mảngTrường = chuỗiTàiKhoản.split("\\|\\|");
+                if (mảngTrường.length < 1) continue;
+
+                String user = mảngTrường[0];
+                String họTên = mảngTrường.length > 2 ? mảngTrường[2] : user;
+                String initials = "SS";
+                if (họTên.length() >= 2) {
+                    String[] mảngTừ = họTên.trim().split(" ");
+                    if (mảngTừ.length >= 2) {
+                        initials = (mảngTừ[0].substring(0, 1) + mảngTừ[mảngTừ.length - 1].substring(0, 1)).toUpperCase();
+                    } else {
+                        initials = họTên.substring(0, 2).toUpperCase();
+                    }
+                }
+
+                thêmThànhViênMẫuNếuChưaCó(user, họTên, initials, 96, true);
+            }
+        }
+
+        // 2. Thêm các tài khoản mẫu mặc định nếu chưa có
+        thêmThànhViênMẫuNếuChưaCó("Beo123", "Gia Beo", "GB", 98, true);
+        thêmThànhViênMẫuNếuChưaCó("minh.triet", "Minh Triết", "MT", 96, true);
+        thêmThànhViênMẫuNếuChưaCó("bao.ngoc", "Bảo Ngọc", "BN", 94, true);
+        thêmThànhViênMẫuNếuChưaCó("khanh.trinh", "Khánh Trình", "KT", 92, true);
+        thêmThànhViênMẫuNếuChưaCó("gia.bao", "Gia Bảo", "GB", 90, false);
+        thêmThànhViênMẫuNếuChưaCó("hoang.long", "Hoàng Long", "HL", 88, false);
+    }
+
+    private void thêmThànhViênMẫuNếuChưaCó(String user, String họTên, String initials, int trust, boolean verified) {
+        for (ThôngTinThànhViênSocial item : danhSáchTấtCảThànhViên) {
+            if (item.username.equalsIgnoreCase(user)) return;
+        }
+        danhSáchTấtCảThànhViên.add(new ThôngTinThànhViênSocial(user, họTên, initials, trust, verified));
     }
 
     private void càiĐặtSựKiệnLắngNghe() {
@@ -135,7 +171,7 @@ public class SocialFriendsActivity extends AppCompatActivity {
             if (làĐangTheoDõi) sốLượngĐangTheoDõi++;
             if (làBạnBè2Chiều) sốLượngBạnBè2Chiều++;
 
-            // Vẽ Card Thành Viên
+            // Bố Cục Thẻ User 2 Hàng Độc Lập Chống Bị Bóp Méo Chữ Họ Tên
             CardView thẻUser = new CardView(this);
             thẻUser.setCardBackgroundColor(Color.parseColor("#161327"));
             thẻUser.setRadius(24);
@@ -148,10 +184,14 @@ public class SocialFriendsActivity extends AppCompatActivity {
             thôngSốThẻ.bottomMargin = 16;
             thẻUser.setLayoutParams(thôngSốThẻ);
 
-            LinearLayout hàngToànBộ = new LinearLayout(this);
-            hàngToànBộ.setOrientation(LinearLayout.HORIZONTAL);
-            hàngToànBộ.setPadding(20, 20, 20, 20);
-            hàngToànBộ.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            LinearLayout khungThẻToànBộ = new LinearLayout(this);
+            khungThẻToànBộ.setOrientation(LinearLayout.VERTICAL);
+            khungThẻToànBộ.setPadding(20, 20, 20, 20);
+
+            // Hàng 1: Avatar + Họ tên (Rộng rãi 100% chiều ngang)
+            LinearLayout hàng1 = new LinearLayout(this);
+            hàng1.setOrientation(LinearLayout.HORIZONTAL);
+            hàng1.setGravity(android.view.Gravity.CENTER_VERTICAL);
 
             // Frame Avatar
             android.widget.FrameLayout khungAvatar = new android.widget.FrameLayout(this);
@@ -186,68 +226,75 @@ public class SocialFriendsActivity extends AppCompatActivity {
                 } catch (Throwable ignored) {}
             }
 
-            // Thông tin Username & Họ tên
+            // Thông tin Username & Họ tên (Chiếm 100% độ rộng còn lại)
             LinearLayout khungMôTả = new LinearLayout(this);
             khungMôTả.setOrientation(LinearLayout.VERTICAL);
             LinearLayout.LayoutParams thôngSốMôTả = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
             thôngSốMôTả.leftMargin = 16;
-            thôngSốMôTả.rightMargin = 10;
             khungMôTả.setLayoutParams(thôngSốMôTả);
 
             TextView nhãnTên = new TextView(this);
             nhãnTên.setText(thànhViên.họTên + " " + (thànhViên.làVerified ? "💎" : ""));
             nhãnTên.setTextColor(Color.WHITE);
-            nhãnTên.setTextSize(14);
+            nhãnTên.setTextSize(15);
             nhãnTên.setTypeface(null, android.graphics.Typeface.BOLD);
+            nhãnTên.setSingleLine(true);
+            nhãnTên.setEllipsize(android.text.TextUtils.TruncateAt.END);
 
             TextView nhãnSub = new TextView(this);
-            nhãnSub.setText("@" + thànhViên.username + " • Trust: " + thànhViên.điểmTrustScore + " điểm");
+            nhãnSub.setText("@" + thànhViên.username + " • Trust Score: " + thànhViên.điểmTrustScore + " điểm");
             nhãnSub.setTextColor(Color.parseColor("#A09CAB"));
             nhãnSub.setTextSize(11);
+            nhãnSub.setSingleLine(true);
+            nhãnSub.setEllipsize(android.text.TextUtils.TruncateAt.END);
 
             khungMôTả.addView(nhãnTên);
             khungMôTả.addView(nhãnSub);
 
-            // Cụm Nút Thao Tác 3 Chức Năng: Chat, Trade & Theo Dõi/Kết Bạn
-            LinearLayout cụmNútThaoTác = new LinearLayout(this);
-            cụmNútThaoTác.setOrientation(LinearLayout.HORIZONTAL);
-            cụmNútThaoTác.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            hàng1.addView(khungAvatar);
+            hàng1.addView(khungMôTả);
 
-            // Nút 1: Nhắn tin trực tiếp
-            Button nútNhắnTin = new Button(this);
-            LinearLayout.LayoutParams thôngSốMởChat = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    84
+            // Hàng 2: Cụm Nút Thao Tác 3 Chức Năng (Ngang hàng phẳng đẹp, weight 1.0f đều)
+            LinearLayout hàng2Nút = new LinearLayout(this);
+            hàng2Nút.setOrientation(LinearLayout.HORIZONTAL);
+            hàng2Nút.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            LinearLayout.LayoutParams thôngSốHàng2 = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            thôngSốMởChat.rightMargin = 8;
-            nútNhắnTin.setLayoutParams(thôngSốMởChat);
+            thôngSốHàng2.topMargin = 12;
+            hàng2Nút.setLayoutParams(thôngSốHàng2);
+
+            // Nút 1: Nhắn tin
+            Button nútNhắnTin = new Button(this);
+            LinearLayout.LayoutParams thôngSốNút1 = new LinearLayout.LayoutParams(0, 84, 1.0f);
+            thôngSốNút1.rightMargin = 6;
+            nútNhắnTin.setLayoutParams(thôngSốNút1);
             nútNhắnTin.setText("💬 Chat");
             nútNhắnTin.setTextColor(Color.WHITE);
-            nútNhắnTin.setTextSize(10);
-            nútNhắnTin.setPadding(12, 0, 12, 0);
+            nútNhắnTin.setTextSize(11);
+            nútNhắnTin.setPadding(0, 0, 0, 0);
             nútNhắnTin.setBackgroundResource(R.drawable.bg_btn_purple);
             nútNhắnTin.setOnClickListener(v -> {
                 android.content.Intent ýĐịnhChat = new android.content.Intent(this, EscrowChatActivity.class);
                 ýĐịnhChat.putExtra("EXTRA_SELLER_NAME", thànhViên.họTên + " (@" + thànhViên.username + ")");
                 ýĐịnhChat.putExtra("EXTRA_SELLER_AVATAR", thànhViên.avatarInitials);
-                ýĐịnhChat.putExtra("EXTRA_VOUCHER_TITLE", "Trò chuyện giao dịch P2P cộng đồng");
+                ýĐịnhChat.putExtra("EXTRA_VOUCHER_TITLE", "Trò chuyện bạn bè cộng đồng");
                 ýĐịnhChat.putExtra("EXTRA_SECRET_CODE", "CHAT-" + thànhViên.username.toUpperCase());
                 ýĐịnhChat.putExtra("EXTRA_PRICE_SS", 0);
+                ýĐịnhChat.putExtra("EXTRA_IS_SOCIAL_CHAT", true);
                 startActivity(ýĐịnhChat);
             });
 
-            // Nút 2: Bàn Trade Voucher P2P
+            // Nút 2: Trade
             Button nútBànTrade = new Button(this);
-            LinearLayout.LayoutParams thôngSốMởTrade = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    84
-            );
-            thôngSốMởTrade.rightMargin = 8;
-            nútBànTrade.setLayoutParams(thôngSốMởTrade);
+            LinearLayout.LayoutParams thôngSốNút2 = new LinearLayout.LayoutParams(0, 84, 1.0f);
+            thôngSốNút2.rightMargin = 6;
+            nútBànTrade.setLayoutParams(thôngSốNút2);
             nútBànTrade.setText("🤝 Trade");
             nútBànTrade.setTextColor(Color.WHITE);
-            nútBànTrade.setTextSize(10);
-            nútBànTrade.setPadding(12, 0, 12, 0);
+            nútBànTrade.setTextSize(11);
+            nútBànTrade.setPadding(0, 0, 0, 0);
             nútBànTrade.setBackgroundResource(R.drawable.bg_outline_button);
             nútBànTrade.setOnClickListener(v -> {
                 android.content.Intent ýĐịnhTrade = new android.content.Intent(this, P2PVoucherTradeActivity.class);
@@ -255,15 +302,12 @@ public class SocialFriendsActivity extends AppCompatActivity {
                 startActivity(ýĐịnhTrade);
             });
 
-            // Nút 3: Theo Dõi / Bạn Bè
+            // Nút 3: Theo dõi
             Button nútTheoDõi = new Button(this);
-            LinearLayout.LayoutParams thôngSốNút = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    84
-            );
-            nútTheoDõi.setLayoutParams(thôngSốNút);
-            nútTheoDõi.setTextSize(10);
-            nútTheoDõi.setPadding(12, 0, 12, 0);
+            LinearLayout.LayoutParams thôngSốNút3 = new LinearLayout.LayoutParams(0, 84, 1.0f);
+            nútTheoDõi.setLayoutParams(thôngSốNút3);
+            nútTheoDõi.setTextSize(11);
+            nútTheoDõi.setPadding(0, 0, 0, 0);
 
             if (làBạnBè2Chiều) {
                 nútTheoDõi.setText("🤝 Bạn Bè");
@@ -281,15 +325,14 @@ public class SocialFriendsActivity extends AppCompatActivity {
 
             nútTheoDõi.setOnClickListener(v -> thựcHiệnThayĐổiTrạngTháiTheoDõi(thànhViên, làĐangTheoDõi, chuỗiĐangTheoDõi));
 
-            cụmNútThaoTác.addView(nútNhắnTin);
-            cụmNútThaoTác.addView(nútBànTrade);
-            cụmNútThaoTác.addView(nútTheoDõi);
+            hàng2Nút.addView(nútNhắnTin);
+            hàng2Nút.addView(nútBànTrade);
+            hàng2Nút.addView(nútTheoDõi);
 
-            hàngToànBộ.addView(khungAvatar);
-            hàngToànBộ.addView(khungMôTả);
-            hàngToànBộ.addView(cụmNútThaoTác);
+            khungThẻToànBộ.addView(hàng1);
+            khungThẻToànBộ.addView(hàng2Nút);
 
-            thẻUser.addView(hàngToànBộ);
+            thẻUser.addView(khungThẻToànBộ);
             containerDanhSáchThànhViên.addView(thẻUser);
         }
 
@@ -307,6 +350,16 @@ public class SocialFriendsActivity extends AppCompatActivity {
         } else {
             chuỗiMới = chuỗiGốc + ";;" + thànhViên.username.toLowerCase();
             Toast.makeText(this, "🎉 Đã theo dõi @" + thànhViên.username + "! Cả 2 đã trở thành Bạn Bè!", Toast.LENGTH_SHORT).show();
+
+            // Đẩy thông báo chuông tới đối tác
+            String targetClean = thànhViên.username.toLowerCase().trim();
+            String thờiGianThực = new java.text.SimpleDateFormat("HH:mm dd/MM", java.util.Locale.getDefault()).format(new java.util.Date());
+            String tbMới = "👤 [THEO DÕI MỚI] Thành viên @" + usernameHiệnTại + " đã bắt đầu theo dõi bạn. Cả hai đã trở thành Bạn Bè 2 Chiều!||" + thờiGianThực;
+            String tbGốc = bộLưuTrữVí.getString("DANH_SACH_THONG_BAO_" + targetClean, "");
+            bộLưuTrữVí.edit()
+                    .putString("DANH_SACH_THONG_BAO_" + targetClean, tbMới + (tbGốc.isEmpty() ? "" : ";;" + tbGốc))
+                    .putBoolean("HAS_UNREAD_NOTIFICATIONS_" + targetClean, true)
+                    .apply();
         }
 
         bộLưuTrữVí.edit().putString("FOLLOWING_LIST_" + usernameHiệnTại.toLowerCase().trim(), chuỗiMới).apply();

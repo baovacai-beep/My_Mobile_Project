@@ -8,7 +8,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -16,12 +15,11 @@ import vn.edu.ueh.baoho.ssharing.R;
 
 public class ChatInboxActivity extends AppCompatActivity {
 
-    private TextView tabĐangGiaoDịch, tabHỗTrợCSKH, tabLịchSửChat;
+    private TextView tabĐangGiaoDịch, tabBạnBèChat, tabHỗTrợCSKH, tabLịchSửChat;
     private LinearLayout containerDanhSáchĐoạnChat;
 
     private String tabĐangChọn = "ACTIVE";
     private String usernameHiệnTại = "baoho123";
-    private String họTênHiệnTại = "Gia Bảo Hồ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +41,6 @@ public class ChatInboxActivity extends AppCompatActivity {
     private void đọcThôngTinTàiKhoản() {
         SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         usernameHiệnTại = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123");
-        họTênHiệnTại = bộLưuTrữCụcBộ.getString("CURRENT_USER_NAME", "Gia Bảo Hồ");
     }
 
     private String tríchXuấtUsernameSạch(String chuỗiGốc) {
@@ -60,6 +57,7 @@ public class ChatInboxActivity extends AppCompatActivity {
 
     private void khởiTạoÁnhXạGiaoDiện() {
         tabĐangGiaoDịch = findViewById(R.id.tabActiveEscrowChats);
+        tabBạnBèChat = findViewById(R.id.tabSocialFriendChats);
         tabHỗTrợCSKH = findViewById(R.id.tabSupportChats);
         tabLịchSửChat = findViewById(R.id.tabCompletedChats);
         containerDanhSáchĐoạnChat = findViewById(R.id.containerChatConversations);
@@ -81,6 +79,10 @@ public class ChatInboxActivity extends AppCompatActivity {
             tabĐangGiaoDịch.setOnClickListener(v -> chuyểnTabChatInbox("ACTIVE", tabĐangGiaoDịch));
         }
 
+        if (tabBạnBèChat != null) {
+            tabBạnBèChat.setOnClickListener(v -> chuyểnTabChatInbox("SOCIAL", tabBạnBèChat));
+        }
+
         if (tabHỗTrợCSKH != null) {
             tabHỗTrợCSKH.setOnClickListener(v -> chuyểnTabChatInbox("SUPPORT", tabHỗTrợCSKH));
         }
@@ -95,6 +97,7 @@ public class ChatInboxActivity extends AppCompatActivity {
 
         int màuXám = Color.parseColor("#888888");
         if (tabĐangGiaoDịch != null) { tabĐangGiaoDịch.setBackground(null); tabĐangGiaoDịch.setTextColor(màuXám); }
+        if (tabBạnBèChat != null) { tabBạnBèChat.setBackground(null); tabBạnBèChat.setTextColor(màuXám); }
         if (tabHỗTrợCSKH != null) { tabHỗTrợCSKH.setBackground(null); tabHỗTrợCSKH.setTextColor(màuXám); }
         if (tabLịchSửChat != null) { tabLịchSửChat.setBackground(null); tabLịchSửChat.setTextColor(màuXám); }
 
@@ -114,83 +117,86 @@ public class ChatInboxActivity extends AppCompatActivity {
         String danhSáchPhòngChatTấtCả = bộLưuTrữVí.getString("DANH_SACH_PHONG_CHAT_TAT_CA", "");
         String danhSáchĐãBánHệThống = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
 
-        if ("ACTIVE".equals(tabĐangChọn)) {
-            int sốĐoạnChatThựcTế = 0;
-            if (!danhSáchPhòngChatTấtCả.isEmpty()) {
-                String[] cácPhòng = danhSáchPhòngChatTấtCả.split(";;;");
-                for (String phòng : cácPhòng) {
-                    if (phòng.trim().isEmpty()) continue;
-                    String[] mảngTrường = phòng.split("\\|\\|");
-                    if (mảngTrường.length < 8) continue;
+        if (!danhSáchPhòngChatTấtCả.isEmpty()) {
+            String[] cácPhòng = danhSáchPhòngChatTấtCả.split(";;;");
+            for (String phòng : cácPhòng) {
+                if (phòng.trim().isEmpty()) continue;
+                String[] mảngTrường = phòng.split("\\|\\|");
+                if (mảngTrường.length < 8) continue;
 
-                    String idPhòng = mảngTrường[0];
-                    String mãCode = mảngTrường[1];
-                    String tênVoucher = mảngTrường[2];
-                    String buyerUser = mảngTrường[3];
-                    String buyerName = mảngTrường[4];
-                    String sellerName = mảngTrường[5];
-                    String sellerAvatar = mảngTrường[6];
-                    int giáXu = 180;
-                    try {
-                        giáXu = Integer.parseInt(mảngTrường[7]);
-                    } catch (Exception ignored) {}
+                String idPhòng = mảngTrường[0];
+                String mãCode = mảngTrường[1];
+                String tênVoucher = mảngTrường[2];
+                String buyerUser = mảngTrường[3];
+                String buyerName = mảngTrường[4];
+                String sellerName = mảngTrường[5];
+                String sellerAvatar = mảngTrường[6];
+                int giáXu = 180;
+                try {
+                    giáXu = Integer.parseInt(mảngTrường[7]);
+                } catch (Exception ignored) {}
 
-                    String nộiDungCuối = mảngTrường.length > 8 ? mảngTrường[8] : "Giao dịch Escrow mới";
-                    String thờiGianCuối = mảngTrường.length > 9 ? mảngTrường[9] : "Vừa xong";
+                String nộiDungCuối = mảngTrường.length > 8 ? mảngTrường[8] : "Giao dịch Escrow mới";
+                String thờiGianCuối = mảngTrường.length > 9 ? mảngTrường[9] : "Vừa xong";
 
-                    // Đọc tin nhắn mới nhất thực tế trong kho phòng chat
-                    String khoTinNhắn = bộLưuTrữVí.getString("DANH_SACH_TIN_NHAN_" + idPhòng, "");
-                    if (!khoTinNhắn.isEmpty()) {
-                        String[] cácTin = khoTinNhắn.split(";;");
-                        String tinCuối = cácTin[cácTin.length - 1];
-                        String[] mảngTin = tinCuối.split("\\|\\|");
-                        if (mảngTin.length >= 5) {
-                            nộiDungCuối = mảngTin[3];
-                            thờiGianCuối = mảngTin[4];
-                        }
-                    }
+                boolean đãHoànTất = danhSáchĐãBánHệThống.contains(mãCode);
+                boolean làChatBạnBè = giáXu == 0 || mãCode.startsWith("CHAT-");
 
-                    // Xác định tên đối tác hiển thị linh hoạt cho 2 đầu tài khoản (Người Mua & Người Bán)
-                    String tênĐốiTácHiểnThị = sellerName;
-                    String avatarĐốiTácHiểnThị = sellerAvatar;
-
-                    if (usernameHiệnTại.equalsIgnoreCase(buyerUser)) {
-                        tênĐốiTácHiểnThị = sellerName;
-                        avatarĐốiTácHiểnThị = sellerAvatar;
-                    } else {
-                        tênĐốiTácHiểnThị = buyerName + " (@" + buyerUser + ")";
-                        avatarĐốiTácHiểnThị = buyerUser.substring(0, Math.min(2, buyerUser.length())).toUpperCase();
-                    }
-
-                    boolean đãHoànTất = danhSáchĐãBánHệThống.contains(mãCode);
-                    String trạngTháiStr = đãHoànTất ? "✓ Đã giải ngân " + giáXu + " SS" : "🔒 Đang khóa " + giáXu + " SS";
-
-                    String usernameThựcĐốiTác = usernameHiệnTại.equalsIgnoreCase(buyerUser) ? sellerName : buyerUser;
-
-                    thêmThẻĐoạnChatHộpThoại(
-                            tênĐốiTácHiểnThị,
-                            avatarĐốiTácHiểnThị,
-                            tênVoucher,
-                            trạngTháiStr,
-                            nộiDungCuối,
-                            thờiGianCuối,
-                            mãCode,
-                            giáXu,
-                            usernameThựcĐốiTác
-                    );
-                    sốĐoạnChatThựcTế++;
+                // Lọc chính xác Rạch Ròi theo từng Tab
+                if ("ACTIVE".equals(tabĐangChọn)) {
+                    if (đãHoànTất || làChatBạnBè) continue;
+                } else if ("SOCIAL".equals(tabĐangChọn)) {
+                    if (!làChatBạnBè) continue;
+                } else if ("HISTORY".equals(tabĐangChọn)) {
+                    if (!đãHoànTất) continue;
+                } else if ("SUPPORT".equals(tabĐangChọn)) {
+                    continue;
                 }
-            }
 
-            if (sốĐoạnChatThựcTế == 0) {
-                thêmThẻĐoạnChatHộpThoại("Minh Triết (@minh.triet)", "MT", "Voucher GrabCar Giảm 50K", "🔒 Đang khóa 350 SS", "Ok để mình nhập thử vào Shopee xem được không.", "09:39", "GRAB50K-COMMUNITY88", 350, "minh.triet");
-                thêmThẻĐoạnChatHộpThoại("Khánh Trình (@khanh.trinh)", "KT", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", "🔒 Đang khóa 180 SS", "Cảm ơn bạn! Mã voucher mới nhận sáng nay...", "08:24", "HLM1T1-USER33", 180, "khanh.trinh");
-                thêmThẻĐoạnChatHộpThoại("Bảo Ngọc (@bao.ngoc)", "BN", "Voucher ShopeeFood Giảm 50K Đơn 100K", "🔒 Đang khóa 500 SS", "Mình đã gửi mã bí mật vào khung chat rồi nhé!", "Hôm qua", "SPFOOD50K-USER22", 500, "bao.ngoc");
+                // Đọc tin nhắn mới nhất
+                String khoTinNhắn = bộLưuTrữVí.getString("DANH_SACH_TIN_NHAN_" + idPhòng, "");
+                if (!khoTinNhắn.isEmpty()) {
+                    String[] cácTin = khoTinNhắn.split(";;");
+                    String tinCuối = cácTin[cácTin.length - 1];
+                    String[] mảngTin = tinCuối.split("\\|\\|");
+                    if (mảngTin.length >= 5) {
+                        nộiDungCuối = mảngTin[3];
+                        thờiGianCuối = mảngTin[4];
+                    }
+                }
+
+                String tênĐốiTácHiểnThị = sellerName;
+                String avatarĐốiTácHiểnThị = sellerAvatar;
+
+                if (usernameHiệnTại.equalsIgnoreCase(buyerUser)) {
+                    tênĐốiTácHiểnThị = sellerName;
+                    avatarĐốiTácHiểnThị = sellerAvatar;
+                } else {
+                    tênĐốiTácHiểnThị = buyerName + " (@" + buyerUser + ")";
+                    avatarĐốiTácHiểnThị = buyerUser.substring(0, Math.min(2, buyerUser.length())).toUpperCase();
+                }
+
+                String trạngTháiStr = làChatBạnBè ? "💬 Bạn bè cộng đồng SSharing" : (đãHoànTất ? "🔒 Đã hoàn tất - Khóa lưu trữ tự động sau 3 ngày" : "🔒 Đang khóa " + giáXu + " SS");
+                String usernameThựcĐốiTác = usernameHiệnTại.equalsIgnoreCase(buyerUser) ? sellerName : buyerUser;
+
+                thêmThẻĐoạnChatHộpThoại(
+                        tênĐốiTácHiểnThị,
+                        avatarĐốiTácHiểnThị,
+                        tênVoucher,
+                        trạngTháiStr,
+                        nộiDungCuối,
+                        thờiGianCuối,
+                        mãCode,
+                        giáXu,
+                        usernameThựcĐốiTác
+                );
             }
-        } else if ("SUPPORT".equals(tabĐangChọn)) {
+        }
+
+        if ("SUPPORT".equals(tabĐangChọn)) {
             thêmThẻĐoạnChatHỗTrợCSKH("🎧 Tổng Đài Trọng Tài CSKH SSharing", "CS", "Hệ thống tiếp nhận tranh chấp & giải quyết khiếu nại Escrow 24/7", "🛡️ Trọng tài đã xác minh giao dịch của bạn an toàn 100%", "Vừa xong");
-        } else {
-            thêmThẻĐoạnChatHộpThoại("Gia Bảo (@gia.bao)", "GB", "Voucher BeCar Giảm 30K Đơn Từ 60K", "✓ Đã giải ngân 220 SS", "Giao dịch đã giải ngân thành công vào ví người bán.", "19/10", "BECAR30K-USER44", 220, "gia.bao");
+        } else if ("HISTORY".equals(tabĐangChọn) && containerDanhSáchĐoạnChat.getChildCount() == 0) {
+            thêmThẻĐoạnChatHộpThoại("Gia Bảo (@gia.bao)", "GB", "Voucher BeCar Giảm 30K Đơn Từ 60K", "🔒 Đã hoàn tất - Khóa lưu trữ tự động sau 3 ngày", "Giao dịch đã giải ngân thành công vào ví người bán.", "19/10", "BECAR30K-USER44", 220, "gia.bao");
         }
     }
 

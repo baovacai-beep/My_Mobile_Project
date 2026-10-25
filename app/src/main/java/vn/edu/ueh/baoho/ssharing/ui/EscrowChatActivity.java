@@ -175,32 +175,53 @@ public class EscrowChatActivity extends AppCompatActivity {
             nhãnUyTínĐốiTác.setText("96% Uy tín  ★ 4.8 (eKYC)");
         }
 
-        // Kiểm tra xem giao dịch đã hoàn tất chưa
-        String danhSáchĐãBánHệThống = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
+        // Phân định rõ Màn Hình Chat Bạn Bè Thường vs Màn Hình Chat Ký Quỹ Mua Bán/Trao Đổi Voucher
+        boolean làChatTròChuyệnXãHội = (dữLiệuÝĐịnh != null && dữLiệuÝĐịnh.getBooleanExtra("EXTRA_IS_SOCIAL_CHAT", false))
+                || (giáXuEscrow == 0 && (mãBíMậtVoucher.startsWith("CHAT-") || "HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher)));
 
-        if (danhSáchĐãBánHệThống.contains(mãBíMậtVoucher)) {
-            if (nhãnTrạngTháiEscrow != null) {
-                nhãnTrạngTháiEscrow.setText("✓ Đã giải phóng: " + String.format("%,d", giáXuEscrow) + " SS cho " + tênNgườiBán);
-                nhãnTrạngTháiEscrow.setTextColor(Color.parseColor("#00E676"));
-            }
-            if (nhãnĐếmLùiEscrow != null) {
-                nhãnĐếmLùiEscrow.setText("✓ Giao dịch hoàn tất");
-            }
-            if (nútXácNhậnEscrow != null) {
-                nútXácNhậnEscrow.setEnabled(false);
-                nútXácNhậnEscrow.setText("✓ Đã Giải Phóng Xu (Giao Dịch Hoàn Tất)");
-            }
-            if (nútBáoCáoLỗiEscrow != null) {
-                nútBáoCáoLỗiEscrow.setVisibility(View.GONE);
-            }
+        if (làChatTròChuyệnXãHội) {
+            View cardEscrowStatus = findViewById(R.id.cardEscrowStatus);
+            View cardVoucherInfo = findViewById(R.id.cardVoucherInfo);
+            if (cardEscrowStatus != null) cardEscrowStatus.setVisibility(View.GONE);
+            if (cardVoucherInfo != null) cardVoucherInfo.setVisibility(View.GONE);
+            if (nhãnThôngBáoHệThốngĐầu != null) nhãnThôngBáoHệThốngĐầu.setVisibility(View.GONE);
+            if (nútXácNhậnEscrow != null) nútXácNhậnEscrow.setVisibility(View.GONE);
+            if (nútBáoCáoLỗiEscrow != null) nútBáoCáoLỗiEscrow.setVisibility(View.GONE);
         } else {
-            if (nhãnTrạngTháiEscrow != null) {
-                nhãnTrạngTháiEscrow.setText("Đang tạm giữ: " + String.format("%,d", giáXuEscrow) + " SS");
+            // Trường hợp Mua Bán / Trao Đổi Voucher Ký Quỹ Escrow Thực Tế
+            String danhSáchĐãBánHệThống = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
+            if (danhSáchĐãBánHệThống.contains(mãBíMậtVoucher)) {
+                if (nhãnTrạngTháiEscrow != null) {
+                    nhãnTrạngTháiEscrow.setText("⚖️ Phán quyết Trọng tài: Đã kết thúc & hoàn tất");
+                    nhãnTrạngTháiEscrow.setTextColor(Color.parseColor("#00E676"));
+                }
+                if (nhãnĐếmLùiEscrow != null) {
+                    nhãnĐếmLùiEscrow.setText("✓ Khóa lưu trữ tự động sau 3 ngày");
+                }
+                if (nútXácNhậnEscrow != null) {
+                    nútXácNhậnEscrow.setEnabled(false);
+                    nútXácNhậnEscrow.setText("✓ Giao Dịch Đã Phán Quyết Hoàn Tất (Đã Khóa)");
+                }
+                if (nútBáoCáoLỗiEscrow != null) {
+                    nútBáoCáoLỗiEscrow.setVisibility(View.GONE);
+                }
+                if (ôNhậpTinNhắn != null) {
+                    ôNhậpTinNhắn.setEnabled(false);
+                    ôNhậpTinNhắn.setHint("🔒 Đoạn chat giao dịch đã hoàn tất và tự động khóa lưu trữ sau 3 ngày.");
+                }
+                View btnSend = findViewById(R.id.btn_send_chat);
+                View btnAttach = findViewById(R.id.btn_attach_image_chat);
+                if (btnSend != null) btnSend.setVisibility(View.GONE);
+                if (btnAttach != null) btnAttach.setVisibility(View.GONE);
+            } else {
+                if (nhãnTrạngTháiEscrow != null) {
+                    nhãnTrạngTháiEscrow.setText("Đang tạm giữ: " + String.format("%,d", giáXuEscrow) + " SS");
+                }
+                if (nhãnThôngBáoHệThốngĐầu != null) {
+                    nhãnThôngBáoHệThốngĐầu.setText("🛡️ Hệ thống: Người mua đã khóa " + giáXuEscrow + " SS vào ví Escrow. Bạn có 60 phút để kiểm tra mã trước khi giải ngân cho " + tênNgườiBán + ".");
+                }
+                khởiĐộngBộĐếmLùiEscrow60Phút();
             }
-            if (nhãnThôngBáoHệThốngĐầu != null) {
-                nhãnThôngBáoHệThốngĐầu.setText("🛡️ Hệ thống: Người mua đã khóa " + giáXuEscrow + " SS vào ví Escrow. Bạn có 60 phút để kiểm tra mã trước khi giải ngân cho " + tênNgườiBán + ".");
-            }
-            khởiĐộngBộĐếmLùiEscrow60Phút();
         }
     }
 

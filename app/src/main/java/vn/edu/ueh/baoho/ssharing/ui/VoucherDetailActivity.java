@@ -75,6 +75,16 @@ public class VoucherDetailActivity extends AppCompatActivity {
             }
         }
 
+        String địnhDạngMã = "CODE_TEXT";
+        String nhãnĐịnhDạng = "📋 MÃ CHUỖI KHUYẾN MÃI NHẬP APP";
+        if (mãBíMậtKíchHoạt.contains("HLM1T1") || mãBíMậtKíchHoạt.contains("SBUX") || mãBíMậtKíchHoạt.contains("BARCODE")) {
+            địnhDạngMã = "BARCODE";
+            nhãnĐịnhDạng = "||| MÃ VẠCH (BARCODE) QUÉT TRỰC TIẾP TẠI CỬA HÀNG";
+        } else if (mãBíMậtKíchHoạt.contains("SPFOOD") || mãBíMậtKíchHoạt.contains("MOMO") || mãBíMậtKíchHoạt.contains("QR")) {
+            địnhDạngMã = "QR_IMAGE";
+            nhãnĐịnhDạng = "🖼 MÃ QR CODE 2D BẰNG CHỨNG HÌNH ẢNH THẬT";
+        }
+
         if (nhãnTiêuĐềChiTiết != null) nhãnTiêuĐềChiTiết.setText(tênVoucherChiTiết);
         if (nhãnTênThươngHiệu != null) {
             nhãnTênThươngHiệu.setText(làGianHàngChínhHãng ? "Thương hiệu: " + tênThươngHiệu : "Người bán C2C: " + tênNgườiBán);
@@ -82,7 +92,7 @@ public class VoucherDetailActivity extends AppCompatActivity {
         if (nhãnCấpĐộTínNhiệm != null) {
             nhãnCấpĐộTínNhiệm.setText(làGianHàngChínhHãng ? "✓ Đối Tác Chính Hãng (Trust Score: 100%)" : "👥 Thành viên cộng đồng (Trust Score: 98%)");
         }
-        if (nhãnMãCheMờ != null) nhãnMãCheMờ.setText("Mã bảo mật: " + cheMờMãBíMật(mãBíMậtKíchHoạt));
+        if (nhãnMãCheMờ != null) nhãnMãCheMờ.setText(nhãnĐịnhDạng + "\n" + cheMờMãBíMật(mãBíMậtKíchHoạt));
 
         // Kiểm tra xem đây có phải voucher do chính tài khoản này đăng bán không
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
@@ -172,9 +182,16 @@ public class VoucherDetailActivity extends AppCompatActivity {
         int sốDưMới = sốDưHiệnTại - giáXuVoucher;
         String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
 
+        String địnhDạngMã = "CODE_TEXT";
+        if (mãBíMậtKíchHoạt.contains("HLM1T1") || mãBíMậtKíchHoạt.contains("SBUX") || mãBíMậtKíchHoạt.contains("BARCODE")) {
+            địnhDạngMã = "BARCODE";
+        } else if (mãBíMậtKíchHoạt.contains("SPFOOD") || mãBíMậtKíchHoạt.contains("MOMO") || mãBíMậtKíchHoạt.contains("QR")) {
+            địnhDạngMã = "QR_IMAGE";
+        }
+
         // 1. Thêm vào Ví Voucher
         String danhSáchVoucherĐãLưu = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_LUU", "");
-        String voucherMớiThêm = mãBíMậtKíchHoạt + "::" + tênVoucherChiTiết + "::HSD: 31 T12 2026::BRAND";
+        String voucherMớiThêm = mãBíMậtKíchHoạt + "::" + tênVoucherChiTiết + "::HSD: 31 T12 2026::BRAND::" + địnhDạngMã;
         String danhSáchVoucherMới = voucherMớiThêm + (danhSáchVoucherĐãLưu.isEmpty() ? "" : ";;" + danhSáchVoucherĐãLưu);
 
         // 2. Thêm vào Lịch Sử Giao Dịch
@@ -195,6 +212,19 @@ public class VoucherDetailActivity extends AppCompatActivity {
     }
 
     private void mởPhòngChatEscrow() {
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String buyerUser = bộLưuTrữVí.getString("CURRENT_USERNAME", "baoho123");
+        String sellerClean = tênNgườiBán.toLowerCase().replaceAll("[^a-z0-9]", "").trim();
+        if (sellerClean.isEmpty()) sellerClean = "beo123";
+
+        String thờiGianThực = new SimpleDateFormat("HH:mm dd/MM", Locale.getDefault()).format(new Date());
+        String tbMới = "🛒 [GIAO DỊCH MỚI] Người dùng @" + buyerUser + " vừa đặt mua voucher '" + tênVoucherChiTiết + "' (" + giáXuVoucher + " SS)! Mở Escrow Chat để giao dịch.||" + thờiGianThực;
+        String tbGốc = bộLưuTrữVí.getString("DANH_SACH_THONG_BAO_" + sellerClean, "");
+        bộLưuTrữVí.edit()
+                .putString("DANH_SACH_THONG_BAO_" + sellerClean, tbMới + (tbGốc.isEmpty() ? "" : ";;" + tbGốc))
+                .putBoolean("HAS_UNREAD_NOTIFICATIONS_" + sellerClean, true)
+                .apply();
+
         Intent ýĐịnhChat = new Intent(this, EscrowChatActivity.class);
         ýĐịnhChat.putExtra("EXTRA_SELLER_NAME", tênNgườiBán);
         ýĐịnhChat.putExtra("EXTRA_SELLER_AVATAR", avatarNgườiBán);

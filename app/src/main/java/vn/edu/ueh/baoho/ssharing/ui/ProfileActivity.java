@@ -249,6 +249,13 @@ public class ProfileActivity extends AppCompatActivity {
             );
         }
 
+        View nútMenuP2PTrade = findViewById(R.id.btnMenuP2PTrade);
+        if (nútMenuP2PTrade != null) {
+            nútMenuP2PTrade.setOnClickListener(v ->
+                    startActivity(new Intent(this, P2PVoucherTradeActivity.class))
+            );
+        }
+
         View nútMenuSeller = findViewById(R.id.btnMenuSeller);
         if (nútMenuSeller != null) {
             nútMenuSeller.setOnClickListener(v ->

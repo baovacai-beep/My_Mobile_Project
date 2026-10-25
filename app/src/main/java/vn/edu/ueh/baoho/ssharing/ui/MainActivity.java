@@ -107,6 +107,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        View badgeRed = findViewById(R.id.viewNotificationBadgeRed);
+        if (badgeRed != null) {
+            boolean hasUnread = bộLưuTrữ.getBoolean("HAS_UNREAD_NOTIFICATIONS_" + usernameClean, true);
+            badgeRed.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
+        }
+
         cậpNhậtSốLượngTinNhắnBongBóngChat(bộLưuTrữ);
     }
 
@@ -281,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
         if (ảnhĐạiDiện != null) ảnhĐạiDiện.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         if (tênNgườiDùng != null) tênNgườiDùng.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         if (thẻSốDưXu != null) thẻSốDưXu.setOnClickListener(v -> startActivity(new Intent(this, WalletActivity.class)));
-        if (nútThôngBáo != null) nútThôngBáo.setOnClickListener(v -> Toast.makeText(this, "Không có thông báo mới", Toast.LENGTH_SHORT).show());
+        if (nútThôngBáo != null) nútThôngBáo.setOnClickListener(v -> startActivity(new Intent(this, NotificationCenterActivity.class)));
 
         View nútBạnBèHeader = findViewById(R.id.btnSocialFriendsHeader);
         if (nútBạnBèHeader != null) {
@@ -315,6 +321,37 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        càiĐặtCụmNútThaoTácNhanh();
+    }
+
+    private void hiểnThịTrungTâmThôngBáoHệThống() {
+        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String userClean = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123").toLowerCase().trim();
+        String danhSáchTB = bộLưuTrữCụcBộ.getString("DANH_SACH_THONG_BAO_" + userClean, "");
+
+        if (danhSáchTB.isEmpty()) {
+            Toast.makeText(this, "🔔 Hộp thư thông báo trống. Chưa có thông báo mới!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        String[] mảngTB = danhSáchTB.split(";;");
+        for (String item : mảngTB) {
+            if (item.trim().isEmpty()) continue;
+            String[] t = item.split("\\|\\|");
+            String nộiDung = t[0];
+            String thờiGian = t.length > 1 ? t[1] : "";
+            sb.append("📌 ").append(nộiDung).append("\n⏱ ").append(thờiGian).append("\n───────────────\n");
+        }
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("🔔 THÔNG BÁO HỆ THỐNG SSHARING")
+                .setMessage(sb.toString().trim())
+                .setPositiveButton("Đã đọc", null)
+                .show();
+    }
+
+    private void càiĐặtCụmNútThaoTácNhanh() {
         // QUICK ACTION HUB (4 NÚT TRÒN)
         View nútTrạm0Đ = findViewById(R.id.btnQuickTram0D);
         View nútGiựtDeal = findViewById(R.id.btnQuickFlashGrab);

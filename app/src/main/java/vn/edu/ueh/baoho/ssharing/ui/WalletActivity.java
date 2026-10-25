@@ -282,7 +282,13 @@ public class WalletActivity extends AppCompatActivity {
         containerVoucherĐãLưuĐộng.removeAllViews();
 
         String danhSáchChuỗiVoucher = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_LUU", "");
-        if (danhSáchChuỗiVoucher.isEmpty()) return;
+        if (danhSáchChuỗiVoucher.isEmpty()) {
+            danhSáchChuỗiVoucher = "HLM1T1-USER33::Voucher Highlands Mua 1 Tặng 1::HSD: 31 T12 2026::FOOD::BARCODE;;" +
+                    "SPFOOD50K-USER22::Voucher ShopeeFood Giảm 50K::HSD: 31 T12 2026::SHOPEE::QR_IMAGE;;" +
+                    "SBUX20K-OCTOBER99::Voucher Starbucks Giảm 20K::HSD: 31 T12 2026::BRAND::BARCODE;;" +
+                    "GRAB50K-COMMUNITY88::Voucher GrabCar Giảm 50K::HSD: 31 T12 2026::GRAB::CODE_TEXT;;" +
+                    "MOMO30K-OCTOBER77::Voucher MoMo Hoàn 30K Nạp ĐT::HSD: 31 T12 2026::SHOP::QR_IMAGE";
+        }
 
         String[] cácVoucher = danhSáchChuỗiVoucher.split(";;");
         for (String chuỗiVoucher : cácVoucher) {
@@ -294,8 +300,9 @@ public class WalletActivity extends AppCompatActivity {
             String tênVoucher = mảngVoucher[1];
             String hạnDùng = mảngVoucher.length > 2 ? mảngVoucher[2] : "HSD: 31 T12 2026";
             String loạiIcon = mảngVoucher.length > 3 ? mảngVoucher[3] : "FLASH";
+            String địnhDạngMã = mảngVoucher.length > 4 ? mảngVoucher[4] : "CODE_TEXT";
 
-            // Tạo Card Voucher Đã Giựt
+            // Tạo Card Voucher
             CardView thẻVoucher = new CardView(this);
             thẻVoucher.setCardBackgroundColor(Color.parseColor("#161327"));
             thẻVoucher.setRadius(32);
@@ -316,10 +323,10 @@ public class WalletActivity extends AppCompatActivity {
             iconMặtHàng.setId(View.generateViewId());
             iconMặtHàng.setBackgroundResource(R.drawable.bg_rounded_icon);
             iconMặtHàng.setPadding(24, 24, 24, 24);
-            if ("GRAB".equals(loạiIcon)) {
+            if ("GRAB".equalsIgnoreCase(loạiIcon)) {
                 iconMặtHàng.setImageResource(R.drawable.ic_wallet);
                 iconMặtHàng.setColorFilter(Color.parseColor("#FF4081"));
-            } else if ("SHOPEE".equals(loạiIcon)) {
+            } else if ("SHOPEE".equalsIgnoreCase(loạiIcon)) {
                 iconMặtHàng.setImageResource(R.drawable.ic_market);
                 iconMặtHàng.setColorFilter(Color.parseColor("#815BF5"));
             } else {
@@ -330,21 +337,34 @@ public class WalletActivity extends AppCompatActivity {
             thôngSốIcon.addRule(RelativeLayout.CENTER_VERTICAL);
             iconMặtHàng.setLayoutParams(thôngSốIcon);
 
-            // Nút Sao Chép Mã
-            Button nútSaoChép = new Button(this);
-            nútSaoChép.setId(View.generateViewId());
-            nútSaoChép.setText("Sao chép mã");
-            nútSaoChép.setTextSize(12);
-            nútSaoChép.setTextColor(Color.parseColor("#E2DEEC"));
-            nútSaoChép.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#26213D")));
+            // Nút Thao Tác Theo Định Dạng (Mã Vạch, QR Code, Sao chép)
+            Button nútThaoTácMã = new Button(this);
+            nútThaoTácMã.setId(View.generateViewId());
+            nútThaoTácMã.setTextSize(11);
+            nútThaoTácMã.setTextColor(Color.parseColor("#E2DEEC"));
+            nútThaoTácMã.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#26213D")));
             RelativeLayout.LayoutParams thôngSốNút = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT,
                     110
             );
             thôngSốNút.addRule(RelativeLayout.ALIGN_PARENT_END);
             thôngSốNút.addRule(RelativeLayout.CENTER_VERTICAL);
-            nútSaoChép.setLayoutParams(thôngSốNút);
-            nútSaoChép.setOnClickListener(vương -> thựcHiệnSaoChépMãVoucher(mãBíMật));
+            nútThaoTácMã.setLayoutParams(thôngSốNút);
+
+            String nhãnLoạiMã;
+            if ("BARCODE".equalsIgnoreCase(địnhDạngMã)) {
+                nútThaoTácMã.setText("||| Mã vạch");
+                nútThaoTácMã.setOnClickListener(v -> hiểnThịDialogMãVạch(tênVoucher, mãBíMật));
+                nhãnLoạiMã = "||| MÃ VẠCH CỬA HÀNG - " + hạnDùng;
+            } else if ("QR_IMAGE".equalsIgnoreCase(địnhDạngMã)) {
+                nútThaoTácMã.setText("🖼 Mã QR");
+                nútThaoTácMã.setOnClickListener(v -> hiểnThịDialogMãQR(tênVoucher, mãBíMật));
+                nhãnLoạiMã = "🖼 MÃ QR ANH CHỤP - " + hạnDùng;
+            } else {
+                nútThaoTácMã.setText("📋 Sao chép mã");
+                nútThaoTácMã.setOnClickListener(v -> thựcHiệnSaoChépMãVoucher(mãBíMật));
+                nhãnLoạiMã = "📋 MÃ CHUỖI SAO CHÉP - " + hạnDùng;
+            }
 
             // Khung Tiêu Đề & Hạn Dùng
             LinearLayout khungChiTiết = new LinearLayout(this);
@@ -355,7 +375,7 @@ public class WalletActivity extends AppCompatActivity {
             );
             thôngSốChiTiết.addRule(RelativeLayout.CENTER_VERTICAL);
             thôngSốChiTiết.addRule(RelativeLayout.RIGHT_OF, iconMặtHàng.getId());
-            thôngSốChiTiết.addRule(RelativeLayout.LEFT_OF, nútSaoChép.getId());
+            thôngSốChiTiết.addRule(RelativeLayout.LEFT_OF, nútThaoTácMã.getId());
             thôngSốChiTiết.leftMargin = 24;
             thôngSốChiTiết.rightMargin = 16;
             khungChiTiết.setLayoutParams(thôngSốChiTiết);
@@ -369,7 +389,7 @@ public class WalletActivity extends AppCompatActivity {
             nhãnTên.setEllipsize(android.text.TextUtils.TruncateAt.END);
 
             TextView nhãnBadge = new TextView(this);
-            nhãnBadge.setText("🎉 Deal Giờ Vàng (Đã Giựt) - " + hạnDùng);
+            nhãnBadge.setText(nhãnLoạiMã);
             nhãnBadge.setTextColor(Color.parseColor("#FFD54F"));
             nhãnBadge.setTextSize(10);
 
@@ -378,11 +398,99 @@ public class WalletActivity extends AppCompatActivity {
 
             khungNộiDung.addView(iconMặtHàng);
             khungNộiDung.addView(khungChiTiết);
-            khungNộiDung.addView(nútSaoChép);
+            khungNộiDung.addView(nútThaoTácMã);
 
             thẻVoucher.addView(khungNộiDung);
             containerVoucherĐãLưuĐộng.addView(thẻVoucher);
         }
+    }
+
+    private void hiểnThịDialogMãVạch(String tênVoucher, String mãCode) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setGravity(Gravity.CENTER);
+        layout.setPadding(30, 30, 30, 30);
+
+        TextView tvTitle = new TextView(this);
+        tvTitle.setText("||| MÃ VẠCH (BARCODE) QUÉT TẠI CỬA HÀNG");
+        tvTitle.setTextColor(Color.parseColor("#43E5A0"));
+        tvTitle.setTextSize(13);
+        tvTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvTitle.setGravity(Gravity.CENTER);
+
+        TextView tvBarcodeBars = new TextView(this);
+        tvBarcodeBars.setText("|| ||| |||| | ||| |||| || ||| |");
+        tvBarcodeBars.setTextColor(Color.WHITE);
+        tvBarcodeBars.setTextSize(36);
+        tvBarcodeBars.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvBarcodeBars.setGravity(Gravity.CENTER);
+        tvBarcodeBars.setPadding(0, 20, 0, 10);
+
+        TextView tvCodeString = new TextView(this);
+        tvCodeString.setText("Mã Voucher String: " + mãCode);
+        tvCodeString.setTextColor(Color.parseColor("#FFD54F"));
+        tvCodeString.setTextSize(15);
+        tvCodeString.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvCodeString.setGravity(Gravity.CENTER);
+
+        TextView tvSub = new TextView(this);
+        tvSub.setText("Đưa màn hình mã vạch này cho nhân viên thu ngân quét áp dụng voucher " + tênVoucher);
+        tvSub.setTextColor(Color.parseColor("#A09CAB"));
+        tvSub.setTextSize(11);
+        tvSub.setGravity(Gravity.CENTER);
+        tvSub.setPadding(0, 10, 0, 0);
+
+        layout.addView(tvTitle);
+        layout.addView(tvBarcodeBars);
+        layout.addView(tvCodeString);
+        layout.addView(tvSub);
+
+        new AlertDialog.Builder(this)
+                .setTitle("🎟 " + tênVoucher)
+                .setView(layout)
+                .setPositiveButton("📋 Sao Chép Mã String", (dialog, which) -> thựcHiệnSaoChépMãVoucher(mãCode))
+                .setNegativeButton("Đóng", null)
+                .show();
+    }
+
+    private void hiểnThịDialogMãQR(String tênVoucher, String mãCode) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setGravity(Gravity.CENTER);
+        layout.setPadding(30, 30, 30, 30);
+
+        TextView tvTitle = new TextView(this);
+        tvTitle.setText("🖼 MÃ QR CODE 2D BẰNG CHỨNG THẬT");
+        tvTitle.setTextColor(Color.parseColor("#815BF5"));
+        tvTitle.setTextSize(13);
+        tvTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvTitle.setGravity(Gravity.CENTER);
+
+        ImageView imgQR = new ImageView(this);
+        imgQR.setImageResource(R.drawable.ic_document_file);
+        imgQR.setColorFilter(Color.parseColor("#815BF5"));
+        LinearLayout.LayoutParams paramsQR = new LinearLayout.LayoutParams(200, 200);
+        paramsQR.topMargin = 20;
+        paramsQR.bottomMargin = 20;
+        imgQR.setLayoutParams(paramsQR);
+
+        TextView tvCodeString = new TextView(this);
+        tvCodeString.setText("Mã Bí Mật String: " + mãCode);
+        tvCodeString.setTextColor(Color.parseColor("#6EE7B7"));
+        tvCodeString.setTextSize(15);
+        tvCodeString.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvCodeString.setGravity(Gravity.CENTER);
+
+        layout.addView(tvTitle);
+        layout.addView(imgQR);
+        layout.addView(tvCodeString);
+
+        new AlertDialog.Builder(this)
+                .setTitle("🎟 " + tênVoucher)
+                .setView(layout)
+                .setPositiveButton("📋 Sao Chép Mã String", (dialog, which) -> thựcHiệnSaoChépMãVoucher(mãCode))
+                .setNegativeButton("Đóng", null)
+                .show();
     }
 
     private void hiểnThịChiTiếtGiaoDịch(String mãGiaoDịch, String tiêuĐề, String sốXuThayĐổi, String thờiGian, String loạiGiaoDịch, String trạngThái, String môTả) {
