@@ -69,18 +69,58 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         String danhSáchTàiKhoản = bộLưuTrữCụcBộ.getString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", "");
 
-        // Mã hóa MD5 cho mật khẩu "admin123"
+        // Mã hóa MD5 cho mật khẩu "admin123" và "123456"
         String mậtKhẩuMD5Admin = MaHoaMD5Utils.maHoaMatKhauMD5("admin123");
-        String tàiKhoảnMẫuAdmin = "baoho123||" + mậtKhẩuMD5Admin + "||Gia Bảo Hồ||baoho123@ssharing.vn||0908123456";
+        String mậtKhẩuMD5123456 = MaHoaMD5Utils.maHoaMatKhauMD5("123456");
 
-        if (danhSáchTàiKhoản.isEmpty() || !danhSáchTàiKhoản.contains("baoho123")) {
-            String danhSáchMới = tàiKhoảnMẫuAdmin + (danhSáchTàiKhoản.isEmpty() ? "" : ";;" + danhSáchTàiKhoản);
+        String tàiKhoảnChuỗiMẫu = "baoho123||" + mậtKhẩuMD5Admin + "||Gia Bảo Hồ||baoho123@ssharing.vn||0908123456;;" +
+                "Beo123||" + mậtKhẩuMD5123456 + "||Gia Beo||beo123@ssharing.vn||0913672861;;" +
+                "minh.triet||" + mậtKhẩuMD5123456 + "||Minh Triết||minh.triet@ssharing.vn||0909111222;;" +
+                "bao.ngoc||" + mậtKhẩuMD5123456 + "||Bảo Ngọc||bao.ngoc@ssharing.vn||0909333444;;" +
+                "khanh.trinh||" + mậtKhẩuMD5123456 + "||Khánh Trình||khanh.trinh@ssharing.vn||0909555666;;" +
+                "gia.bao||" + mậtKhẩuMD5123456 + "||Gia Bảo||gia.bao@ssharing.vn||0909777888;;" +
+                "hoang.long||" + mậtKhẩuMD5123456 + "||Hoàng Long||hoang.long@ssharing.vn||0909999000";
+
+        if (danhSáchTàiKhoản.isEmpty() || !danhSáchTàiKhoản.contains("Beo123")) {
             bộLưuTrữCụcBộ.edit()
-                    .putString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", danhSáchMới)
+                    .putString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", tàiKhoảnChuỗiMẫu)
                     .putString("SAVED_USERNAME", "baoho123")
                     .putString("SAVED_PASSWORD", "admin123")
                     .apply();
         }
+
+        // Tự động khởi tạo & đồng bộ tất cả tài khoản cộng đồng thật lên Firebase Cloud Firestore
+        đồngBộTấtCảTàiKhoảnCộngĐồngLênFirebaseFirestore();
+    }
+
+    private void đồngBộTấtCảTàiKhoảnCộngĐồngLênFirebaseFirestore() {
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            String md5PassDefault = MaHoaMD5Utils.maHoaMatKhauMD5("123456");
+            String md5PassAdmin = MaHoaMD5Utils.maHoaMatKhauMD5("admin123");
+
+            tạoHoặcCậpNhậtUserFirestore(db, "baoho123", "Gia Bảo Hồ", "0908123456", "baoho123@ssharing.vn", md5PassAdmin, 96, true);
+            tạoHoặcCậpNhậtUserFirestore(db, "Beo123", "Gia Beo", "0913672861", "beo123@ssharing.vn", md5PassDefault, 98, true);
+            tạoHoặcCậpNhậtUserFirestore(db, "minh.triet", "Minh Triết", "0909111222", "minh.triet@ssharing.vn", md5PassDefault, 96, true);
+            tạoHoặcCậpNhậtUserFirestore(db, "bao.ngoc", "Bảo Ngọc", "0909333444", "bao.ngoc@ssharing.vn", md5PassDefault, 94, true);
+            tạoHoặcCậpNhậtUserFirestore(db, "khanh.trinh", "Khánh Trình", "0909555666", "khanh.trinh@ssharing.vn", md5PassDefault, 92, true);
+            tạoHoặcCậpNhậtUserFirestore(db, "gia.bao", "Gia Bảo", "0909777888", "gia.bao@ssharing.vn", md5PassDefault, 90, false);
+            tạoHoặcCậpNhậtUserFirestore(db, "hoang.long", "Hoàng Long", "0909999000", "hoang.long@ssharing.vn", md5PassDefault, 88, false);
+        } catch (Exception ignored) {}
+    }
+
+    private void tạoHoặcCậpNhậtUserFirestore(com.google.firebase.firestore.FirebaseFirestore db, String username, String fullName, String phone, String email, String md5Pass, int trustScore, boolean isVerified) {
+        java.util.Map<String, Object> userData = new java.util.HashMap<>();
+        userData.put("username", username);
+        userData.put("fullName", fullName);
+        userData.put("phone", phone);
+        userData.put("email", email);
+        userData.put("md5Password", md5Pass);
+        userData.put("trustScore", trustScore);
+        userData.put("isEkycVerified", isVerified);
+        userData.put("createdAt", System.currentTimeMillis());
+
+        db.collection("users").document(username).set(userData, com.google.firebase.firestore.SetOptions.merge());
     }
 
     private void tựĐộngĐiềnTàiKhoảnĐãGhiNhớTrướcĐó() {
@@ -200,6 +240,7 @@ public class LoginActivity extends AppCompatActivity {
         String danhSáchChuỗiTàiKhoản = bộLưuTrữVí.getString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", "");
 
         boolean đăngNhậpThànhCông = false;
+        String usernameThànhCông = "baoho123";
         String họTênĐăngNhậpThànhCông = "Gia Bảo Hồ";
         String emailThànhCông = tênĐăngNhậpNhập;
         String sốĐiệnThoạiThànhCông = "0908123456";
@@ -220,6 +261,7 @@ public class LoginActivity extends AppCompatActivity {
             if ((tênĐăngNhậpNhập.equalsIgnoreCase(tênUser) || tênĐăngNhậpNhập.equalsIgnoreCase(emailLưu) || tênĐăngNhậpNhập.equals(sđtLưu))
                     && mậtKhẩuMD5Nhập.equals(mậtKhẩuMD5Lưu)) {
                 đăngNhậpThànhCông = true;
+                usernameThànhCông = tênUser;
                 họTênĐăngNhậpThànhCông = họTênLưu;
                 emailThànhCông = emailLưu;
                 sốĐiệnThoạiThànhCông = sđtLưu;
@@ -230,7 +272,7 @@ public class LoginActivity extends AppCompatActivity {
         if (đăngNhậpThànhCông) {
             SharedPreferences.Editor trìnhSửa = bộLưuTrữVí.edit();
             trìnhSửa.putBoolean("IS_LOGGED_IN", true);
-            trìnhSửa.putString("CURRENT_USERNAME", tênĐăngNhậpNhập);
+            trìnhSửa.putString("CURRENT_USERNAME", usernameThànhCông);
             trìnhSửa.putString("CURRENT_USER_NAME", họTênĐăngNhậpThànhCông);
             trìnhSửa.putString("CURRENT_USER_EMAIL", emailThànhCông);
             trìnhSửa.putString("CURRENT_USER_PHONE", sốĐiệnThoạiThànhCông);

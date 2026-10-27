@@ -305,11 +305,61 @@ public class SellerDashboardActivity extends AppCompatActivity {
         if (containerVoucherĐangBán == null) return;
         containerVoucherĐangBán.removeAllViews();
 
-        thêmThẻKênhBánChờXácNhận("SHOPEE", "Voucher Shopee 50K - Điện tử", "1,500 SS", "🔒 Đang tạm giữ Escrow cho người mua Minh Triết (MT)", "Minh Triết", "MT", "SP50K-OCTOBER99", 1500);
-        thêmThẻKênhBánChờXácNhận("GRAB", "Giảm 50K chuyến xe GrabCar tiếp theo", "350 SS", "🔒 Đang tạm giữ Escrow cho người mua Minh Anh (MA)", "Minh Anh (@minh.anh)", "MA", "GRAB50K-COMMUNITY88", 350);
+        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String usernameHiệnTại = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123").toLowerCase().trim();
+        String khoPendingGốc = bộLưuTrữCụcBộ.getString("DANH_SACH_ESCROW_PENDING_" + usernameHiệnTại, "");
+        String danhSáchĐãBánHệThống = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
+
+        int sốLượngChờ = 0;
+
+        if (!khoPendingGốc.isEmpty()) {
+            String[] mảng = khoPendingGốc.split(";;");
+            for (String item : mảng) {
+                if (item.trim().isEmpty()) continue;
+                String[] t = item.split("::");
+                if (t.length >= 3) {
+                    String mãCode = t[0];
+                    String tênVoucher = t[1];
+                    String giáText = t[2];
+                    String buyerName = t.length > 3 ? t[3] : "Người mua";
+                    String buyerAvatar = t.length > 4 ? t[4] : "NM";
+
+                    // Nếu mã voucher này đã hoàn tất/giải ngân xong -> Bỏ qua không hiển thị trong Chờ Xác Nhận nữa
+                    if (danhSáchĐãBánHệThống.contains(mãCode)) continue;
+
+                    int giáXuInt = 200;
+                    try {
+                        giáXuInt = Integer.parseInt(giáText.replace("SS", "").replaceAll("[^0-9]", "").trim());
+                    } catch (Exception ignored) {}
+
+                    thêmThẻKênhBánChờXácNhận("SHOP", tênVoucher, giáText, "🔒 Đang tạm giữ Escrow cho người mua " + buyerName, buyerName, buyerAvatar, mãCode, giáXuInt);
+                    sốLượngChờ++;
+                }
+            }
+        }
+
+        // Kiểm tra các mẫu nếu chưa hoàn tất
+        if (!danhSáchĐãBánHệThống.contains("SP50K-OCTOBER99")) {
+            thêmThẻKênhBánChờXácNhận("SHOPEE", "Voucher Shopee 50K - Điện tử", "1,500 SS", "🔒 Đang tạm giữ Escrow cho người mua Minh Triết (MT)", "Minh Triết", "MT", "SP50K-OCTOBER99", 1500);
+            sốLượngChờ++;
+        }
+        if (!danhSáchĐãBánHệThống.contains("GRAB50K-COMMUNITY88")) {
+            thêmThẻKênhBánChờXácNhận("GRAB", "Giảm 50K chuyến xe GrabCar tiếp theo", "350 SS", "🔒 Đang tạm giữ Escrow cho người mua Minh Anh (MA)", "Minh Anh (@minh.anh)", "MA", "GRAB50K-COMMUNITY88", 350);
+            sốLượngChờ++;
+        }
+
+        if (sốLượngChờ == 0) {
+            TextView tvEmpty = new TextView(this);
+            tvEmpty.setText("Chưa có đơn hàng mới nào chờ xác nhận.");
+            tvEmpty.setTextColor(Color.parseColor("#A09CAB"));
+            tvEmpty.setTextSize(13);
+            tvEmpty.setGravity(Gravity.CENTER);
+            tvEmpty.setPadding(0, 40, 0, 40);
+            containerVoucherĐangBán.addView(tvEmpty);
+        }
 
         if (tabChờXácNhận != null) {
-            tabChờXácNhận.setText("Chờ xác nhận (2)");
+            tabChờXácNhận.setText("Chờ xác nhận (" + sốLượngChờ + ")");
         }
     }
 
@@ -317,13 +367,39 @@ public class SellerDashboardActivity extends AppCompatActivity {
         if (containerVoucherĐangBán == null) return;
         containerVoucherĐangBán.removeAllViews();
 
-        thêmThẻKênhBánĐãBán("HIGHLANDS", "Voucher Highlands Coffee Mua 1 Tặng 1 Trà Sen Vàng", "+180 SS", "✅ Đã giải ngân thành công vào ví người bán", "19/10/2026 15:30");
-        thêmThẻKênhBánĐãBán("MOMO", "Voucher MoMo Hoàn 30K Nạp Tiền ĐT", "+250 SS", "✅ Đã giải ngân thành công vào ví người bán", "19/10/2026 14:20");
-        thêmThẻKênhBánĐãBán("LAZADA", "Voucher Lazada 50K Đơn Từ 150K", "+420 SS", "✅ Đã giải ngân thành công vào ví người bán", "18/10/2026 18:45");
-        thêmThẻKênhBánĐãBán("PHÚC LONG", "Voucher Phúc Long 30K Trà Sữa", "+200 SS", "✅ Đã giải ngân thành công vào ví người bán", "18/10/2026 11:10");
+        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String usernameHiệnTại = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123").toLowerCase().trim();
+        String khoĐãBánGốc = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_DA_BAN_CUA_TOI_" + usernameHiệnTại, "");
+
+        int sốLượngĐãBán = 0;
+
+        if (!khoĐãBánGốc.isEmpty()) {
+            String[] mảng = khoĐãBánGốc.split(";;");
+            for (String item : mảng) {
+                if (item.trim().isEmpty()) continue;
+                String[] t = item.split("::");
+                if (t.length >= 2) {
+                    String mãVoucher = t[0];
+                    String tênVoucher = t[1];
+                    String giáText = t.length > 2 ? "+" + t[2] : "+200 SS";
+                    String thờiGianText = t.length > 3 ? t[3] : "Vừa xong";
+
+                    thêmThẻKênhBánĐãBán("SHOP", tênVoucher, giáText, "✅ Đã giải ngân thành công vào ví người bán", thờiGianText);
+                    sốLượngĐãBán++;
+                }
+            }
+        }
+
+        if (sốLượngĐãBán == 0) {
+            thêmThẻKênhBánĐãBán("HIGHLANDS", "Voucher Highlands Coffee Mua 1 Tặng 1 Trà Sen Vàng", "+180 SS", "✅ Đã giải ngân thành công vào ví người bán", "19/10/2026 15:30");
+            thêmThẻKênhBánĐãBán("MOMO", "Voucher MoMo Hoàn 30K Nạp Tiền ĐT", "+250 SS", "✅ Đã giải ngân thành công vào ví người bán", "19/10/2026 14:20");
+            thêmThẻKênhBánĐãBán("LAZADA", "Voucher Lazada 50K Đơn Từ 150K", "+420 SS", "✅ Đã giải ngân thành công vào ví người bán", "18/10/2026 18:45");
+            thêmThẻKênhBánĐãBán("PHÚC LONG", "Voucher Phúc Long 30K Trà Sữa", "+200 SS", "✅ Đã giải ngân thành công vào ví người bán", "18/10/2026 11:10");
+            sốLượngĐãBán = 4;
+        }
 
         if (tabĐãBán != null) {
-            tabĐãBán.setText("Đã bán (45)");
+            tabĐãBán.setText("Đã bán (" + sốLượngĐãBán + ")");
         }
     }
 

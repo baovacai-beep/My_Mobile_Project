@@ -541,7 +541,7 @@
                 android:layout_height="44dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_outline_button"
-                android:text="🔎 Xem tất cả kết quả trong kho Voucher →"
+                android:text="Xem tất cả kết quả trong kho Voucher →"
                 android:textAllCaps="false"
                 android:textColor="#815BF5"
                 android:textSize="13sp"

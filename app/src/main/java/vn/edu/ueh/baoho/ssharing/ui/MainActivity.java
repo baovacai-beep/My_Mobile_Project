@@ -79,6 +79,26 @@ public class MainActivity extends AppCompatActivity {
         cậpNhậtKhungGợiÝDànhChoBạn();
     }
 
+    private static android.graphics.Bitmap giảiMãẢnhThuNhỏAnToàn(String path, int maxDim) {
+        if (path == null || path.isEmpty()) return null;
+        try {
+            android.graphics.BitmapFactory.Options opts = new android.graphics.BitmapFactory.Options();
+            opts.inJustDecodeBounds = true;
+            android.graphics.BitmapFactory.decodeFile(path, opts);
+            if (opts.outWidth <= 0 || opts.outHeight <= 0) return null;
+
+            int sample = 1;
+            while ((opts.outWidth / sample) > maxDim || (opts.outHeight / sample) > maxDim) {
+                sample *= 2;
+            }
+            opts.inJustDecodeBounds = false;
+            opts.inSampleSize = sample;
+            opts.inPreferredConfig = android.graphics.Bitmap.Config.RGB_565;
+            return android.graphics.BitmapFactory.decodeFile(path, opts);
+        } catch (Throwable ignored) {}
+        return null;
+    }
+
     private void cậpNhậtTênNgườiDùngMànChính(SharedPreferences bộLưuTrữ) {
         TextView nhãnTênUser = findViewById(R.id.tvUsername);
         ImageView ảnhĐạiDiệnHome = findViewById(R.id.imgAvatar);
@@ -98,12 +118,10 @@ public class MainActivity extends AppCompatActivity {
             String đườngDẫnẢnh = bộLưuTrữ.getString(keyAvatarCáNhân, "");
 
             if (đườngDẫnẢnh != null && !đườngDẫnẢnh.isEmpty() && new java.io.File(đườngDẫnẢnh).exists()) {
-                try {
-                    android.graphics.Bitmap bitmapAvatar = android.graphics.BitmapFactory.decodeFile(đườngDẫnẢnh);
-                    if (bitmapAvatar != null) {
-                        ảnhĐạiDiệnHome.setImageBitmap(bitmapAvatar);
-                    }
-                } catch (Throwable ignored) {}
+                android.graphics.Bitmap bitmapAvatar = giảiMãẢnhThuNhỏAnToàn(đườngDẫnẢnh, 200);
+                if (bitmapAvatar != null) {
+                    ảnhĐạiDiệnHome.setImageBitmap(bitmapAvatar);
+                }
             }
         }
 
@@ -558,12 +576,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // Các voucher chính chủ do các tài khoản cá nhân thực tế sở hữu và quản lý
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "STARBUCKS", "Voucher Starbucks Giảm 30K Đơn 70K", 200, "300 SS", "Cộng đồng", false, "Starbucks Coffee", "Hồ Gia Bảo (@baoho123)", "BH", "SBUX30K-BH");
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "GRAB", "Voucher GrabCar Giảm 50K Chuyến Đêm", 350, "500 SS", "Cộng đồng", false, "Grab Vietnam", "Gia Beo (@Beo123)", "GB", "GRAB50K-BEO");
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "SHOPEE", "Voucher ShopeeFood Giảm 50K Đơn 100K", 500, "650 SS", "Cộng đồng", false, "ShopeeFood", "Bảo Ngọc (@bao.ngoc)", "BN", "SPFOOD50K-USER22");
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "HIGHLANDS", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", 180, "250 SS", "Cộng đồng", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-USER33");
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "BE", "Voucher BeCar Giảm 30K Đơn Từ 60K", 220, "300 SS", "Cộng đồng", false, "Be Group", "Gia Bảo (@gia.bao)", "GB", "BECAR30K-USER44");
+        // Các voucher chính chủ do các tài khoản cá nhân thực tế sở hữu và quản lý (Chỉ thêm NẾU CHƯA BỊ MUA)
+        if (!danhSáchĐãBánHệThống.contains("SBUX30K-BH"))
+            thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "STARBUCKS", "Voucher Starbucks Giảm 30K Đơn 70K", 200, "300 SS", "Cộng đồng", false, "Starbucks Coffee", "Hồ Gia Bảo (@baoho123)", "BH", "SBUX30K-BH");
+        if (!danhSáchĐãBánHệThống.contains("GRAB50K-BEO"))
+            thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "GRAB", "Voucher GrabCar Giảm 50K Chuyến Đêm", 350, "500 SS", "Cộng đồng", false, "Grab Vietnam", "Gia Beo (@Beo123)", "GB", "GRAB50K-BEO");
+        if (!danhSáchĐãBánHệThống.contains("SPFOOD50K-USER22"))
+            thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "SHOPEE", "Voucher ShopeeFood Giảm 50K Đơn 100K", 500, "650 SS", "Cộng đồng", false, "ShopeeFood", "Bảo Ngọc (@bao.ngoc)", "BN", "SPFOOD50K-USER22");
+        if (!danhSáchĐãBánHệThống.contains("HLM1T1-USER33"))
+            thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "HIGHLANDS", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", 180, "250 SS", "Cộng đồng", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-USER33");
+        if (!danhSáchĐãBánHệThống.contains("BECAR30K-USER44"))
+            thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "BE", "Voucher BeCar Giảm 30K Đơn Từ 60K", 220, "300 SS", "Cộng đồng", false, "Be Group", "Gia Bảo (@gia.bao)", "GB", "BECAR30K-USER44");
     }
 
     private void cậpNhậtDanhSáchẨmThực() {
