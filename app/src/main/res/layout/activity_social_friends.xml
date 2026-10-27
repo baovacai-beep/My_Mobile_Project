@@ -113,7 +113,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="🤝 Bạn Bè 2 Chiều"
+                            android:text="Bạn Bè"
                             android:textColor="#A09CAB"
                             android:textSize="11sp" />
                     </LinearLayout>

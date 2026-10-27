@@ -178,15 +178,15 @@ public class MainActivity extends AppCompatActivity {
                 "https://cdn-media.sforum.vn/storage/app/media/wp-content/uploads/2024/04/shopee-rewards-thumbnail.jpg", R.drawable.banner_shopeefood
         ));
         danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
-                "☕ STARBUCKS COFFEE WEEKEND", "Mua 1 Tặng 1 Trà/Cà phê tất cả chi nhánh", 160, "☕", "STARBUCKS", "SBUX-M1T1-SLIDER", Color.parseColor("#11998E"), Color.parseColor("#38EF7D"), true, "Starbucks Official Store", "SB",
+                "STARBUCKS COFFEE WEEKEND", "Mua 1 Tặng 1 Trà/Cà phê tất cả chi nhánh", 160, "☕", "STARBUCKS", "SBUX-M1T1-SLIDER", Color.parseColor("#11998E"), Color.parseColor("#38EF7D"), true, "Starbucks Official Store", "SB",
                 "", R.drawable.banner_starbucks
         ));
         danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
-                "🚗 GRABCAR FREESHIP & GIẢM 50K", "Đồng giá 10 Xu - Săn deal khung giờ vàng", 100, "🚗", "GRAB", "GRAB50K-SLIDER", Color.parseColor("#00B4DB"), Color.parseColor("#0083B0"), true, "Grab Vietnam Store", "GR",
+                "GRABCAR FREESHIP & GIẢM 50K", "Đồng giá 10 Xu - Săn deal khung giờ vàng", 100, "🚗", "GRAB", "GRAB50K-SLIDER", Color.parseColor("#00B4DB"), Color.parseColor("#0083B0"), true, "Grab Vietnam Store", "GR",
                 "", R.drawable.banner_grab
         ));
         danhSáchBanner.add(new BannerSliderAdapter.ThôngTinBannerItem(
-                "📱 MOMO HOÀN XU 30K", "Nạp tiền ĐT & Data 4G Viettel, Mobifone, Vinaphone", 150, "📱", "MOMO", "MOMO30K-SLIDER", Color.parseColor("#FF416C"), Color.parseColor("#FF4B2B"), true, "MoMo Official Store", "MM",
+                "MOMO HOÀN XU 30K", "Nạp tiền ĐT & Data 4G Viettel, Mobifone, Vinaphone", 150, "📱", "MOMO", "MOMO30K-SLIDER", Color.parseColor("#FF416C"), Color.parseColor("#FF4B2B"), true, "MoMo Official Store", "MM",
                 "", R.drawable.banner_momo
         ));
 
@@ -539,13 +539,16 @@ public class MainActivity extends AppCompatActivity {
                     continue;
                 }
 
+                // Bỏ qua các bài đăng test rác không hợp lệ
+                if (môTả.equalsIgnoreCase("rhdf") || môTả.length() < 3) continue;
+
                 thêmThẻVoucherVàoKhung(
                         khungLướiVoucherTrangChủ,
                         thươngHiệu.toUpperCase(),
                         môTả,
                         giáXu,
                         "C2C Market",
-                        "👥 Cộng đồng",
+                        "Cộng đồng",
                         false,
                         thươngHiệu,
                         tênNgườiBán,
@@ -555,17 +558,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // 1. @minh.anh - Grab 50K
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "GRAB", "Giảm 50K chuyến xe GrabCar tiếp theo", 350, "500 SS", "👥 Cộng đồng", false, "Grab Vietnam", "Minh Anh (@minh.anh)", "MA", "GRAB50K-COMMUNITY88");
-
-        // 2. @bao.ngoc - ShopeeFood 50K
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "SHOPEE", "Voucher ShopeeFood Giảm 50K Đơn 100K", 500, "650 SS", "👥 Cộng đồng", false, "ShopeeFood", "Bảo Ngọc (@bao.ngoc)", "BN", "SPFOOD50K-USER22");
-
-        // 3. @khanh.trinh - Highlands Mua 1 Tặng 1
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "HIGHLANDS", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", 180, "250 SS", "👥 Cộng đồng", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-USER33");
-
-        // 4. @gia.bao - BeCar 30K
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "BE", "Voucher BeCar Giảm 30K Đơn Từ 60K", 220, "300 SS", "👥 Cộng đồng", false, "Be Group", "Gia Bảo (@gia.bao)", "GB", "BECAR30K-USER44");
+        // Các voucher chính chủ do các tài khoản cá nhân thực tế sở hữu và quản lý
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "STARBUCKS", "Voucher Starbucks Giảm 30K Đơn 70K", 200, "300 SS", "Cộng đồng", false, "Starbucks Coffee", "Hồ Gia Bảo (@baoho123)", "BH", "SBUX30K-BH");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "GRAB", "Voucher GrabCar Giảm 50K Chuyến Đêm", 350, "500 SS", "Cộng đồng", false, "Grab Vietnam", "Gia Beo (@Beo123)", "GB", "GRAB50K-BEO");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "SHOPEE", "Voucher ShopeeFood Giảm 50K Đơn 100K", 500, "650 SS", "Cộng đồng", false, "ShopeeFood", "Bảo Ngọc (@bao.ngoc)", "BN", "SPFOOD50K-USER22");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "HIGHLANDS", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", 180, "250 SS", "Cộng đồng", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-USER33");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "BE", "Voucher BeCar Giảm 30K Đơn Từ 60K", 220, "300 SS", "Cộng đồng", false, "Be Group", "Gia Bảo (@gia.bao)", "GB", "BECAR30K-USER44");
     }
 
     private void cậpNhậtDanhSáchẨmThực() {
@@ -574,7 +572,7 @@ public class MainActivity extends AppCompatActivity {
         khungLướiVoucherTrangChủ.removeAllViews();
         if (nhãnTiêuĐềKhuVực != null) nhãnTiêuĐềKhuVực.setText("Kết Quả Lọc: Ẩm Thực & Đồ Uống");
         thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "STARBUCKS", "Voucher Starbucks Giảm 20K Đơn 50K", 160, "200 SS", "✓ Chính hãng", true, "Starbucks Coffee", "Starbucks Official Store", "SB", "SBUX20K-OCTOBER99");
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "HIGHLANDS", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", 180, "250 SS", "👥 Cộng đồng", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-USER33");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "HIGHLANDS", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", 180, "250 SS", "Cộng đồng", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-USER33");
     }
 
     private void cậpNhậtDanhSáchMuaSắm() {
@@ -583,7 +581,7 @@ public class MainActivity extends AppCompatActivity {
         khungLướiVoucherTrangChủ.removeAllViews();
         if (nhãnTiêuĐềKhuVực != null) nhãnTiêuĐềKhuVực.setText("Kết Quả Lọc: Mua Sắm & Siêu Thị");
         thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "LAZADA", "Voucher Lazada 50K Đơn Từ 150K", 420, "500 SS", "✓ Chính hãng", true, "Lazada Mall", "Lazada Official Store", "LZ", "LAZ50K-OFFICIAL66");
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "SHOPEE", "Voucher ShopeeFood Giảm 50K Đơn 100K", 500, "650 SS", "👥 Cộng đồng", false, "ShopeeFood", "Bảo Ngọc (@bao.ngoc)", "BN", "SPFOOD50K-USER22");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "SHOPEE", "Voucher ShopeeFood Giảm 50K Đơn 100K", 500, "650 SS", "Cộng đồng", false, "ShopeeFood", "Bảo Ngọc (@bao.ngoc)", "BN", "SPFOOD50K-USER22");
     }
 
     private void cậpNhậtDanhSáchDiChuyển() {
@@ -591,8 +589,8 @@ public class MainActivity extends AppCompatActivity {
         chuỗiTabĐangChọn = "CATEGORY_TRANSPORT";
         khungLướiVoucherTrangChủ.removeAllViews();
         if (nhãnTiêuĐềKhuVực != null) nhãnTiêuĐềKhuVực.setText("Kết Quả Lọc: Di Chuyển & Xe Công Nghệ");
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "GRAB", "Giảm 50K chuyến xe GrabCar tiếp theo", 350, "500 SS", "👥 Cộng đồng", false, "Grab Vietnam", "Minh Anh (@minh.anh)", "MA", "GRAB50K-COMMUNITY88");
-        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "BE", "Voucher BeCar Giảm 30K Đơn Từ 60K", 220, "300 SS", "👥 Cộng đồng", false, "Be Group", "Gia Bảo (@gia.bao)", "GB", "BECAR30K-USER44");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "GRAB", "Giảm 50K chuyến xe GrabCar tiếp theo", 350, "500 SS", "Cộng đồng", false, "Grab Vietnam", "Minh Anh (@minh.anh)", "MA", "GRAB50K-COMMUNITY88");
+        thêmThẻVoucherVàoKhung(khungLướiVoucherTrangChủ, "BE", "Voucher BeCar Giảm 30K Đơn Từ 60K", 220, "300 SS", "Cộng đồng", false, "Be Group", "Gia Bảo (@gia.bao)", "GB", "BECAR30K-USER44");
     }
 
     private void cậpNhậtDanhSáchGiảiTrí() {
@@ -606,7 +604,7 @@ public class MainActivity extends AppCompatActivity {
     private void cậpNhậtKhungGợiÝDànhChoBạn() {
         if (khungVoucherGợiÝBottom == null || khungVoucherGợiÝBottom.getChildCount() > 0) return;
 
-        thêmThẻVoucherVàoKhung(khungVoucherGợiÝBottom, "HIGHLANDS", "Voucher Highlands Coffee Trà Sen Vàng 30K", 180, "250 SS", "👥 Hot Deal", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-HOT");
+        thêmThẻVoucherVàoKhung(khungVoucherGợiÝBottom, "HIGHLANDS", "Voucher Highlands Coffee Trà Sen Vàng 30K", 180, "250 SS", "Hot Deal", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-HOT");
         thêmThẻVoucherVàoKhung(khungVoucherGợiÝBottom, "STARBUCKS", "Giảm 20K cho đơn từ 50K Starbucks", 160, "200 SS", "✓ Gợi ý", true, "Starbucks Coffee", "Starbucks Official Store", "SB", "SBUX20K-HOT");
         thêmThẻVoucherVàoKhung(khungVoucherGợiÝBottom, "GRAB", "Voucher GrabFood FreeShip 30K", 120, "180 SS", "✓ Đề xuất", true, "GrabFood Vietnam", "Grab Official Store", "GR", "GRABFS30K-HOT");
     }
@@ -694,7 +692,7 @@ public class MainActivity extends AppCompatActivity {
         khungGiá.addView(nhãnGiáGốc);
 
         TextView nhãnNgườiBán = new TextView(this);
-        nhãnNgườiBán.setText("👤 " + tênNgườiBán);
+        nhãnNgườiBán.setText(tênNgườiBán);
         nhãnNgườiBán.setTextColor(Color.parseColor("#9E9DA8"));
         nhãnNgườiBán.setTextSize(10);
         LinearLayout.LayoutParams thôngSốNgườiBán = new LinearLayout.LayoutParams(
