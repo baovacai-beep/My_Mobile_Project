@@ -90,7 +90,7 @@ public class VoucherDetailActivity extends AppCompatActivity {
             nhãnTênThươngHiệu.setText(làGianHàngChínhHãng ? "Thương hiệu: " + tênThươngHiệu : "Người bán C2C: " + tênNgườiBán);
         }
         if (nhãnCấpĐộTínNhiệm != null) {
-            nhãnCấpĐộTínNhiệm.setText(làGianHàngChínhHãng ? "✓ Đối Tác Chính Hãng (Trust Score: 100%)" : "👥 Thành viên cộng đồng (Trust Score: 98%)");
+            nhãnCấpĐộTínNhiệm.setText(làGianHàngChínhHãng ? "✓ Đối Tác Chính Hãng (Trust Score: 100%)" : "✓ Thành viên cộng đồng (Trust Score: 98%)");
         }
         if (nhãnMãCheMờ != null) nhãnMãCheMờ.setText(nhãnĐịnhDạng + "\n" + cheMờMãBíMật(mãBíMậtKíchHoạt));
 

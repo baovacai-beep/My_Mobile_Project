@@ -93,31 +93,24 @@ public class SearchActivity extends AppCompatActivity {
 
                 String tênNgườiBán = mảngTrường.length > 7 ? mảngTrường[7] : "Người dùng SSharing";
                 String avatarInitials = mảngTrường.length > 8 ? mảngTrường[8] : "SS";
-                String usernameNgườiBán = mảngTrường.length > 9 ? mảngTrường[9] : "";
 
-                // Bỏ qua sản phẩm do chính tài khoản này đăng bán
-                if (usernameHiệnTại.equalsIgnoreCase(usernameNgườiBán) ||
-                        tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()) ||
-                        tênNgườiBán.equalsIgnoreCase(họTênHiệnTại)) {
-                    continue;
-                }
+                // Bỏ qua các bài đăng test rác không hợp lệ
+                if (môTả.equalsIgnoreCase("rhdf") || môTả.length() < 3) continue;
 
                 khoTấtCảVoucher.add(new ThôngTinVoucher(
-                        thươngHiệu.toUpperCase(), môTả, giáXu, "C2C Market", "👥 Cộng đồng", false, thươngHiệu, tênNgườiBán, avatarInitials, mãVoucher, "C2C"
+                        thươngHiệu.toUpperCase(), môTả, giáXu, "C2C Market", "Cộng đồng", false, thươngHiệu, tênNgườiBán, avatarInitials, mãVoucher, "C2C"
                 ));
             }
         }
 
-        khoTấtCảVoucher.add(new ThôngTinVoucher("STARBUCKS", "Voucher Starbucks Giảm 20K Đơn 50K", 160, "200 SS", "✓ Chính hãng", true, "Starbucks Coffee", "Starbucks Official Store", "SB", "SBUX20K-OCTOBER99", "FOOD"));
-        khoTấtCảVoucher.add(new ThôngTinVoucher("MOMO", "Voucher MoMo Hoàn 30K Nạp ĐT / Data 4G", 250, "300 SS", "✓ Chính hãng", true, "MoMo E-Wallet", "MoMo Official Store", "MM", "MOMO30K-OCTOBER77", "SHOP"));
-        khoTấtCảVoucher.add(new ThôngTinVoucher("LAZADA", "Voucher Lazada 50K Đơn Từ 150K", 420, "500 SS", "✓ Chính hãng", true, "Lazada Mall", "Lazada Official Store", "LZ", "LAZ50K-OFFICIAL66", "SHOP"));
-        khoTấtCảVoucher.add(new ThôngTinVoucher("PHÚC LONG", "Voucher Phúc Long 30K Trà Sữa", 200, "250 SS", "✓ Chính hãng", true, "Phúc Long Tea", "Phúc Long Official Store", "PL", "PL30K-OFFICIAL55", "FOOD"));
-        khoTấtCảVoucher.add(new ThôngTinVoucher("CGV", "Vé Xem Phim CGV 2D Vé Đôi 100K", 280, "350 SS", "✓ Chính hãng", true, "CGV Cinemas", "CGV Official Store", "CGV", "CGV2D-OFFICIAL11", "MOVIE"));
-        khoTấtCảVoucher.add(new ThôngTinVoucher("GRAB", "Giảm 50K chuyến xe GrabCar tiếp theo", 350, "500 SS", "👥 Cộng đồng", false, "Grab Vietnam", "Minh Anh (@minh.anh)", "MA", "GRAB50K-COMMUNITY88", "TRANSPORT"));
-        khoTấtCảVoucher.add(new ThôngTinVoucher("SHOPEE", "Voucher ShopeeFood Giảm 50K Đơn 100K", 500, "650 SS", "👥 Cộng đồng", false, "ShopeeFood", "Bảo Ngọc (@bao.ngoc)", "BN", "SPFOOD50K-USER22", "FOOD"));
-        khoTấtCảVoucher.add(new ThôngTinVoucher("HIGHLANDS", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", 180, "250 SS", "👥 Cộng đồng", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-USER33", "FOOD"));
-        khoTấtCảVoucher.add(new ThôngTinVoucher("BE", "Voucher BeCar Giảm 30K Đơn Từ 60K", 220, "300 SS", "👥 Cộng đồng", false, "Be Group", "Gia Bảo (@gia.bao)", "GB", "BECAR30K-USER44", "TRANSPORT"));
-        khoTấtCảVoucher.add(new ThôngTinVoucher("TIKI", "Voucher TikiTrading 100K Đơn 300K", 600, "800 SS", "👥 Cộng đồng", false, "TikiTrading", "Hoàng Long (@hoang.long)", "HL", "TIKI100K-USER55", "SHOP"));
+        // Thêm các voucher chính chủ do các tài khoản cá nhân quản lý đăng bán thực tế
+        khoTấtCảVoucher.add(new ThôngTinVoucher("STARBUCKS", "Voucher Starbucks Giảm 30K Đơn 70K", 200, "300 SS", "Cộng đồng", false, "Starbucks Coffee", "Hồ Gia Bảo (@baoho123)", "BH", "SBUX30K-BH", "FOOD"));
+        khoTấtCảVoucher.add(new ThôngTinVoucher("GRAB", "Voucher GrabCar Giảm 50K Chuyến Đêm", 350, "500 SS", "Cộng đồng", false, "Grab Vietnam", "Gia Beo (@Beo123)", "GB", "GRAB50K-BEO", "TRANSPORT"));
+        khoTấtCảVoucher.add(new ThôngTinVoucher("SHOPEE", "Voucher ShopeeFood Giảm 50K Đơn 100K", 500, "650 SS", "Cộng đồng", false, "ShopeeFood", "Bảo Ngọc (@bao.ngoc)", "BN", "SPFOOD50K-USER22", "FOOD"));
+        khoTấtCảVoucher.add(new ThôngTinVoucher("HIGHLANDS", "Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng", 180, "250 SS", "Cộng đồng", false, "Highlands Coffee", "Khánh Trình (@khanh.trinh)", "KT", "HLM1T1-USER33", "FOOD"));
+        khoTấtCảVoucher.add(new ThôngTinVoucher("BE", "Voucher BeCar Giảm 30K Đơn Từ 60K", 220, "300 SS", "Cộng đồng", false, "Be Group", "Gia Bảo (@gia.bao)", "GB", "BECAR30K-USER44", "TRANSPORT"));
+        khoTấtCảVoucher.add(new ThôngTinVoucher("TIKI", "Voucher TikiTrading 100K Đơn 300K", 600, "800 SS", "Cộng đồng", false, "TikiTrading", "Hoàng Long (@hoang.long)", "HL", "TIKI100K-USER55", "SHOP"));
+        khoTấtCảVoucher.add(new ThôngTinVoucher("MOMO", "Voucher MoMo Hoàn 30K Nạp Điện Thoại", 250, "300 SS", "Cộng đồng", false, "MoMo E-Wallet", "Bảo Ngọc (@bao.ngoc)", "BN", "MOMO30K-OCTOBER77", "SHOP"));
     }
 
     private void khởiTạoÁnhXạGiaoDiện() {
@@ -314,7 +307,7 @@ public class SearchActivity extends AppCompatActivity {
         khungGiá.addView(nhãnGiáGốc);
 
         TextView nhãnNgườiBán = new TextView(this);
-        nhãnNgườiBán.setText("👤 " + món.tênNgườiBán);
+        nhãnNgườiBán.setText(món.tênNgườiBán);
         nhãnNgườiBán.setTextColor(Color.parseColor("#9E9DA8"));
         nhãnNgườiBán.setTextSize(11);
         LinearLayout.LayoutParams thôngSốNgườiBán = new LinearLayout.LayoutParams(

@@ -144,10 +144,24 @@ public class SellerDashboardActivity extends AppCompatActivity {
         String danhSáchChuỗiĐăngBán = bộLưuTrữCụcBộ.getString(keyShopCáNhân, "");
 
         if (danhSáchChuỗiĐăngBán.isEmpty()) {
-            if ("baoho123".equals(usernameHiệnTại)) {
-                danhSáchChuỗiĐăngBán = "POS_DEFAULT_1||Giảm 50K đơn từ 250K - Điện tử||Shopee||SP250K||1500||31/12/2026||Mô tả Shopee";
-                bộLưuTrữCụcBộ.edit().putString(keyShopCáNhân, danhSáchChuỗiĐăngBán).apply();
+            if ("baoho123".equalsIgnoreCase(usernameHiệnTại)) {
+                danhSáchChuỗiĐăngBán = "POS_BH1||Voucher Starbucks Giảm 30K Đơn 70K||STARBUCKS||SBUX30K-BH||200||31/12/2026||Mã chính chủ do Hồ Gia Bảo quản lý";
+            } else if ("beo123".equalsIgnoreCase(usernameHiệnTại)) {
+                danhSáchChuỗiĐăngBán = "POS_BEO1||Voucher GrabCar Giảm 50K Chuyến Đêm||GRAB||GRAB50K-BEO||350||31/12/2026||Mã Grab do Gia Beo quản lý";
+            } else if ("minh.triet".equalsIgnoreCase(usernameHiệnTại)) {
+                danhSáchChuỗiĐăngBán = "POS_MT1||Voucher ShopeeFood Giảm 50K Đơn 100K||SHOPEE||SPFOOD50K-USER22||500||31/12/2026||Mã ShopeeFood do Minh Triết quản lý";
+            } else if ("bao.ngoc".equalsIgnoreCase(usernameHiệnTại)) {
+                danhSáchChuỗiĐăngBán = "POS_BN1||Voucher MoMo Hoàn 30K Nạp Điện Thoại||MOMO||MOMO30K-OCTOBER77||250||31/12/2026||Mã MoMo do Bảo Ngọc quản lý";
+            } else if ("khanh.trinh".equalsIgnoreCase(usernameHiệnTại)) {
+                danhSáchChuỗiĐăngBán = "POS_KT1||Voucher Highlands Mua 1 Tặng 1 Trà Sen Vàng||HIGHLANDS||HLM1T1-USER33||180||31/12/2026||Mã Highlands do Khánh Trình quản lý";
+            } else if ("gia.bao".equalsIgnoreCase(usernameHiệnTại)) {
+                danhSáchChuỗiĐăngBán = "POS_GB1||Voucher BeCar Giảm 30K Đơn Từ 60K||BE||BECAR30K-USER44||220||31/12/2026||Mã BeCar do Gia Bảo quản lý";
+            } else if ("hoang.long".equalsIgnoreCase(usernameHiệnTại)) {
+                danhSáchChuỗiĐăngBán = "POS_HL1||Voucher TikiTrading 100K Đơn 300K||TIKI||TIKI100K-USER55||600||31/12/2026||Mã Tiki do Hoàng Long quản lý";
+            } else {
+                danhSáchChuỗiĐăngBán = "POS_GENERIC||Voucher Khuyến Mãi Cá Nhân||SHOP||CODE123||100||31/12/2026||Mã cá nhân quản lý";
             }
+            bộLưuTrữCụcBộ.edit().putString(keyShopCáNhân, danhSáchChuỗiĐăngBán).apply();
         }
 
         String[] cácBàiĐăng = danhSáchChuỗiĐăngBán.split(";;");

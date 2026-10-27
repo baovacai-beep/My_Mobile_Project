@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Bản đồ thực tế WebView OpenStreetMap / Leaflet (Hiển thị bản đồ giao thông đường xá thật 100%) -->
+    <!-- Bản đồ thực tế WebView OpenStreetMap / Leaflet -->
     <WebView
         android:id="@+id/webViewMap"
         android:layout_width="match_parent"

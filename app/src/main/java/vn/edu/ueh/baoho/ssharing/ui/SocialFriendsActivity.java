@@ -291,7 +291,7 @@ public class SocialFriendsActivity extends AppCompatActivity {
             LinearLayout.LayoutParams thôngSốNút2 = new LinearLayout.LayoutParams(0, 84, 1.0f);
             thôngSốNút2.rightMargin = 6;
             nútBànTrade.setLayoutParams(thôngSốNút2);
-            nútBànTrade.setText("🤝 Trade");
+            nútBànTrade.setText("Trade");
             nútBànTrade.setTextColor(Color.WHITE);
             nútBànTrade.setTextSize(11);
             nútBànTrade.setPadding(0, 0, 0, 0);
@@ -310,7 +310,7 @@ public class SocialFriendsActivity extends AppCompatActivity {
             nútTheoDõi.setPadding(0, 0, 0, 0);
 
             if (làBạnBè2Chiều) {
-                nútTheoDõi.setText("🤝 Bạn Bè");
+                nútTheoDõi.setText("Bạn Bè");
                 nútTheoDõi.setTextColor(Color.parseColor("#00E676"));
                 nútTheoDõi.setBackgroundResource(R.drawable.bg_card_dark);
             } else if (làĐangTheoDõi) {
