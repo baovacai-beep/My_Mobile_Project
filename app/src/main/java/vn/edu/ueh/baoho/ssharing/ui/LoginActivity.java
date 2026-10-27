@@ -240,6 +240,7 @@ public class LoginActivity extends AppCompatActivity {
         String danhSáchChuỗiTàiKhoản = bộLưuTrữVí.getString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", "");
 
         boolean đăngNhậpThànhCông = false;
+        String usernameThànhCông = "baoho123";
         String họTênĐăngNhậpThànhCông = "Gia Bảo Hồ";
         String emailThànhCông = tênĐăngNhậpNhập;
         String sốĐiệnThoạiThànhCông = "0908123456";
@@ -260,6 +261,7 @@ public class LoginActivity extends AppCompatActivity {
             if ((tênĐăngNhậpNhập.equalsIgnoreCase(tênUser) || tênĐăngNhậpNhập.equalsIgnoreCase(emailLưu) || tênĐăngNhậpNhập.equals(sđtLưu))
                     && mậtKhẩuMD5Nhập.equals(mậtKhẩuMD5Lưu)) {
                 đăngNhậpThànhCông = true;
+                usernameThànhCông = tênUser;
                 họTênĐăngNhậpThànhCông = họTênLưu;
                 emailThànhCông = emailLưu;
                 sốĐiệnThoạiThànhCông = sđtLưu;
@@ -270,7 +272,7 @@ public class LoginActivity extends AppCompatActivity {
         if (đăngNhậpThànhCông) {
             SharedPreferences.Editor trìnhSửa = bộLưuTrữVí.edit();
             trìnhSửa.putBoolean("IS_LOGGED_IN", true);
-            trìnhSửa.putString("CURRENT_USERNAME", tênĐăngNhậpNhập);
+            trìnhSửa.putString("CURRENT_USERNAME", usernameThànhCông);
             trìnhSửa.putString("CURRENT_USER_NAME", họTênĐăngNhậpThànhCông);
             trìnhSửa.putString("CURRENT_USER_EMAIL", emailThànhCông);
             trìnhSửa.putString("CURRENT_USER_PHONE", sốĐiệnThoạiThànhCông);

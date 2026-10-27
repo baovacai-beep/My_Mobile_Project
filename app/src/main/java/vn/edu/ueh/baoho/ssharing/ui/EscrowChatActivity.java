@@ -701,7 +701,6 @@ public class EscrowChatActivity extends AppCompatActivity {
                 }
             } catch (Throwable ignored) {}
         }
-        ôAvatar.setLayoutParams(thôngSốAvatar);
 
         LinearLayout bongBóngLeft = new LinearLayout(this);
         bongBóngLeft.setOrientation(LinearLayout.VERTICAL);
@@ -844,12 +843,11 @@ public class EscrowChatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (bộCậpNhậtChatRealtime != null && côngViệcTựĐộngTrượtBanner() != null) {
+        if (bộCậpNhậtChatRealtime != null) {
             bộCậpNhậtChatRealtime.removeCallbacksAndMessages(null);
         }
-    }
-
-    private Runnable côngViệcTựĐộngTrượtBanner() {
-        return côngViệcTảiTinNhắnTựĐộng;
+        if (bộĐếmLùiEscrowTimer != null) {
+            bộĐếmLùiEscrowTimer.cancel();
+        }
     }
 }
