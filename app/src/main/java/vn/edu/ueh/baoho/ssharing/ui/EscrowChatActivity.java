@@ -179,6 +179,11 @@ public class EscrowChatActivity extends AppCompatActivity {
         boolean làChatTròChuyệnXãHội = (dữLiệuÝĐịnh != null && dữLiệuÝĐịnh.getBooleanExtra("EXTRA_IS_SOCIAL_CHAT", false))
                 || (giáXuEscrow == 0 && (mãBíMậtVoucher.startsWith("CHAT-") || "HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher)));
 
+        // KÍCH HOẠT VÀ ĐĂNG KÝ NGAY PHÒNG CHAT VÀO HỘP THOẠI CHUNG NGAY KHI MỞ MÀN HÌNH (KỂ CẢ CHƯA GỬI TIN NHẮN)
+        String thờiGianKhởiTạo = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+        String nộiDungBanĐầu = làChatTròChuyệnXãHội ? "Trò chuyện bạn bè cộng đồng" : "🔒 Đã khóa " + giáXuEscrow + " SS vào ví Escrow";
+        đăngKýPhòngChatVàoDanhSáchChung(idPhòngChat, mãBíMậtVoucher, tênVoucher, usernameHiệnTại, họTênHiệnTại, tênNgườiBán, avatarNgườiBán, giáXuEscrow, nộiDungBanĐầu, thờiGianKhởiTạo);
+
         if (làChatTròChuyệnXãHội) {
             View cardEscrowStatus = findViewById(R.id.cardEscrowStatus);
             View cardVoucherInfo = findViewById(R.id.cardVoucherInfo);
@@ -214,37 +219,80 @@ public class EscrowChatActivity extends AppCompatActivity {
                 if (btnSend != null) btnSend.setVisibility(View.GONE);
                 if (btnAttach != null) btnAttach.setVisibility(View.GONE);
             } else {
+                String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
+                boolean làNgườiBánCủaGiaoDịch = usernameHiệnTại.equalsIgnoreCase(partnerClean)
+                        || (tênNgườiBán != null && tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()));
+
                 if (nhãnTrạngTháiEscrow != null) {
                     nhãnTrạngTháiEscrow.setText("Đang tạm giữ: " + String.format("%,d", giáXuEscrow) + " SS");
                 }
-                if (nhãnThôngBáoHệThốngĐầu != null) {
-                    nhãnThôngBáoHệThốngĐầu.setText("🛡️ Hệ thống: Người mua đã khóa " + giáXuEscrow + " SS vào ví Escrow. Bạn có 60 phút để kiểm tra mã trước khi giải ngân cho " + tênNgườiBán + ".");
+
+                if (làNgườiBánCủaGiaoDịch) {
+                    if (nútXácNhậnEscrow != null) {
+                        nútXácNhậnEscrow.setText("💸 Hoàn Xu Cho Khách Hàng (Tự Nguyện)");
+                        nútXácNhậnEscrow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FFD54F")));
+                        nútXácNhậnEscrow.setTextColor(Color.parseColor("#120E22"));
+                    }
+                    if (nútBáoCáoLỗiEscrow != null) {
+                        nútBáoCáoLỗiEscrow.setText("⚖️ Nộp Bằng Chứng Trọng Tài CSKH");
+                        nútBáoCáoLỗiEscrow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#815BF5")));
+                    }
+                    if (nhãnThôngBáoHệThốngĐầu != null) {
+                        nhãnThôngBáoHệThốngĐầu.setText("🛡️ Hệ thống: Người mua đang tạm giữ " + giáXuEscrow + " SS vào ví Escrow. Người mua có 24 giờ (1 ngày) để kiểm tra mã. Bạn sẽ nhận xu khi người mua xác nhận hoặc hết 24h!");
+                    }
+                } else {
+                    if (nhãnThôngBáoHệThốngĐầu != null) {
+                        nhãnThôngBáoHệThốngĐầu.setText("🛡️ Hệ thống: Bạn đã khóa " + giáXuEscrow + " SS vào ví Escrow. Bạn có 24 giờ (1 ngày) để kiểm tra mã trước khi giải ngân cho " + tênNgườiBán + ".");
+                    }
                 }
-                khởiĐộngBộĐếmLùiEscrow60Phút();
+                khởiĐộngBộĐếmLùiEscrow24GiờThựcTế();
             }
         }
     }
 
-    private void khởiĐộngBộĐếmLùiEscrow60Phút() {
+    private void khởiĐộngBộĐếmLùiEscrow24GiờThựcTế() {
         if (bộĐếmLùiEscrowTimer != null) {
             bộĐếmLùiEscrowTimer.cancel();
         }
 
-        bộĐếmLùiEscrowTimer = new android.os.CountDownTimer(tổngSốGiâyĐếmLùi, 1000) {
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String keyThờiGianBắtĐầu = "ESCROW_START_TIME_" + mãBíMậtVoucher;
+        long thờiGianBắtĐầu = bộLưuTrữVí.getLong(keyThờiGianBắtĐầu, 0L);
+
+        if (thờiGianBắtĐầu == 0L) {
+            thờiGianBắtĐầu = System.currentTimeMillis();
+            bộLưuTrữVí.edit().putLong(keyThờiGianBắtĐầu, thờiGianBắtĐầu).apply();
+        }
+
+        long tổngThờiGian24GiờMs = 24 * 60 * 60 * 1000L; // 24 Giờ = 86,400,000 ms
+        long thờiGianHiệnTại = System.currentTimeMillis();
+        long thờiGianCònLạiMs = (thờiGianBắtĐầu + tổngThờiGian24GiờMs) - thờiGianHiệnTại;
+
+        if (thờiGianCònLạiMs <= 0) {
+            if (nhãnĐếmLùiEscrow != null) {
+                nhãnĐếmLùiEscrow.setText("⏱ Hết 24 giờ - Tự động giải phóng xu");
+            }
+            thựcHiệnHoànTấtEscrow();
+            return;
+        }
+
+        bộĐếmLùiEscrowTimer = new android.os.CountDownTimer(thờiGianCònLạiMs, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                tổngSốGiâyĐếmLùi = millisUntilFinished;
-                long sốPhút = (millisUntilFinished / 1000) / 60;
-                long sốGiây = (millisUntilFinished / 1000) % 60;
+                long tổngSốGiâyCònLại = millisUntilFinished / 1000;
+                long sốGiờ = tổngSốGiâyCònLại / 3600;
+                long sốPhút = (tổngSốGiâyCònLại % 3600) / 60;
+                long sốGiây = tổngSốGiâyCònLại % 60;
+
                 if (nhãnĐếmLùiEscrow != null) {
-                    nhãnĐếmLùiEscrow.setText(String.format(Locale.getDefault(), "⏱ Còn lại %02d:%02d để thử mã", sốPhút, sốGiây));
+                    nhãnĐếmLùiEscrow.setText(String.format(Locale.getDefault(), "⏱ Còn lại %02dg %02dp %02ds để thử mã (24 giờ)", sốGiờ, sốPhút, sốGiây));
                 }
             }
 
             @Override
             public void onFinish() {
                 if (nhãnĐếmLùiEscrow != null) {
-                    nhãnĐếmLùiEscrow.setText("⏱ Hết 60 phút - Tự động giải phóng");
+                    nhãnĐếmLùiEscrow.setText("⏱ Hết 24 giờ - Tự động giải phóng xu");
                 }
                 thựcHiệnHoànTấtEscrow();
             }
@@ -767,12 +815,53 @@ public class EscrowChatActivity extends AppCompatActivity {
     }
 
     private void xácNhậnGiảiPhóngEscrow() {
-        new AlertDialog.Builder(this)
-                .setTitle("Xác Nhận Giải Phong Xu Escrow")
-                .setMessage("Bạn đã kiểm tra và xác nhận mã " + tênVoucher + " hoạt động tốt? Hệ thống sẽ giải phóng " + giáXuEscrow + " SS cho " + tênNgườiBán + ".")
-                .setPositiveButton("Giải phóng ngay", (hộpThoại, vịTrí) -> thựcHiệnHoànTấtEscrow())
-                .setNegativeButton("Hủy", null)
-                .show();
+        String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
+        boolean làNgườiBánCủaGiaoDịch = usernameHiệnTại.equalsIgnoreCase(partnerClean)
+                || (tênNgườiBán != null && tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()));
+
+        if (làNgườiBánCủaGiaoDịch) {
+            new AlertDialog.Builder(this)
+                    .setTitle("💸 Xác Nhận Hoàn Xu Tự Nguyện")
+                    .setMessage("Bạn có chắc chắn muốn tự nguyện hoàn " + giáXuEscrow + " SS lại cho người mua?")
+                    .setPositiveButton("Hoàn xu ngay", (dialog, which) -> thựcHiệnTựNguyệnHoànXuTừngNgườiBán())
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        } else {
+            new AlertDialog.Builder(this)
+                    .setTitle("Xác Nhận Giải Phóng Xu Escrow")
+                    .setMessage("Bạn đã kiểm tra và xác nhận mã " + tênVoucher + " hoạt động tốt? Hệ thống sẽ giải phóng " + giáXuEscrow + " SS cho " + tênNgườiBán + ".")
+                    .setPositiveButton("Giải phóng ngay", (hộpThoại, vịTrí) -> thựcHiệnHoànTấtEscrow())
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        }
+    }
+
+    private void thựcHiệnTựNguyệnHoànXuTừngNgườiBán() {
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+
+        String danhSáchĐãBánGốc = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
+        bộLưuTrữVí.edit().putString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", mãBíMậtVoucher + ";;" + danhSáchĐãBánGốc).apply();
+
+        thựcHiệnGửiGóiNộiDungTinNhắn("🛡️ Hệ thống: Người bán @" + usernameHiệnTại + " đã tự nguyện hoàn " + giáXuEscrow + " SS lại cho Người mua. Giao dịch đã khép lại!");
+
+        if (ôNhậpTinNhắn != null) {
+            ôNhậpTinNhắn.setEnabled(false);
+            ôNhậpTinNhắn.setHint("🔒 Đoạn chat giao dịch đã hoàn tất và tự động khóa lưu trữ sau 1 ngày.");
+        }
+        View btnSend = findViewById(R.id.btn_send_chat);
+        View btnAttach = findViewById(R.id.btn_attach_image_chat);
+        if (btnSend != null) btnSend.setVisibility(View.GONE);
+        if (btnAttach != null) btnAttach.setVisibility(View.GONE);
+
+        if (nútXácNhậnEscrow != null) {
+            nútXácNhậnEscrow.setEnabled(false);
+            nútXácNhậnEscrow.setText("✓ Đã Hoàn Xu Cho Người Mua");
+        }
+        if (nútBáoCáoLỗiEscrow != null) {
+            nútBáoCáoLỗiEscrow.setVisibility(View.GONE);
+        }
+
+        Toast.makeText(this, "💸 Đã tự nguyện hoàn " + giáXuEscrow + " SS lại cho Người Mua thành công!", Toast.LENGTH_LONG).show();
     }
 
     private void thựcHiệnHoànTấtEscrow() {

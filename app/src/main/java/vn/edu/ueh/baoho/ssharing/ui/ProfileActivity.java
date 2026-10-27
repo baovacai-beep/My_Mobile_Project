@@ -138,18 +138,36 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    private static Bitmap giảiMãẢnhThuNhỏAnToàn(String path, int maxDim) {
+        if (path == null || path.isEmpty()) return null;
+        try {
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(path, opts);
+            if (opts.outWidth <= 0 || opts.outHeight <= 0) return null;
+
+            int sample = 1;
+            while ((opts.outWidth / sample) > maxDim || (opts.outHeight / sample) > maxDim) {
+                sample *= 2;
+            }
+            opts.inJustDecodeBounds = false;
+            opts.inSampleSize = sample;
+            opts.inPreferredConfig = Bitmap.Config.RGB_565;
+            return BitmapFactory.decodeFile(path, opts);
+        } catch (Throwable ignored) {}
+        return null;
+    }
+
     private void tảiẢnhAvatarAnToàn(ImageView viewTarget, String đườngDẫnTệp, String họTên) {
         if (viewTarget == null) return;
         viewTarget.setImageDrawable(null);
         if (đườngDẫnTệp != null && !đườngDẫnTệp.isEmpty() && new File(đườngDẫnTệp).exists()) {
-            try {
-                Bitmap bitmapAvatar = BitmapFactory.decodeFile(đườngDẫnTệp);
-                if (bitmapAvatar != null) {
-                    viewTarget.setImageBitmap(bitmapAvatar);
-                    viewTarget.setVisibility(View.VISIBLE);
-                    return;
-                }
-            } catch (Throwable ignored) {}
+            Bitmap bitmapAvatar = giảiMãẢnhThuNhỏAnToàn(đườngDẫnTệp, 200);
+            if (bitmapAvatar != null) {
+                viewTarget.setImageBitmap(bitmapAvatar);
+                viewTarget.setVisibility(View.VISIBLE);
+                return;
+            }
         }
         viewTarget.setVisibility(View.GONE);
         đặtChữCáiAvatarChung(họTên);

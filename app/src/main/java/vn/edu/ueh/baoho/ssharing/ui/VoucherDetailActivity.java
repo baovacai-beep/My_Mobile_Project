@@ -220,7 +220,20 @@ public class VoucherDetailActivity extends AppCompatActivity {
         String thờiGianThực = new SimpleDateFormat("HH:mm dd/MM", Locale.getDefault()).format(new Date());
         String tbMới = "🛒 [GIAO DỊCH MỚI] Người dùng @" + buyerUser + " vừa đặt mua voucher '" + tênVoucherChiTiết + "' (" + giáXuVoucher + " SS)! Mở Escrow Chat để giao dịch.||" + thờiGianThực;
         String tbGốc = bộLưuTrữVí.getString("DANH_SACH_THONG_BAO_" + sellerClean, "");
+
+        // Đăng ký đơn hàng chờ xác nhận vào Kênh Người Bán của Seller
+        String khoPendingGốc = bộLưuTrữVí.getString("DANH_SACH_ESCROW_PENDING_" + sellerClean, "");
+        String bảnGhiPendingMới = mãBíMậtKíchHoạt + "::" + tênVoucherChiTiết + "::" + giáXuVoucher + " SS::" + buyerUser + "::" + buyerUser.substring(0, Math.min(2, buyerUser.length())).toUpperCase() + "::" + buyerUser;
+        String khoPendingMới = bảnGhiPendingMới + (khoPendingGốc.isEmpty() ? "" : ";;" + khoPendingGốc);
+
+        // Đánh dấu mã voucher đã được khóa / mua -> Biến mất khỏi Sàn C2C Market ngay lập tức khi vừa bấm Mua
+        String danhSáchĐãBánGốc = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
+        String danhSáchĐãBánMới = mãBíMậtKíchHoạt + ";;" + danhSáchĐãBánGốc;
+
         bộLưuTrữVí.edit()
+                .putLong("ESCROW_START_TIME_" + mãBíMậtKíchHoạt, System.currentTimeMillis())
+                .putString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", danhSáchĐãBánMới)
+                .putString("DANH_SACH_ESCROW_PENDING_" + sellerClean, khoPendingMới)
                 .putString("DANH_SACH_THONG_BAO_" + sellerClean, tbMới + (tbGốc.isEmpty() ? "" : ";;" + tbGốc))
                 .putBoolean("HAS_UNREAD_NOTIFICATIONS_" + sellerClean, true)
                 .apply();
