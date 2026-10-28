@@ -179,7 +179,7 @@ public class EscrowChatActivity extends AppCompatActivity {
 
         // Phân định rõ Màn Hình Chat Bạn Bè Thường vs Màn Hình Chat Ký Quỹ Mua Bán/Trao Đổi Voucher
         boolean làChatTròChuyệnXãHội = (dữLiệuÝĐịnh != null && dữLiệuÝĐịnh.getBooleanExtra("EXTRA_IS_SOCIAL_CHAT", false))
-                || (giáXuEscrow == 0 && (mãBíMậtVoucher.startsWith("CHAT-") || "HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher)));
+                || (giáXuEscrow == 0 && (mãBíMậtVoucher.startsWith("CHAT-") || mãBíMậtVoucher.startsWith("SOCIAL_") || "HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher)));
 
         // KÍCH HOẠT VÀ ĐĂNG KÝ NGAY PHÒNG CHAT VÀO HỘP THOẠI CHUNG NGAY KHI MỞ MÀN HÌNH (KỂ CẢ CHƯA GỬI TIN NHẮN)
         String thờiGianKhởiTạo = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
@@ -420,6 +420,7 @@ public class EscrowChatActivity extends AppCompatActivity {
                                     if (sbKhoMới.length() > 0) sbKhoMới.append(";;");
                                     sbKhoMới.append(recordStr);
                                     cóTinMới = true;
+                                    android.util.Log.d("SSharing_Chat", "📥 [REALTIME RECEIVED] Room: " + idPhòngChat + " | Sender: @" + senderUser + " | Message: " + msgText);
                                 }
                             }
                         }
@@ -481,6 +482,7 @@ public class EscrowChatActivity extends AppCompatActivity {
 
         // Đồng bộ tin nhắn mới lên Firebase Firestore cho phòng chat P2P
         đồngBộTinNhắnLênFirebaseFirestore(idPhòngChat, usernameHiệnTại, họTênHiệnTại, avatarInitials, nộiDungGói, thờiGianThực);
+        android.util.Log.d("SSharing_Chat", "📤 [SENT MESSAGE] Room: " + idPhòngChat + " | Sender: @" + usernameHiệnTại + " | Message: " + nộiDungGói);
 
         cậpNhậtHiểnThịDanhSáchTinNhắnRealtime();
         cuộnXuốngĐáyChat();

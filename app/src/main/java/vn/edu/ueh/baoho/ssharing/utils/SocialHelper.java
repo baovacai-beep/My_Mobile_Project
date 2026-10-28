@@ -226,4 +226,18 @@ public class SocialHelper {
             db.collection("users").document(usernameClean).set(update, com.google.firebase.firestore.SetOptions.merge());
         } catch (Throwable ignored) {}
     }
+
+    /**
+     * Tạo mã ID phòng chat 1-on-1 cố định & đối xứng giữa 2 tài khoản (sắp xếp theo bảng chữ cái)
+     */
+    public static String generateSocialChatRoomCode(String userA, String userB) {
+        String cleanA = userA != null ? userA.toLowerCase().trim() : "";
+        String cleanB = userB != null ? userB.toLowerCase().trim() : "";
+
+        if (cleanA.compareTo(cleanB) <= 0) {
+            return "SOCIAL_" + cleanA + "_" + cleanB;
+        } else {
+            return "SOCIAL_" + cleanB + "_" + cleanA;
+        }
+    }
 }

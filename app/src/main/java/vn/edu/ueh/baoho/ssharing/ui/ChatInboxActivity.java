@@ -146,7 +146,7 @@ public class ChatInboxActivity extends AppCompatActivity {
                 String thờiGianCuối = mảngTrường.length > 9 ? mảngTrường[9] : "Vừa xong";
 
                 boolean đãHoànTất = danhSáchĐãBánHệThống.contains(mãCode);
-                boolean làChatSocial = giáXu == 0 || mãCode.startsWith("CHAT-");
+                boolean làChatSocial = giáXu == 0 || mãCode.startsWith("CHAT-") || mãCode.startsWith("SOCIAL_");
 
                 // Kiểm tra bạn bè 2 chiều (Mutual Friends) vs Người lạ (Strangers)
                 String usernameThựcĐốiTác = usernameHiệnTại.equalsIgnoreCase(buyerUser) ? sellerName : buyerUser;

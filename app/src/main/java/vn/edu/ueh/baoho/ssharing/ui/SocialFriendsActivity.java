@@ -274,11 +274,12 @@ public class SocialFriendsActivity extends AppCompatActivity {
             nútNhắnTin.setPadding(0, 0, 0, 0);
             nútNhắnTin.setBackgroundResource(R.drawable.bg_btn_purple);
             nútNhắnTin.setOnClickListener(v -> {
+                String socialRoomCode = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.generateSocialChatRoomCode(usernameHiệnTại, thànhViên.username);
                 android.content.Intent ýĐịnhChat = new android.content.Intent(this, EscrowChatActivity.class);
                 ýĐịnhChat.putExtra("EXTRA_SELLER_NAME", thànhViên.họTên + " (@" + thànhViên.username + ")");
                 ýĐịnhChat.putExtra("EXTRA_SELLER_AVATAR", thànhViên.avatarInitials);
                 ýĐịnhChat.putExtra("EXTRA_VOUCHER_TITLE", "Trò chuyện bạn bè cộng đồng");
-                ýĐịnhChat.putExtra("EXTRA_SECRET_CODE", "CHAT-" + thànhViên.username.toUpperCase());
+                ýĐịnhChat.putExtra("EXTRA_SECRET_CODE", socialRoomCode);
                 ýĐịnhChat.putExtra("EXTRA_PRICE_SS", 0);
                 ýĐịnhChat.putExtra("EXTRA_IS_SOCIAL_CHAT", true);
                 startActivity(ýĐịnhChat);
@@ -340,6 +341,7 @@ public class SocialFriendsActivity extends AppCompatActivity {
 
     private void thựcHiệnThayĐổiTrạngTháiTheoDõi(ThôngTinThànhViênSocial thànhViên) {
         boolean nowFollowing = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.toggleFollowUser(this, usernameHiệnTại, thànhViên.username);
+        android.util.Log.d("SSharing_Social", "🤝 [FOLLOW TOGGLE] User: @" + usernameHiệnTại + " -> Target: @" + thànhViên.username + " | NowFollowing: " + nowFollowing);
 
         if (nowFollowing) {
             boolean làBạnBè2Chiều = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isMutualFriend(this, usernameHiệnTại, thànhViên.username);
@@ -403,6 +405,7 @@ public class SocialFriendsActivity extends AppCompatActivity {
                                 sb.append(list.get(i));
                             }
                             bộLưuTrữVí.edit().putString("FOLLOWING_LIST_" + usernameHiệnTại.toLowerCase().trim(), sb.toString()).apply();
+                            android.util.Log.d("SSharing_Social", "🔔 [REALTIME FOLLOW SYNC] Received Firestore follow update for @" + usernameHiệnTại);
                             runOnUiThread(() -> cậpNhậtThốngKêVàVẽDanhSáchthànhViên(ôNhậpTìmKiếmUser != null ? ôNhậpTìmKiếmUser.getText().toString().trim() : ""));
                         }
                     });
