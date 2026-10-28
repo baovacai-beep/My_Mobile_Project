@@ -244,7 +244,7 @@ public class SocialHelper {
         int mutualCount = 0;
 
         for (String targetUser : followedList) {
-            if (isUserFollowing(context, targetUser, cleanA)) {
+            if (isMutualFriend(context, cleanA, targetUser)) {
                 mutualCount++;
             }
         }
