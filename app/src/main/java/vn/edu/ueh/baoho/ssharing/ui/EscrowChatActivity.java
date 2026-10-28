@@ -101,6 +101,17 @@ public class EscrowChatActivity extends AppCompatActivity {
         return chuỗiGốc.toLowerCase().trim();
     }
 
+    public static String tạoMãPhòngChatBạnBèĐốiXứng(String u1Input, String u2Input) {
+        String u1 = u1Input != null ? u1Input.toLowerCase().trim() : "";
+        String u2 = u2Input != null ? u2Input.toLowerCase().trim() : "";
+
+        if (u1.compareTo(u2) < 0) {
+            return "P2P_" + u1 + "_" + u2;
+        } else {
+            return "P2P_" + u2 + "_" + u1;
+        }
+    }
+
     private void khởiTạoÁnhXạGiaoDiện() {
         khungDanhSáchTinNhắn = findViewById(R.id.containerChatMessages);
         khungCuộnChat = findViewById(R.id.scrollChatArea);
@@ -136,6 +147,15 @@ public class EscrowChatActivity extends AppCompatActivity {
             }
         }
 
+        String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
+        boolean làChatTròChuyệnXãHội = (dữLiệuÝĐịnh != null && dữLiệuÝĐịnh.getBooleanExtra("EXTRA_IS_SOCIAL_CHAT", false))
+                || (giáXuEscrow == 0 && (mãBíMậtVoucher.startsWith("CHAT-") || mãBíMậtVoucher.startsWith("P2P_") || "HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher)));
+
+        // CHUẨN HÓA MÃ PHÒNG CHAT ĐỐI XỨNG BẠN BÈ/NGƯỜI LẠ P2P AN TOÀN
+        if (làChatTròChuyệnXãHội && !"HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher) && !partnerClean.isEmpty()) {
+            mãBíMậtVoucher = tạoMãPhòngChatBạnBèĐốiXứng(usernameHiệnTại, partnerClean);
+        }
+
         idPhòngChat = "CHAT_ROOM_" + mãBíMậtVoucher;
 
         // Đánh dấu người dùng hiện tại ĐÃ ĐỌC phòng chat này
@@ -158,7 +178,6 @@ public class EscrowChatActivity extends AppCompatActivity {
         // Nạp ảnh đại diện thật của đối tác lên Header phòng Chat nếu có
         ImageView imgPartnerHeader = findViewById(R.id.imgPartnerAvatarHeader);
         if (imgPartnerHeader != null) {
-            String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
             String pathAvatarPartner = bộLưuTrữVí.getString("CURRENT_USER_AVATAR_PATH_" + partnerClean, "");
             if (!pathAvatarPartner.isEmpty() && new File(pathAvatarPartner).exists()) {
                 try {
@@ -176,10 +195,6 @@ public class EscrowChatActivity extends AppCompatActivity {
         if (nhãnUyTínĐốiTác != null) {
             nhãnUyTínĐốiTác.setText("96% Uy tín  ★ 4.8 (eKYC)");
         }
-
-        // Phân định rõ Màn Hình Chat Bạn Bè Thường vs Màn Hình Chat Ký Quỹ Mua Bán/Trao Đổi Voucher
-        boolean làChatTròChuyệnXãHội = (dữLiệuÝĐịnh != null && dữLiệuÝĐịnh.getBooleanExtra("EXTRA_IS_SOCIAL_CHAT", false))
-                || (giáXuEscrow == 0 && (mãBíMậtVoucher.startsWith("CHAT-") || mãBíMậtVoucher.startsWith("SOCIAL_") || "HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher)));
 
         // KÍCH HOẠT VÀ ĐĂNG KÝ NGAY PHÒNG CHAT VÀO HỘP THOẠI CHUNG NGAY KHI MỞ MÀN HÌNH (KỂ CẢ CHƯA GỬI TIN NHẮN)
         String thờiGianKhởiTạo = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
@@ -221,7 +236,7 @@ public class EscrowChatActivity extends AppCompatActivity {
                 if (btnSend != null) btnSend.setVisibility(View.GONE);
                 if (btnAttach != null) btnAttach.setVisibility(View.GONE);
             } else {
-                String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
+                partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
                 boolean làNgườiBánCủaGiaoDịch = usernameHiệnTại.equalsIgnoreCase(partnerClean)
                         || (tênNgườiBán != null && tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()));
 
