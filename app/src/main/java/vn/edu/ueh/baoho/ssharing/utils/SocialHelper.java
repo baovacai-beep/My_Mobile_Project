@@ -73,9 +73,9 @@ public class SocialHelper {
         if (cleanA.isEmpty() || cleanTarget.isEmpty()) return false;
 
         SharedPreferences prefs = context.getSharedPreferences("SSHARING_PREFS", Context.MODE_PRIVATE);
-        String followerStr = prefs.getString("FOLLOWER_LIST_" + cleanA, "");
-        if (followerStr.isEmpty()) {
-            return isUserFollowing(context, cleanTarget, cleanA);
+        String followerStr = prefs.getString("FOLLOWER_LIST_" + cleanA, "NONE");
+        if ("NONE".equalsIgnoreCase(followerStr) || followerStr.trim().isEmpty()) {
+            return false;
         }
 
         String[] parts = followerStr.split(";;");
@@ -203,7 +203,8 @@ public class SocialHelper {
                                             if (i > 0) sbFollowers.append(";;");
                                             sbFollowers.append(myFollowersList.get(i));
                                         }
-                                        prefs.edit().putString("FOLLOWER_LIST_" + cleanUser, sbFollowers.toString()).apply();
+                                        String valFollowers = sbFollowers.length() > 0 ? sbFollowers.toString() : "NONE";
+                                        prefs.edit().putString("FOLLOWER_LIST_" + cleanUser, valFollowers).apply();
                                     }
                                     if (onComplete != null) onComplete.run();
                                 })
