@@ -50,7 +50,6 @@ public class SocialFriendsActivity extends AppCompatActivity {
 
     private String usernameHiệnTại = "baoho123";
     private List<ThôngTinThànhViênSocial> danhSáchTấtCảThànhViên = new ArrayList<>();
-    private com.google.firebase.firestore.ListenerRegistration listenerFirestoreFollow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +61,6 @@ public class SocialFriendsActivity extends AppCompatActivity {
         khởiTạoKhoThànhViênMẫu();
         càiĐặtSựKiệnLắngNghe();
         cậpNhậtThốngKêVàVẽDanhSáchthànhViên("");
-        kíchHoạtLắngNgheTheoDõiRealtimeFirestore();
     }
 
     private void đọcThôngTinTàiKhoản() {
@@ -341,7 +339,6 @@ public class SocialFriendsActivity extends AppCompatActivity {
 
     private void thựcHiệnThayĐổiTrạngTháiTheoDõi(ThôngTinThànhViênSocial thànhViên) {
         boolean nowFollowing = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.toggleFollowUser(this, usernameHiệnTại, thànhViên.username);
-        android.util.Log.d("SSharing_Social", "🤝 [FOLLOW TOGGLE] User: @" + usernameHiệnTại + " -> Target: @" + thànhViên.username + " | NowFollowing: " + nowFollowing);
 
         if (nowFollowing) {
             boolean làBạnBè2Chiều = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isMutualFriend(this, usernameHiệnTại, thànhViên.username);
@@ -377,46 +374,5 @@ public class SocialFriendsActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
 
         cậpNhậtThốngKêVàVẽDanhSáchthànhViên(ôNhậpTìmKiếmUser != null ? ôNhậpTìmKiếmUser.getText().toString().trim() : "");
-    }
-
-    private void kíchHoạtLắngNgheTheoDõiRealtimeFirestore() {
-        try {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            listenerFirestoreFollow = db.collection("users")
-                    .document(usernameHiệnTại)
-                    .collection("following")
-                    .addSnapshotListener((snapshots, e) -> {
-                        if (e != null || snapshots == null) return;
-                        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-                        List<String> list = new ArrayList<>();
-                        for (com.google.firebase.firestore.DocumentSnapshot doc : snapshots.getDocuments()) {
-                            Boolean isFollowing = doc.getBoolean("is_following");
-                            if (isFollowing != null && isFollowing) {
-                                String targetUser = doc.getId().toLowerCase().trim();
-                                if (!list.contains(targetUser)) {
-                                    list.add(targetUser);
-                                }
-                            }
-                        }
-                        if (!list.isEmpty()) {
-                            StringBuilder sb = new StringBuilder();
-                            for (int i = 0; i < list.size(); i++) {
-                                if (i > 0) sb.append(";;");
-                                sb.append(list.get(i));
-                            }
-                            bộLưuTrữVí.edit().putString("FOLLOWING_LIST_" + usernameHiệnTại.toLowerCase().trim(), sb.toString()).apply();
-                            android.util.Log.d("SSharing_Social", "🔔 [REALTIME FOLLOW SYNC] Received Firestore follow update for @" + usernameHiệnTại);
-                            runOnUiThread(() -> cậpNhậtThốngKêVàVẽDanhSáchthànhViên(ôNhậpTìmKiếmUser != null ? ôNhậpTìmKiếmUser.getText().toString().trim() : ""));
-                        }
-                    });
-        } catch (Exception ignored) {}
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (listenerFirestoreFollow != null) {
-            listenerFirestoreFollow.remove();
-        }
     }
 }

@@ -420,7 +420,6 @@ public class EscrowChatActivity extends AppCompatActivity {
                                     if (sbKhoMới.length() > 0) sbKhoMới.append(";;");
                                     sbKhoMới.append(recordStr);
                                     cóTinMới = true;
-                                    android.util.Log.d("SSharing_Chat", "📥 [REALTIME RECEIVED] Room: " + idPhòngChat + " | Sender: @" + senderUser + " | Message: " + msgText);
                                 }
                             }
                         }
@@ -482,7 +481,6 @@ public class EscrowChatActivity extends AppCompatActivity {
 
         // Đồng bộ tin nhắn mới lên Firebase Firestore cho phòng chat P2P
         đồngBộTinNhắnLênFirebaseFirestore(idPhòngChat, usernameHiệnTại, họTênHiệnTại, avatarInitials, nộiDungGói, thờiGianThực);
-        android.util.Log.d("SSharing_Chat", "📤 [SENT MESSAGE] Room: " + idPhòngChat + " | Sender: @" + usernameHiệnTại + " | Message: " + nộiDungGói);
 
         cậpNhậtHiểnThịDanhSáchTinNhắnRealtime();
         cuộnXuốngĐáyChat();
@@ -506,6 +504,35 @@ public class EscrowChatActivity extends AppCompatActivity {
         }
 
         bộLưuTrữVí.edit().putString("DANH_SACH_PHONG_CHAT_TAT_CA", danhSáchMới.toString()).apply();
+
+        // ĐỒNG BỘ INBOX LÊN CLOUD FIRESTORE CHO CẢ 2 BÊN (BUYER VÀ SELLER/TARGET USER)
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            Map<String, Object> roomData = new HashMap<>();
+            roomData.put("idPhong", idPhòng);
+            roomData.put("maCode", mãCode);
+            roomData.put("tenVoucher", tênVoucher);
+            roomData.put("buyerUsername", buyerUsername);
+            roomData.put("buyerName", buyerName);
+            roomData.put("sellerName", sellerName);
+            roomData.put("sellerAvatar", sellerAvatar);
+            roomData.put("giaXu", giáXu);
+            roomData.put("noiDungTin", nộiDungTin);
+            roomData.put("thoiGian", thờiGian);
+            roomData.put("updatedAt", System.currentTimeMillis());
+
+            // Đẩy vào Cloud Inbox cho User A
+            String cleanBuyer = buyerUsername.toLowerCase().trim();
+            if (!cleanBuyer.isEmpty()) {
+                db.collection("users").document(cleanBuyer).collection("chat_inbox").document(idPhòng).set(roomData);
+            }
+
+            // Đẩy vào Cloud Inbox cho User B (Target User / Seller)
+            String cleanPartner = tríchXuấtUsernameSạch(sellerName);
+            if (!cleanPartner.isEmpty()) {
+                db.collection("users").document(cleanPartner).collection("chat_inbox").document(idPhòng).set(roomData);
+            }
+        } catch (Exception ignored) {}
     }
 
     private void đồngBộTinNhắnLênFirebaseFirestore(String idPhòng, String username, String họTên, String avatar, String nộiDung, String thờiGian) {

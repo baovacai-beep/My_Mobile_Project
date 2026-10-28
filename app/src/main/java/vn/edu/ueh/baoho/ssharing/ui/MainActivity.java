@@ -63,10 +63,14 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         boolean đãĐăngNhập = bộLưuTrữVí.getBoolean("IS_LOGGED_IN", false);
         if (!đãĐăngNhập) {
+            android.util.Log.d("SSharing_Main", "🔑 [AUTH CHECK] Session expired or not logged in -> Redirecting to LoginActivity");
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
+
+        String usernameCurrent = bộLưuTrữVí.getString("CURRENT_USERNAME", "baoho123");
+        android.util.Log.d("SSharing_Main", "🚀 [MAIN LAUNCH] Active user session: @" + usernameCurrent);
 
         setContentView(R.layout.activity_main);
 

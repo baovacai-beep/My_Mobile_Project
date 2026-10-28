@@ -20,6 +20,7 @@ public class ChatInboxActivity extends AppCompatActivity {
 
     private String tabĐangChọn = "ACTIVE";
     private String usernameHiệnTại = "baoho123";
+    private com.google.firebase.firestore.ListenerRegistration listenerFirestoreInbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class ChatInboxActivity extends AppCompatActivity {
         khởiTạoÁnhXạGiaoDiện();
         càiĐặtSựKiệnLắngNghe();
         cậpNhậtDanhSáchĐoạnChatTheoTab();
+        kíchHoạtLắngNgheInboxRealtimeFirestore();
     }
 
     @Override
@@ -416,6 +418,63 @@ public class ChatInboxActivity extends AppCompatActivity {
 
         if (containerDanhSáchĐoạnChat != null) {
             containerDanhSáchĐoạnChat.addView(thẻCard);
+        }
+    }
+
+    private void kíchHoạtLắngNgheInboxRealtimeFirestore() {
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            listenerFirestoreInbox = db.collection("users")
+                    .document(usernameHiệnTại.toLowerCase().trim())
+                    .collection("chat_inbox")
+                    .orderBy("updatedAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                    .addSnapshotListener((snapshots, e) -> {
+                        if (e != null || snapshots == null) return;
+                        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : snapshots.getDocuments()) {
+                            String idPhong = doc.getString("idPhong");
+                            String maCode = doc.getString("maCode");
+                            String tenVoucher = doc.getString("tenVoucher");
+                            String buyerUsername = doc.getString("buyerUsername");
+                            String buyerName = doc.getString("buyerName");
+                            String sellerName = doc.getString("sellerName");
+                            String sellerAvatar = doc.getString("sellerAvatar");
+                            Long giaXuObj = doc.getLong("giaXu");
+                            int giaXu = giaXuObj != null ? giaXuObj.intValue() : 0;
+                            String noiDungTin = doc.getString("noiDungTin");
+                            String thoiGian = doc.getString("thoiGian");
+
+                            if (idPhong == null) continue;
+                            if (noiDungTin == null) noiDungTin = "Giao dịch mới";
+                            if (thoiGian == null) thoiGian = "Vừa xong";
+
+                            String banGhiMoi = idPhong + "||" + maCode + "||" + tenVoucher + "||" + buyerUsername + "||" + buyerName + "||" + sellerName + "||" + sellerAvatar + "||" + giaXu + "||" + noiDungTin + "||" + thoiGian;
+
+                            String danhSachGoc = bộLưuTrữVí.getString("DANH_SACH_PHONG_CHAT_TAT_CA", "");
+                            StringBuilder danhSachMoi = new StringBuilder();
+                            danhSachMoi.append(banGhiMoi);
+
+                            if (!danhSachGoc.isEmpty()) {
+                                String[] cacPhong = danhSachGoc.split(";;;");
+                                for (String phong : cacPhong) {
+                                    if (phong.trim().isEmpty() || phong.startsWith(idPhong)) continue;
+                                    danhSachMoi.append(";;;").append(phong);
+                                }
+                            }
+                            bộLưuTrữVí.edit().putString("DANH_SACH_PHONG_CHAT_TAT_CA", danhSachMoi.toString()).apply();
+                        }
+
+                        runOnUiThread(this::cậpNhậtDanhSáchĐoạnChatTheoTab);
+                    });
+        } catch (Exception ignored) {}
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (listenerFirestoreInbox != null) {
+            listenerFirestoreInbox.remove();
         }
     }
 }
