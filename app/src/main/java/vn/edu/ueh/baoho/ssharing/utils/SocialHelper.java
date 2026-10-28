@@ -19,14 +19,6 @@ public class SocialHelper {
             return "baoho123;;minh.triet";
         } else if ("minh.triet".equals(u)) {
             return "baoho123;;beo123";
-        } else if ("khanh.trinh".equals(u)) {
-            return "baoho123";
-        } else if ("bao.ngoc".equals(u)) {
-            return "baoho123";
-        } else if ("gia.bao".equals(u)) {
-            return "baoho123";
-        } else if ("hoang.long".equals(u)) {
-            return "baoho123";
         }
         return "";
     }
