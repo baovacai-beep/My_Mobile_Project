@@ -15,7 +15,7 @@ import vn.edu.ueh.baoho.ssharing.R;
 
 public class ChatInboxActivity extends AppCompatActivity {
 
-    private TextView tabĐangGiaoDịch, tabBạnBèChat, tabHỗTrợCSKH, tabLịchSửChat;
+    private TextView tabĐangGiaoDịch, tabBạnBèChat, tabNgườiLạChat, tabHỗTrợCSKH, tabLịchSửChat;
     private LinearLayout containerDanhSáchĐoạnChat;
 
     private String tabĐangChọn = "ACTIVE";
@@ -58,6 +58,7 @@ public class ChatInboxActivity extends AppCompatActivity {
     private void khởiTạoÁnhXạGiaoDiện() {
         tabĐangGiaoDịch = findViewById(R.id.tabActiveEscrowChats);
         tabBạnBèChat = findViewById(R.id.tabSocialFriendChats);
+        tabNgườiLạChat = findViewById(R.id.tabStrangerChats);
         tabHỗTrợCSKH = findViewById(R.id.tabSupportChats);
         tabLịchSửChat = findViewById(R.id.tabCompletedChats);
         containerDanhSáchĐoạnChat = findViewById(R.id.containerChatConversations);
@@ -83,6 +84,10 @@ public class ChatInboxActivity extends AppCompatActivity {
             tabBạnBèChat.setOnClickListener(v -> chuyểnTabChatInbox("SOCIAL", tabBạnBèChat));
         }
 
+        if (tabNgườiLạChat != null) {
+            tabNgườiLạChat.setOnClickListener(v -> chuyểnTabChatInbox("STRANGER", tabNgườiLạChat));
+        }
+
         if (tabHỗTrợCSKH != null) {
             tabHỗTrợCSKH.setOnClickListener(v -> chuyểnTabChatInbox("SUPPORT", tabHỗTrợCSKH));
         }
@@ -98,6 +103,7 @@ public class ChatInboxActivity extends AppCompatActivity {
         int màuXám = Color.parseColor("#888888");
         if (tabĐangGiaoDịch != null) { tabĐangGiaoDịch.setBackground(null); tabĐangGiaoDịch.setTextColor(màuXám); }
         if (tabBạnBèChat != null) { tabBạnBèChat.setBackground(null); tabBạnBèChat.setTextColor(màuXám); }
+        if (tabNgườiLạChat != null) { tabNgườiLạChat.setBackground(null); tabNgườiLạChat.setTextColor(màuXám); }
         if (tabHỗTrợCSKH != null) { tabHỗTrợCSKH.setBackground(null); tabHỗTrợCSKH.setTextColor(màuXám); }
         if (tabLịchSửChat != null) { tabLịchSửChat.setBackground(null); tabLịchSửChat.setTextColor(màuXám); }
 
@@ -140,13 +146,22 @@ public class ChatInboxActivity extends AppCompatActivity {
                 String thờiGianCuối = mảngTrường.length > 9 ? mảngTrường[9] : "Vừa xong";
 
                 boolean đãHoànTất = danhSáchĐãBánHệThống.contains(mãCode);
-                boolean làChatBạnBè = giáXu == 0 || mãCode.startsWith("CHAT-");
+                boolean làChatSocial = giáXu == 0 || mãCode.startsWith("CHAT-");
+
+                // Kiểm tra bạn bè 2 chiều (Mutual Friends) vs Người lạ (Strangers)
+                String usernameThựcĐốiTác = usernameHiệnTại.equalsIgnoreCase(buyerUser) ? sellerName : buyerUser;
+                String partnerClean = tríchXuấtUsernameSạch(usernameThựcĐốiTác);
+                String chuỗiĐangTheoDõi = bộLưuTrữVí.getString("FOLLOWING_LIST_" + usernameHiệnTại.toLowerCase().trim(), "");
+                boolean làĐangTheoDõi = chuỗiĐangTheoDõi.contains(partnerClean);
+                boolean làBạnBè2Chiều = làĐangTheoDõi && ("beo123".equalsIgnoreCase(partnerClean) || "minh.triet".equalsIgnoreCase(partnerClean));
 
                 // Lọc chính xác Rạch Ròi theo từng Tab
                 if ("ACTIVE".equals(tabĐangChọn)) {
-                    if (đãHoànTất || làChatBạnBè) continue;
+                    if (đãHoànTất || làChatSocial) continue;
                 } else if ("SOCIAL".equals(tabĐangChọn)) {
-                    if (!làChatBạnBè) continue;
+                    if (!làChatSocial || !làBạnBè2Chiều) continue;
+                } else if ("STRANGER".equals(tabĐangChọn)) {
+                    if (!làChatSocial || làBạnBè2Chiều) continue;
                 } else if ("HISTORY".equals(tabĐangChọn)) {
                     if (!đãHoànTất) continue;
                 } else if ("SUPPORT".equals(tabĐangChọn)) {
@@ -176,8 +191,7 @@ public class ChatInboxActivity extends AppCompatActivity {
                     avatarĐốiTácHiểnThị = buyerUser.substring(0, Math.min(2, buyerUser.length())).toUpperCase();
                 }
 
-                String trạngTháiStr = làChatBạnBè ? "💬 Bạn bè cộng đồng SSharing" : (đãHoànTất ? "🔒 Đã hoàn tất - Khóa lưu trữ tự động sau 3 ngày" : "🔒 Đang khóa " + giáXu + " SS");
-                String usernameThựcĐốiTác = usernameHiệnTại.equalsIgnoreCase(buyerUser) ? sellerName : buyerUser;
+                String trạngTháiStr = làChatSocial ? (làBạnBè2Chiều ? "💬 Bạn bè 2 chiều" : "👤 Tin nhắn từ Người Lạ") : (đãHoànTất ? "🔒 Đã hoàn tất - Khóa lưu trữ tự động sau 3 ngày" : "🔒 Đang khóa " + giáXu + " SS");
 
                 thêmThẻĐoạnChatHộpThoại(
                         tênĐốiTácHiểnThị,
