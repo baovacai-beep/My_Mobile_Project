@@ -50,6 +50,7 @@ public class SocialFriendsActivity extends AppCompatActivity {
 
     private String usernameHiệnTại = "baoho123";
     private List<ThôngTinThànhViênSocial> danhSáchTấtCảThànhViên = new ArrayList<>();
+    private com.google.firebase.firestore.ListenerRegistration bộLắngNgheFollowRealtimeFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,35 @@ public class SocialFriendsActivity extends AppCompatActivity {
         khởiTạoÁnhXạGiaoDiện();
         khởiTạoKhoThànhViênMẫu();
         càiĐặtSựKiệnLắngNghe();
-        cậpNhậtThốngKêVàVẽDanhSáchthànhViên("");
+
+        // Tự động đồng bộ liên kết Follow từ Cloud Firestore trước khi vẽ danh sách
+        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncFollowStateFromCloud(this, usernameHiệnTại, () -> {
+            cậpNhậtThốngKêVàVẽDanhSáchthànhViên("");
+        });
+
+        // Kích hoạt ngay bộ lắng nghe Firestore Realtime cho mọi sự kiện Follow/Unfollow mới
+        kíchHoạtLắngNgheFollowRealtimeFirestore();
+    }
+
+    private void kíchHoạtLắngNgheFollowRealtimeFirestore() {
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            bộLắngNgheFollowRealtimeFirestore = db.collection("follows")
+                    .addSnapshotListener((snapshot, error) -> {
+                        if (error != null || snapshot == null) return;
+                        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncFollowStateFromCloud(this, usernameHiệnTại, () -> {
+                            runOnUiThread(() -> cậpNhậtThốngKêVàVẽDanhSáchthànhViên(ôNhậpTìmKiếmUser != null ? ôNhậpTìmKiếmUser.getText().toString().trim() : ""));
+                        });
+                    });
+        } catch (Throwable ignored) {}
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncFollowStateFromCloud(this, usernameHiệnTại, () -> {
+            cậpNhậtThốngKêVàVẽDanhSáchthànhViên("");
+        });
     }
 
     private void đọcThôngTinTàiKhoản() {
@@ -149,11 +178,11 @@ public class SocialFriendsActivity extends AppCompatActivity {
         if (containerDanhSáchThànhViên == null) return;
         containerDanhSáchThànhViên.removeAllViews();
 
-        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        String chuỗiĐangTheoDõi = bộLưuTrữVí.getString("FOLLOWING_LIST_" + usernameHiệnTại.toLowerCase().trim(), "Beo123;;minh.triet");
+        int[] counts = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.calculateFollowingAndMutualCounts(this, usernameHiệnTại);
+        int sốLượngĐangTheoDõi = counts[0];
+        int sốLượngBạnBè2Chiều = counts[1];
 
-        int sốLượngĐangTheoDõi = 0;
-        int sốLượngBạnBè2Chiều = 0;
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
 
         for (ThôngTinThànhViênSocial thànhViên : danhSáchTấtCảThànhViên) {
             if (thànhViên.username.equalsIgnoreCase(usernameHiệnTại)) continue;
@@ -164,12 +193,8 @@ public class SocialFriendsActivity extends AppCompatActivity {
                 if (!khớpUser && !khớpTên) continue;
             }
 
-            boolean làĐangTheoDõi = chuỗiĐangTheoDõi.contains(thànhViên.username.toLowerCase());
-            // Giả lập đối tác cũng theo dõi lại mình -> Trở thành Bạn Bè 2 chiều
-            boolean làBạnBè2Chiều = làĐangTheoDõi && ("Beo123".equalsIgnoreCase(thànhViên.username) || "minh.triet".equalsIgnoreCase(thànhViên.username));
-
-            if (làĐangTheoDõi) sốLượngĐangTheoDõi++;
-            if (làBạnBè2Chiều) sốLượngBạnBè2Chiều++;
+            boolean làĐangTheoDõi = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isUserFollowing(this, usernameHiệnTại, thànhViên.username);
+            boolean làBạnBè2Chiều = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isMutualFriend(this, usernameHiệnTại, thànhViên.username);
 
             // Bố Cục Thẻ User 2 Hàng Độc Lập Chống Bị Bóp Méo Chữ Họ Tên
             CardView thẻUser = new CardView(this);
@@ -276,11 +301,12 @@ public class SocialFriendsActivity extends AppCompatActivity {
             nútNhắnTin.setPadding(0, 0, 0, 0);
             nútNhắnTin.setBackgroundResource(R.drawable.bg_btn_purple);
             nútNhắnTin.setOnClickListener(v -> {
+                String socialRoomCode = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.generateSocialChatRoomCode(usernameHiệnTại, thànhViên.username);
                 android.content.Intent ýĐịnhChat = new android.content.Intent(this, EscrowChatActivity.class);
                 ýĐịnhChat.putExtra("EXTRA_SELLER_NAME", thànhViên.họTên + " (@" + thànhViên.username + ")");
                 ýĐịnhChat.putExtra("EXTRA_SELLER_AVATAR", thànhViên.avatarInitials);
                 ýĐịnhChat.putExtra("EXTRA_VOUCHER_TITLE", "Trò chuyện bạn bè cộng đồng");
-                ýĐịnhChat.putExtra("EXTRA_SECRET_CODE", "CHAT-" + thànhViên.username.toUpperCase());
+                ýĐịnhChat.putExtra("EXTRA_SECRET_CODE", socialRoomCode);
                 ýĐịnhChat.putExtra("EXTRA_PRICE_SS", 0);
                 ýĐịnhChat.putExtra("EXTRA_IS_SOCIAL_CHAT", true);
                 startActivity(ýĐịnhChat);
@@ -323,7 +349,7 @@ public class SocialFriendsActivity extends AppCompatActivity {
                 nútTheoDõi.setBackgroundResource(R.drawable.bg_btn_purple);
             }
 
-            nútTheoDõi.setOnClickListener(v -> thựcHiệnThayĐổiTrạngTháiTheoDõi(thànhViên, làĐangTheoDõi, chuỗiĐangTheoDõi));
+            nútTheoDõi.setOnClickListener(v -> thựcHiệnThayĐổiTrạngTháiTheoDõi(thànhViên));
 
             hàng2Nút.addView(nútNhắnTin);
             hàng2Nút.addView(nútBànTrade);
@@ -340,41 +366,50 @@ public class SocialFriendsActivity extends AppCompatActivity {
         if (nhãnSốBạnBè2Chiều != null) nhãnSốBạnBè2Chiều.setText(String.valueOf(sốLượngBạnBè2Chiều));
     }
 
-    private void thựcHiệnThayĐổiTrạngTháiTheoDõi(ThôngTinThànhViênSocial thànhViên, boolean đangTheoDõi, String chuỗiGốc) {
-        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        String chuỗiMới;
+    private void thựcHiệnThayĐổiTrạngTháiTheoDõi(ThôngTinThànhViênSocial thànhViên) {
+        boolean nowFollowing = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.toggleFollowUser(this, usernameHiệnTại, thànhViên.username);
 
-        if (đangTheoDõi) {
-            chuỗiMới = chuỗiGốc.replace(thànhViên.username.toLowerCase(), "").replace(";;;;", ";;");
-            Toast.makeText(this, "Đã bỏ theo dõi @" + thànhViên.username, Toast.LENGTH_SHORT).show();
-        } else {
-            chuỗiMới = chuỗiGốc + ";;" + thànhViên.username.toLowerCase();
-            Toast.makeText(this, "🎉 Đã theo dõi @" + thànhViên.username + "! Cả 2 đã trở thành Bạn Bè!", Toast.LENGTH_SHORT).show();
+        if (nowFollowing) {
+            boolean làBạnBè2Chiều = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isMutualFriend(this, usernameHiệnTại, thànhViên.username);
+            if (làBạnBè2Chiều) {
+                Toast.makeText(this, "🎉 Đã theo dõi @" + thànhViên.username + "! Cả 2 đã trở thành BẠN BÈ 2 CHIỀU!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "🎉 Đã theo dõi @" + thànhViên.username + "!", Toast.LENGTH_SHORT).show();
+            }
 
             // Đẩy thông báo chuông tới đối tác
+            SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
             String targetClean = thànhViên.username.toLowerCase().trim();
             String thờiGianThực = new java.text.SimpleDateFormat("HH:mm dd/MM", java.util.Locale.getDefault()).format(new java.util.Date());
-            String tbMới = "👤 [THEO DÕI MỚI] Thành viên @" + usernameHiệnTại + " đã bắt đầu theo dõi bạn. Cả hai đã trở thành Bạn Bè 2 Chiều!||" + thờiGianThực;
+            String tbMới = "👤 [THEO DÕI MỚI] Thành viên @" + usernameHiệnTại + " đã bắt đầu theo dõi bạn.||" + thờiGianThực;
             String tbGốc = bộLưuTrữVí.getString("DANH_SACH_THONG_BAO_" + targetClean, "");
             bộLưuTrữVí.edit()
                     .putString("DANH_SACH_THONG_BAO_" + targetClean, tbMới + (tbGốc.isEmpty() ? "" : ";;" + tbGốc))
                     .putBoolean("HAS_UNREAD_NOTIFICATIONS_" + targetClean, true)
                     .apply();
+        } else {
+            Toast.makeText(this, "Đã bỏ theo dõi @" + thànhViên.username, Toast.LENGTH_SHORT).show();
         }
-
-        bộLưuTrữVí.edit().putString("FOLLOWING_LIST_" + usernameHiệnTại.toLowerCase().trim(), chuỗiMới).apply();
 
         // Đồng bộ lên Firebase Firestore
         try {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             Map<String, Object> data = new HashMap<>();
             data.put("target_user", thànhViên.username);
-            data.put("is_following", !đangTheoDõi);
+            data.put("is_following", nowFollowing);
             data.put("updated_at", System.currentTimeMillis());
 
             db.collection("users").document(usernameHiệnTại).collection("following").document(thànhViên.username).set(data);
         } catch (Exception ignored) {}
 
         cậpNhậtThốngKêVàVẽDanhSáchthànhViên(ôNhậpTìmKiếmUser != null ? ôNhậpTìmKiếmUser.getText().toString().trim() : "");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bộLắngNgheFollowRealtimeFirestore != null) {
+            bộLắngNgheFollowRealtimeFirestore.remove();
+        }
     }
 }

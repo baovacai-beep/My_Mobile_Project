@@ -57,7 +57,7 @@ public class EscrowChatActivity extends AppCompatActivity {
     private Handler bộCậpNhậtChatRealtime = new Handler(Looper.getMainLooper());
     private Runnable côngViệcTảiTinNhắnTựĐộng;
     private android.os.CountDownTimer bộĐếmLùiEscrowTimer;
-    private long tổngSốGiâyĐếmLùi = 3504000; // ~ 58 phút còn lại
+    private long tổngSốGiâyĐếmLùi = 86400000L; // 24 giờ (1 ngày) = 86,400,000 ms
 
     private String tênNgườiBán = "Minh Triết";
     private String avatarNgườiBán = "MT";
@@ -68,6 +68,7 @@ public class EscrowChatActivity extends AppCompatActivity {
     private String usernameHiệnTại = "baoho123";
     private String họTênHiệnTại = "Gia Bảo Hồ";
     private String idPhòngChat = "CHAT_ROOM_DEFAULT";
+    private com.google.firebase.firestore.ListenerRegistration listenerFirestoreChat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class EscrowChatActivity extends AppCompatActivity {
         đọcDữLiệuGiaoDịchTruyềnTới();
         càiĐặtSựKiệnLắngNghe();
         khởiĐộngTảiTinNhắnRealtime();
+        kíchHoạtLắngNgheTinNhắnFirestoreRealtime();
     }
 
     private void đọcThôngTinTàiKhoảnĐangĐăngNhập() {
@@ -97,6 +99,17 @@ public class EscrowChatActivity extends AppCompatActivity {
             }
         }
         return chuỗiGốc.toLowerCase().trim();
+    }
+
+    public static String tạoMãPhòngChatBạnBèĐốiXứng(String u1Input, String u2Input) {
+        String u1 = u1Input != null ? u1Input.toLowerCase().trim() : "";
+        String u2 = u2Input != null ? u2Input.toLowerCase().trim() : "";
+
+        if (u1.compareTo(u2) < 0) {
+            return "P2P_" + u1 + "_" + u2;
+        } else {
+            return "P2P_" + u2 + "_" + u1;
+        }
     }
 
     private void khởiTạoÁnhXạGiaoDiện() {
@@ -134,6 +147,15 @@ public class EscrowChatActivity extends AppCompatActivity {
             }
         }
 
+        String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
+        boolean làChatTròChuyệnXãHội = (dữLiệuÝĐịnh != null && dữLiệuÝĐịnh.getBooleanExtra("EXTRA_IS_SOCIAL_CHAT", false))
+                || (giáXuEscrow == 0 && (mãBíMậtVoucher.startsWith("CHAT-") || mãBíMậtVoucher.startsWith("P2P_") || "HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher)));
+
+        // CHUẨN HÓA MÃ PHÒNG CHAT ĐỐI XỨNG BẠN BÈ/NGƯỜI LẠ P2P AN TOÀN
+        if (làChatTròChuyệnXãHội && !"HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher) && !partnerClean.isEmpty()) {
+            mãBíMậtVoucher = tạoMãPhòngChatBạnBèĐốiXứng(usernameHiệnTại, partnerClean);
+        }
+
         idPhòngChat = "CHAT_ROOM_" + mãBíMậtVoucher;
 
         // Đánh dấu người dùng hiện tại ĐÃ ĐỌC phòng chat này
@@ -156,7 +178,6 @@ public class EscrowChatActivity extends AppCompatActivity {
         // Nạp ảnh đại diện thật của đối tác lên Header phòng Chat nếu có
         ImageView imgPartnerHeader = findViewById(R.id.imgPartnerAvatarHeader);
         if (imgPartnerHeader != null) {
-            String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
             String pathAvatarPartner = bộLưuTrữVí.getString("CURRENT_USER_AVATAR_PATH_" + partnerClean, "");
             if (!pathAvatarPartner.isEmpty() && new File(pathAvatarPartner).exists()) {
                 try {
@@ -174,10 +195,6 @@ public class EscrowChatActivity extends AppCompatActivity {
         if (nhãnUyTínĐốiTác != null) {
             nhãnUyTínĐốiTác.setText("96% Uy tín  ★ 4.8 (eKYC)");
         }
-
-        // Phân định rõ Màn Hình Chat Bạn Bè Thường vs Màn Hình Chat Ký Quỹ Mua Bán/Trao Đổi Voucher
-        boolean làChatTròChuyệnXãHội = (dữLiệuÝĐịnh != null && dữLiệuÝĐịnh.getBooleanExtra("EXTRA_IS_SOCIAL_CHAT", false))
-                || (giáXuEscrow == 0 && (mãBíMậtVoucher.startsWith("CHAT-") || "HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher)));
 
         // KÍCH HOẠT VÀ ĐĂNG KÝ NGAY PHÒNG CHAT VÀO HỘP THOẠI CHUNG NGAY KHI MỞ MÀN HÌNH (KỂ CẢ CHƯA GỬI TIN NHẮN)
         String thờiGianKhởiTạo = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
@@ -219,7 +236,7 @@ public class EscrowChatActivity extends AppCompatActivity {
                 if (btnSend != null) btnSend.setVisibility(View.GONE);
                 if (btnAttach != null) btnAttach.setVisibility(View.GONE);
             } else {
-                String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
+                partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
                 boolean làNgườiBánCủaGiaoDịch = usernameHiệnTại.equalsIgnoreCase(partnerClean)
                         || (tênNgườiBán != null && tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()));
 
@@ -382,6 +399,57 @@ public class EscrowChatActivity extends AppCompatActivity {
         bộCậpNhậtChatRealtime.post(côngViệcTảiTinNhắnTựĐộng);
     }
 
+    private void kíchHoạtLắngNgheTinNhắnFirestoreRealtime() {
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            listenerFirestoreChat = db.collection("chat_rooms")
+                    .document(idPhòngChat)
+                    .collection("messages")
+                    .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.ASCENDING)
+                    .addSnapshotListener((snapshots, e) -> {
+                        if (e != null || snapshots == null || snapshots.isEmpty()) return;
+
+                        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+                        String khoTinNhắnGốc = bộLưuTrữVí.getString("DANH_SACH_TIN_NHAN_" + idPhòngChat, "");
+
+                        boolean cóTinMới = false;
+                        StringBuilder sbKhoMới = new StringBuilder(khoTinNhắnGốc);
+
+                        for (com.google.firebase.firestore.DocumentChange dc : snapshots.getDocumentChanges()) {
+                            if (dc.getType() == com.google.firebase.firestore.DocumentChange.Type.ADDED) {
+                                com.google.firebase.firestore.DocumentSnapshot doc = dc.getDocument();
+                                String senderUser = doc.getString("sender_username");
+                                String senderName = doc.getString("sender_name");
+                                String senderAvatar = doc.getString("sender_avatar");
+                                String msgText = doc.getString("message_text");
+                                String timeStr = doc.getString("time_str");
+
+                                if (senderUser == null || msgText == null) continue;
+                                if (senderAvatar == null) senderAvatar = "SS";
+                                if (senderName == null) senderName = senderUser;
+                                if (timeStr == null) timeStr = "Vừa xong";
+
+                                String recordStr = senderUser + "||" + senderName + "||" + senderAvatar + "||" + msgText + "||" + timeStr;
+
+                                if (!sbKhoMới.toString().contains(recordStr)) {
+                                    if (sbKhoMới.length() > 0) sbKhoMới.append(";;");
+                                    sbKhoMới.append(recordStr);
+                                    cóTinMới = true;
+                                }
+                            }
+                        }
+
+                        if (cóTinMới) {
+                            bộLưuTrữVí.edit().putString("DANH_SACH_TIN_NHAN_" + idPhòngChat, sbKhoMới.toString()).apply();
+                            runOnUiThread(() -> {
+                                cậpNhậtHiểnThịDanhSáchTinNhắnRealtime();
+                                cuộnXuốngĐáyChat();
+                            });
+                        }
+                    });
+        } catch (Exception ignored) {}
+    }
+
     private void thựcHiệnGửiTinNhắnP2PThựcTế() {
         if (ôNhậpTinNhắn == null) return;
         String nộiDungMới = ôNhậpTinNhắn.getText().toString().trim();
@@ -451,6 +519,35 @@ public class EscrowChatActivity extends AppCompatActivity {
         }
 
         bộLưuTrữVí.edit().putString("DANH_SACH_PHONG_CHAT_TAT_CA", danhSáchMới.toString()).apply();
+
+        // ĐỒNG BỘ INBOX LÊN CLOUD FIRESTORE CHO CẢ 2 BÊN (BUYER VÀ SELLER/TARGET USER)
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            Map<String, Object> roomData = new HashMap<>();
+            roomData.put("idPhong", idPhòng);
+            roomData.put("maCode", mãCode);
+            roomData.put("tenVoucher", tênVoucher);
+            roomData.put("buyerUsername", buyerUsername);
+            roomData.put("buyerName", buyerName);
+            roomData.put("sellerName", sellerName);
+            roomData.put("sellerAvatar", sellerAvatar);
+            roomData.put("giaXu", giáXu);
+            roomData.put("noiDungTin", nộiDungTin);
+            roomData.put("thoiGian", thờiGian);
+            roomData.put("updatedAt", System.currentTimeMillis());
+
+            // Đẩy vào Cloud Inbox cho User A
+            String cleanBuyer = buyerUsername.toLowerCase().trim();
+            if (!cleanBuyer.isEmpty()) {
+                db.collection("users").document(cleanBuyer).collection("chat_inbox").document(idPhòng).set(roomData);
+            }
+
+            // Đẩy vào Cloud Inbox cho User B (Target User / Seller)
+            String cleanPartner = tríchXuấtUsernameSạch(sellerName);
+            if (!cleanPartner.isEmpty()) {
+                db.collection("users").document(cleanPartner).collection("chat_inbox").document(idPhòng).set(roomData);
+            }
+        } catch (Exception ignored) {}
     }
 
     private void đồngBộTinNhắnLênFirebaseFirestore(String idPhòng, String username, String họTên, String avatar, String nộiDung, String thờiGian) {
@@ -937,6 +1034,9 @@ public class EscrowChatActivity extends AppCompatActivity {
         }
         if (bộĐếmLùiEscrowTimer != null) {
             bộĐếmLùiEscrowTimer.cancel();
+        }
+        if (listenerFirestoreChat != null) {
+            listenerFirestoreChat.remove();
         }
     }
 }

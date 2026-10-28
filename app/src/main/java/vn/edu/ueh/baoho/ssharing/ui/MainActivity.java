@@ -63,10 +63,14 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         boolean đãĐăngNhập = bộLưuTrữVí.getBoolean("IS_LOGGED_IN", false);
         if (!đãĐăngNhập) {
+            android.util.Log.d("SSharing_Main", "🔑 [AUTH CHECK] Session expired or not logged in -> Redirecting to LoginActivity");
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
+
+        String usernameCurrent = bộLưuTrữVí.getString("CURRENT_USERNAME", "baoho123");
+        android.util.Log.d("SSharing_Main", "🚀 [MAIN LAUNCH] Active user session: @" + usernameCurrent);
 
         setContentView(R.layout.activity_main);
 
@@ -113,16 +117,7 @@ public class MainActivity extends AppCompatActivity {
         if (ảnhĐạiDiệnHome != null) {
             // Reset ảnh mặc định ban đầu để xóa bộ nhớ đệm ảnh cũ khi chuyển đổi giữa các tài khoản
             ảnhĐạiDiệnHome.setImageResource(R.drawable.ic_user);
-
-            String keyAvatarCáNhân = "CURRENT_USER_AVATAR_PATH_" + usernameClean;
-            String đườngDẫnẢnh = bộLưuTrữ.getString(keyAvatarCáNhân, "");
-
-            if (đườngDẫnẢnh != null && !đườngDẫnẢnh.isEmpty() && new java.io.File(đườngDẫnẢnh).exists()) {
-                android.graphics.Bitmap bitmapAvatar = giảiMãẢnhThuNhỏAnToàn(đườngDẫnẢnh, 200);
-                if (bitmapAvatar != null) {
-                    ảnhĐạiDiệnHome.setImageBitmap(bitmapAvatar);
-                }
-            }
+            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.loadUserAvatar(this, ảnhĐạiDiệnHome, usernameClean);
         }
 
         View badgeRed = findViewById(R.id.viewNotificationBadgeRed);

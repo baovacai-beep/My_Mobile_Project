@@ -96,15 +96,8 @@ public class ProfileActivity extends AppCompatActivity {
         cậpNhậtTrustScoreVàDanhHiệu(điểmTrustScore);
 
         // Cập nhật Avatar Ảnh hoặc Chữ cái riêng của tài khoản hiện tại
-        if (đườngDẫnẢnhLưu != null && !đườngDẫnẢnhLưu.isEmpty() && new File(đườngDẫnẢnhLưu).exists()) {
-            tảiẢnhAvatarAnToàn(ảnhĐạiDiệnDướiPhoto, đườngDẫnẢnhLưu, họTênUser);
-        } else {
-            if (ảnhĐạiDiệnDướiPhoto != null) {
-                ảnhĐạiDiệnDướiPhoto.setImageDrawable(null);
-                ảnhĐạiDiệnDướiPhoto.setVisibility(View.GONE);
-            }
-            đặtChữCáiAvatarChung(họTênUser);
-        }
+        đặtChữCáiAvatarChung(họTênUser);
+        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.loadUserAvatar(this, ảnhĐạiDiệnDướiPhoto, usernameClean);
 
         cậpNhậtThốngKêBạnBèProfile(bộLưuTrữCụcBộ, usernameClean);
     }
@@ -114,21 +107,9 @@ public class ProfileActivity extends AppCompatActivity {
         TextView tvFriends = findViewById(R.id.tvProfileFriendsCount);
         View btnStats = findViewById(R.id.btnProfileSocialStats);
 
-        String chuỗiĐangTheoDõi = bộLưuTrữCụcBộ.getString("FOLLOWING_LIST_" + usernameUser, "Beo123;;minh.triet");
-        int sốTheoDõi = 0;
-        int sốBạnBè = 0;
-
-        if (!chuỗiĐangTheoDõi.isEmpty()) {
-            String[] mảng = chuỗiĐangTheoDõi.split(";;");
-            for (String u : mảng) {
-                if (!u.trim().isEmpty()) {
-                    sốTheoDõi++;
-                    if ("beo123".equalsIgnoreCase(u.trim()) || "minh.triet".equalsIgnoreCase(u.trim())) {
-                        sốBạnBè++;
-                    }
-                }
-            }
-        }
+        int[] counts = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.calculateFollowingAndMutualCounts(this, usernameUser);
+        int sốTheoDõi = counts[0];
+        int sốBạnBè = counts[1];
 
         if (tvFollowing != null) tvFollowing.setText(String.valueOf(sốTheoDõi));
         if (tvFriends != null) tvFriends.setText(String.valueOf(sốBạnBè));
@@ -425,8 +406,10 @@ public class ProfileActivity extends AppCompatActivity {
                         .putString(keyAvatarCáNhân, tệpAvatarNộiBộ.getAbsolutePath())
                         .apply();
 
+                vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncAvatarToCloud(this, usernameClean, tệpAvatarNộiBộ);
+
                 cậpNhậtThôngTinCáNhân();
-                Toast.makeText(this, "📷 Đã cập nhật ảnh đại diện riêng cho tài khoản " + usernameUser + " thành công!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "📷 Đã cập nhật ảnh đại diện lên Cloud Firebase cho tài khoản " + usernameUser + "!", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Toast.makeText(this, "Không thể lưu ảnh đại diện vào bộ nhớ.", Toast.LENGTH_SHORT).show();
             }

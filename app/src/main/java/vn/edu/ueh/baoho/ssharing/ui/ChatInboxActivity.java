@@ -15,11 +15,12 @@ import vn.edu.ueh.baoho.ssharing.R;
 
 public class ChatInboxActivity extends AppCompatActivity {
 
-    private TextView tabĐangGiaoDịch, tabBạnBèChat, tabHỗTrợCSKH, tabLịchSửChat;
+    private TextView tabĐangGiaoDịch, tabBạnBèChat, tabNgườiLạChat, tabHỗTrợCSKH, tabLịchSửChat;
     private LinearLayout containerDanhSáchĐoạnChat;
 
     private String tabĐangChọn = "ACTIVE";
     private String usernameHiệnTại = "baoho123";
+    private com.google.firebase.firestore.ListenerRegistration listenerFirestoreInbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +31,13 @@ public class ChatInboxActivity extends AppCompatActivity {
         khởiTạoÁnhXạGiaoDiện();
         càiĐặtSựKiệnLắngNghe();
         cậpNhậtDanhSáchĐoạnChatTheoTab();
+        kíchHoạtLắngNgheInboxRealtimeFirestore();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        cậpNhậtDanhSáchĐoạnChatTheoTab();
+        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncFollowStateFromCloud(this, usernameHiệnTại, this::cậpNhậtDanhSáchĐoạnChatTheoTab);
     }
 
     private void đọcThôngTinTàiKhoản() {
@@ -58,6 +60,7 @@ public class ChatInboxActivity extends AppCompatActivity {
     private void khởiTạoÁnhXạGiaoDiện() {
         tabĐangGiaoDịch = findViewById(R.id.tabActiveEscrowChats);
         tabBạnBèChat = findViewById(R.id.tabSocialFriendChats);
+        tabNgườiLạChat = findViewById(R.id.tabStrangerChats);
         tabHỗTrợCSKH = findViewById(R.id.tabSupportChats);
         tabLịchSửChat = findViewById(R.id.tabCompletedChats);
         containerDanhSáchĐoạnChat = findViewById(R.id.containerChatConversations);
@@ -83,6 +86,10 @@ public class ChatInboxActivity extends AppCompatActivity {
             tabBạnBèChat.setOnClickListener(v -> chuyểnTabChatInbox("SOCIAL", tabBạnBèChat));
         }
 
+        if (tabNgườiLạChat != null) {
+            tabNgườiLạChat.setOnClickListener(v -> chuyểnTabChatInbox("STRANGER", tabNgườiLạChat));
+        }
+
         if (tabHỗTrợCSKH != null) {
             tabHỗTrợCSKH.setOnClickListener(v -> chuyểnTabChatInbox("SUPPORT", tabHỗTrợCSKH));
         }
@@ -98,6 +105,7 @@ public class ChatInboxActivity extends AppCompatActivity {
         int màuXám = Color.parseColor("#888888");
         if (tabĐangGiaoDịch != null) { tabĐangGiaoDịch.setBackground(null); tabĐangGiaoDịch.setTextColor(màuXám); }
         if (tabBạnBèChat != null) { tabBạnBèChat.setBackground(null); tabBạnBèChat.setTextColor(màuXám); }
+        if (tabNgườiLạChat != null) { tabNgườiLạChat.setBackground(null); tabNgườiLạChat.setTextColor(màuXám); }
         if (tabHỗTrợCSKH != null) { tabHỗTrợCSKH.setBackground(null); tabHỗTrợCSKH.setTextColor(màuXám); }
         if (tabLịchSửChat != null) { tabLịchSửChat.setBackground(null); tabLịchSửChat.setTextColor(màuXám); }
 
@@ -116,6 +124,8 @@ public class ChatInboxActivity extends AppCompatActivity {
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         String danhSáchPhòngChatTấtCả = bộLưuTrữVí.getString("DANH_SACH_PHONG_CHAT_TAT_CA", "");
         String danhSáchĐãBánHệThống = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
+
+        java.util.Set<String> cácĐốiTácĐãHiểnThịSet = new java.util.HashSet<>();
 
         if (!danhSáchPhòngChatTấtCả.isEmpty()) {
             String[] cácPhòng = danhSáchPhòngChatTấtCả.split(";;;");
@@ -140,17 +150,34 @@ public class ChatInboxActivity extends AppCompatActivity {
                 String thờiGianCuối = mảngTrường.length > 9 ? mảngTrường[9] : "Vừa xong";
 
                 boolean đãHoànTất = danhSáchĐãBánHệThống.contains(mãCode);
-                boolean làChatBạnBè = giáXu == 0 || mãCode.startsWith("CHAT-");
+                boolean làChatSocial = giáXu == 0 || mãCode.startsWith("CHAT-") || mãCode.startsWith("SOCIAL_") || mãCode.startsWith("P2P_");
+
+                // Kiểm tra bạn bè 2 chiều (Mutual Friends) vs Người lạ (Strangers)
+                String usernameThựcĐốiTác = usernameHiệnTại.equalsIgnoreCase(buyerUser) ? sellerName : buyerUser;
+                String partnerClean = tríchXuấtUsernameSạch(usernameThựcĐốiTác);
+
+                // Khử trùng lặp: Mỗi đối tác chỉ hiển thị 1 thẻ hội thoại gần nhất duy nhất
+                if (!partnerClean.isEmpty()) {
+                    if (cácĐốiTácĐãHiểnThịSet.contains(partnerClean)) continue;
+                }
+
+                boolean làBạnBè2Chiều = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isMutualFriend(this, usernameHiệnTại, partnerClean);
 
                 // Lọc chính xác Rạch Ròi theo từng Tab
                 if ("ACTIVE".equals(tabĐangChọn)) {
-                    if (đãHoànTất || làChatBạnBè) continue;
+                    if (đãHoànTất || làChatSocial) continue;
                 } else if ("SOCIAL".equals(tabĐangChọn)) {
-                    if (!làChatBạnBè) continue;
+                    if (!làChatSocial || !làBạnBè2Chiều) continue;
+                } else if ("STRANGER".equals(tabĐangChọn)) {
+                    if (!làChatSocial || làBạnBè2Chiều) continue;
                 } else if ("HISTORY".equals(tabĐangChọn)) {
                     if (!đãHoànTất) continue;
                 } else if ("SUPPORT".equals(tabĐangChọn)) {
                     continue;
+                }
+
+                if (!partnerClean.isEmpty()) {
+                    cácĐốiTácĐãHiểnThịSet.add(partnerClean);
                 }
 
                 // Đọc tin nhắn mới nhất
@@ -176,8 +203,7 @@ public class ChatInboxActivity extends AppCompatActivity {
                     avatarĐốiTácHiểnThị = buyerUser.substring(0, Math.min(2, buyerUser.length())).toUpperCase();
                 }
 
-                String trạngTháiStr = làChatBạnBè ? "💬 Bạn bè cộng đồng SSharing" : (đãHoànTất ? "🔒 Đã hoàn tất - Khóa lưu trữ tự động sau 3 ngày" : "🔒 Đang khóa " + giáXu + " SS");
-                String usernameThựcĐốiTác = usernameHiệnTại.equalsIgnoreCase(buyerUser) ? sellerName : buyerUser;
+                String trạngTháiStr = làChatSocial ? (làBạnBè2Chiều ? "💬 Bạn bè 2 chiều" : "👤 Tin nhắn từ Người Lạ") : (đãHoànTất ? "🔒 Đã hoàn tất - Khóa lưu trữ tự động sau 3 ngày" : "🔒 Đang khóa " + giáXu + " SS");
 
                 thêmThẻĐoạnChatHộpThoại(
                         tênĐốiTácHiểnThị,
@@ -404,6 +430,63 @@ public class ChatInboxActivity extends AppCompatActivity {
 
         if (containerDanhSáchĐoạnChat != null) {
             containerDanhSáchĐoạnChat.addView(thẻCard);
+        }
+    }
+
+    private void kíchHoạtLắngNgheInboxRealtimeFirestore() {
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            listenerFirestoreInbox = db.collection("users")
+                    .document(usernameHiệnTại.toLowerCase().trim())
+                    .collection("chat_inbox")
+                    .orderBy("updatedAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                    .addSnapshotListener((snapshots, e) -> {
+                        if (e != null || snapshots == null) return;
+                        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : snapshots.getDocuments()) {
+                            String idPhong = doc.getString("idPhong");
+                            String maCode = doc.getString("maCode");
+                            String tenVoucher = doc.getString("tenVoucher");
+                            String buyerUsername = doc.getString("buyerUsername");
+                            String buyerName = doc.getString("buyerName");
+                            String sellerName = doc.getString("sellerName");
+                            String sellerAvatar = doc.getString("sellerAvatar");
+                            Long giaXuObj = doc.getLong("giaXu");
+                            int giaXu = giaXuObj != null ? giaXuObj.intValue() : 0;
+                            String noiDungTin = doc.getString("noiDungTin");
+                            String thoiGian = doc.getString("thoiGian");
+
+                            if (idPhong == null) continue;
+                            if (noiDungTin == null) noiDungTin = "Giao dịch mới";
+                            if (thoiGian == null) thoiGian = "Vừa xong";
+
+                            String banGhiMoi = idPhong + "||" + maCode + "||" + tenVoucher + "||" + buyerUsername + "||" + buyerName + "||" + sellerName + "||" + sellerAvatar + "||" + giaXu + "||" + noiDungTin + "||" + thoiGian;
+
+                            String danhSachGoc = bộLưuTrữVí.getString("DANH_SACH_PHONG_CHAT_TAT_CA", "");
+                            StringBuilder danhSachMoi = new StringBuilder();
+                            danhSachMoi.append(banGhiMoi);
+
+                            if (!danhSachGoc.isEmpty()) {
+                                String[] cacPhong = danhSachGoc.split(";;;");
+                                for (String phong : cacPhong) {
+                                    if (phong.trim().isEmpty() || phong.startsWith(idPhong)) continue;
+                                    danhSachMoi.append(";;;").append(phong);
+                                }
+                            }
+                            bộLưuTrữVí.edit().putString("DANH_SACH_PHONG_CHAT_TAT_CA", danhSachMoi.toString()).apply();
+                        }
+
+                        runOnUiThread(this::cậpNhậtDanhSáchĐoạnChatTheoTab);
+                    });
+        } catch (Exception ignored) {}
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (listenerFirestoreInbox != null) {
+            listenerFirestoreInbox.remove();
         }
     }
 }
