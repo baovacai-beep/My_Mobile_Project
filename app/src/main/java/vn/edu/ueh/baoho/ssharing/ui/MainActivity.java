@@ -451,6 +451,13 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         SharedPreferences bộLưuTrữ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         cậpNhậtSốDưMànChính();
+
+        String usernameCurrent = bộLưuTrữ.getString("CURRENT_USERNAME", "baoho123");
+        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncUserProfileFromCloud(this, usernameCurrent, () -> {
+            SharedPreferences updatedPrefs = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+            cậpNhậtTênNgườiDùngMànChính(updatedPrefs);
+        });
+
         cậpNhậtTênNgườiDùngMànChính(bộLưuTrữ);
         if (bộLịchTrượtTựĐộng != null && côngViệcTựĐộngTrượtBanner != null) {
             bộLịchTrượtTựĐộng.postDelayed(côngViệcTựĐộngTrượtBanner, 5000);
@@ -458,11 +465,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cậpNhậtSốDưMànChính() {
-        SharedPreferences bộLưuTrữ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        int sốDưXu = bộLưuTrữ.getInt("SO_DU_XU_SS", 1250);
+        String username = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getCurrentUsername(this);
+        int sốDưXu = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getBalance(this, username);
         if (nhãnSốDưXuMànChính != null) {
             nhãnSốDưXuMànChính.setText(String.format("%,d", sốDưXu) + " SS");
         }
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.syncFromFirestore(this, username, () -> {
+            int sốDưMới = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getBalance(this, username);
+            if (nhãnSốDưXuMànChính != null) {
+                nhãnSốDưXuMànChính.setText(String.format("%,d", sốDưMới) + " SS");
+            }
+        });
     }
 
     private void cậpNhậtGiaoDiệnTab(boolean làTabMallĐượcChọn) {

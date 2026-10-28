@@ -139,14 +139,26 @@ public class WalletActivity extends AppCompatActivity {
 
     private void cậpNhậtSốDưVàDữLiệuVí() {
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        int sốDưXuHiệnTại = bộLưuTrữVí.getInt("SO_DU_XU_SS", 1250);
+        String usernameHiệnTại = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getCurrentUsername(this);
+
+        int sốDưXuHiệnTại = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getBalance(this, usernameHiệnTại);
         if (nhãnSốDưXu != null) {
             nhãnSốDưXu.setText(String.format("%,d", sốDưXuHiệnTại) + " SS");
         }
 
         cậpNhậtẢnhĐạiDiệnVí(bộLưuTrữVí);
-        tảiLịchSửGiaoDịchĐộng(bộLưuTrữVí);
-        tảiDanhSáchVoucherĐãLưu(bộLưuTrữVí);
+        tảiLịchSửGiaoDịchĐộng(usernameHiệnTại);
+        tảiDanhSáchVoucherĐãLưu(usernameHiệnTại);
+
+        // Đồng bộ dữ liệu mới nhất từ Firebase Firestore cho ví tài khoản hiện tại
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.syncFromFirestore(this, usernameHiệnTại, () -> {
+            int sốDưMới = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getBalance(this, usernameHiệnTại);
+            if (nhãnSốDưXu != null) {
+                nhãnSốDưXu.setText(String.format("%,d", sốDưMới) + " SS");
+            }
+            tảiLịchSửGiaoDịchĐộng(usernameHiệnTại);
+            tảiDanhSáchVoucherĐãLưu(usernameHiệnTại);
+        });
     }
 
     private void cậpNhậtẢnhĐạiDiệnVí(SharedPreferences bộLưuTrữVí) {
@@ -170,16 +182,11 @@ public class WalletActivity extends AppCompatActivity {
         }
     }
 
-    private void tảiLịchSửGiaoDịchĐộng(SharedPreferences bộLưuTrữVí) {
+    private void tảiLịchSửGiaoDịchĐộng(String username) {
         if (containerGiaoDịchĐộng == null) return;
         containerGiaoDịchĐộng.removeAllViews();
 
-        String danhSáchChuỗiGiaoDịch = bộLưuTrữVí.getString("DANH_SACH_GIAO_DICH", "");
-        if (danhSáchChuỗiGiaoDịch.isEmpty()) {
-            // Nạp 2 bản ghi mặc định nếu chưa có lịch sử
-            danhSáchChuỗiGiaoDịch = "TX-N892031||Nạp xu qua VietQR Napas247||+500 SS||19/10/2026 14:30:00||Nạp tiền VietQR||Thành công||Nạp 500.000đ nhận 500 SS xu" +
-                    ";;TX-E761920||Mua Voucher Highlands Coffee||-35 SS||19/10/2026 12:15:00||Thanh toán Escrow||Thành công||Thanh toán mua voucher Trà Sen Vàng";
-        }
+        String danhSáchChuỗiGiaoDịch = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getTransactionHistory(this, username);
 
         String[] cácBảnGhi = danhSáchChuỗiGiaoDịch.split(";;");
         for (String bảnGhi : cácBảnGhi) {
@@ -277,18 +284,11 @@ public class WalletActivity extends AppCompatActivity {
         }
     }
 
-    private void tảiDanhSáchVoucherĐãLưu(SharedPreferences bộLưuTrữVí) {
+    private void tảiDanhSáchVoucherĐãLưu(String username) {
         if (containerVoucherĐãLưuĐộng == null) return;
         containerVoucherĐãLưuĐộng.removeAllViews();
 
-        String danhSáchChuỗiVoucher = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_LUU", "");
-        if (danhSáchChuỗiVoucher.isEmpty()) {
-            danhSáchChuỗiVoucher = "HLM1T1-USER33::Voucher Highlands Mua 1 Tặng 1::HSD: 31 T12 2026::FOOD::BARCODE;;" +
-                    "SPFOOD50K-USER22::Voucher ShopeeFood Giảm 50K::HSD: 31 T12 2026::SHOPEE::QR_IMAGE;;" +
-                    "SBUX20K-OCTOBER99::Voucher Starbucks Giảm 20K::HSD: 31 T12 2026::BRAND::BARCODE;;" +
-                    "GRAB50K-COMMUNITY88::Voucher GrabCar Giảm 50K::HSD: 31 T12 2026::GRAB::CODE_TEXT;;" +
-                    "MOMO30K-OCTOBER77::Voucher MoMo Hoàn 30K Nạp ĐT::HSD: 31 T12 2026::SHOP::QR_IMAGE";
-        }
+        String danhSáchChuỗiVoucher = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getSavedVouchers(this, username);
 
         String[] cácVoucher = danhSáchChuỗiVoucher.split(";;");
         for (String chuỗiVoucher : cácVoucher) {

@@ -352,6 +352,166 @@ public class SocialHelper {
     }
 
     /**
+     * Cập nhật thông tin hồ sơ (Họ tên, email, sđt) cả trên Local SharedPreferences và Firebase Cloud Firestore
+     */
+    public static void updateUserProfileOnCloud(Context context, String username, String fullName, String email, String phone) {
+        if (username == null || username.trim().isEmpty()) return;
+        String cleanUser = username.toLowerCase().trim();
+        SharedPreferences prefs = context.getSharedPreferences("SSHARING_PREFS", Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = prefs.edit();
+        if (fullName != null && !fullName.trim().isEmpty()) {
+            editor.putString("CURRENT_USER_NAME", fullName.trim());
+        }
+        if (email != null && !email.trim().isEmpty()) {
+            editor.putString("CURRENT_USER_EMAIL", email.trim());
+        }
+        if (phone != null && !phone.trim().isEmpty()) {
+            editor.putString("CURRENT_USER_PHONE", phone.trim());
+        }
+
+        // Cập nhật chuỗi danh sách tài khoản local DANH_SACH_TAI_KHOAN_NGUOI_DUNG
+        String danhSáchGốc = prefs.getString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", "");
+        if (!danhSáchGốc.isEmpty()) {
+            StringBuilder sbMới = new StringBuilder();
+            String[] mảngTK = danhSáchGốc.split(";;");
+            for (String tk : mảngTK) {
+                if (tk.trim().isEmpty()) continue;
+                String[] p = tk.split("\\|\\|");
+                if (p.length >= 2 && cleanUser.equalsIgnoreCase(p[0])) {
+                    String passMD5 = p[1];
+                    String newName = (fullName != null && !fullName.trim().isEmpty()) ? fullName.trim() : (p.length > 2 ? p[2] : cleanUser);
+                    String newMail = (email != null && !email.trim().isEmpty()) ? email.trim() : (p.length > 3 ? p[3] : "");
+                    String newPhone = (phone != null && !phone.trim().isEmpty()) ? phone.trim() : (p.length > 4 ? p[4] : "");
+                    if (sbMới.length() > 0) sbMới.append(";;");
+                    sbMới.append(cleanUser).append("||").append(passMD5).append("||").append(newName).append("||").append(newMail).append("||").append(newPhone);
+                } else {
+                    if (sbMới.length() > 0) sbMới.append(";;");
+                    sbMới.append(tk);
+                }
+            }
+            editor.putString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", sbMới.toString());
+        }
+        editor.apply();
+
+        // Cập nhật lên Đám Mây Firebase Cloud Firestore
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            java.util.Map<String, Object> update = new java.util.HashMap<>();
+            if (fullName != null && !fullName.trim().isEmpty()) {
+                update.put("fullName", fullName.trim());
+                update.put("ho_ten", fullName.trim());
+            }
+            if (email != null && !email.trim().isEmpty()) {
+                update.put("email", email.trim());
+            }
+            if (phone != null && !phone.trim().isEmpty()) {
+                update.put("phone", phone.trim());
+                update.put("so_dien_thoai", phone.trim());
+            }
+            update.put("updatedAt", System.currentTimeMillis());
+
+            db.collection("users").document(cleanUser)
+                    .set(update, com.google.firebase.firestore.SetOptions.merge())
+                    .addOnSuccessListener(aVoid ->
+                        android.util.Log.d("SSharing_Profile", "☁️ [CLOUD PROFILE SYNC] Updated profile info on Firebase for @" + cleanUser)
+                    );
+        } catch (Throwable ignored) {}
+    }
+
+    /**
+     * Đồng bộ thông tin hồ sơ của tài khoản hiện tại từ Firebase Cloud Firestore về SharedPreferences local
+     */
+    public static void syncUserProfileFromCloud(Context context, String username, Runnable onComplete) {
+        if (username == null || username.trim().isEmpty()) {
+            if (onComplete != null) onComplete.run();
+            return;
+        }
+        String cleanUser = username.toLowerCase().trim();
+
+        try {
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("users").document(cleanUser).get()
+                    .addOnSuccessListener(doc -> {
+                        if (doc != null && doc.exists()) {
+                            String cloudName = doc.getString("fullName");
+                            if (cloudName == null) cloudName = doc.getString("ho_ten");
+                            String cloudEmail = doc.getString("email");
+                            String cloudPhone = doc.getString("phone");
+                            if (cloudPhone == null) cloudPhone = doc.getString("so_dien_thoai");
+
+                            SharedPreferences prefs = context.getSharedPreferences("SSHARING_PREFS", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+
+                            if (cloudName != null && !cloudName.trim().isEmpty()) {
+                                editor.putString("CURRENT_USER_NAME", cloudName.trim());
+                            }
+                            if (cloudEmail != null && !cloudEmail.trim().isEmpty()) {
+                                editor.putString("CURRENT_USER_EMAIL", cloudEmail.trim());
+                            }
+                            if (cloudPhone != null && !cloudPhone.trim().isEmpty()) {
+                                editor.putString("CURRENT_USER_PHONE", cloudPhone.trim());
+                            }
+                            editor.apply();
+                        }
+                        if (onComplete != null) onComplete.run();
+                    })
+                    .addOnFailureListener(e -> {
+                        if (onComplete != null) onComplete.run();
+                    });
+        } catch (Throwable ignored) {
+            if (onComplete != null) onComplete.run();
+        }
+    }
+
+    public interface OnNameResolvedCallback {
+        void onResolved(String fullName);
+    }
+
+    /**
+     * Lấy Họ tên đầy đủ mới nhất từ Cloud Firestore cho một username bất kỳ
+     */
+    public static void getUserFullNameFromCloud(Context context, String username, OnNameResolvedCallback callback) {
+        if (username == null || username.trim().isEmpty()) {
+            if (callback != null) callback.onResolved(username);
+            return;
+        }
+        String cleanUser = cleanUsername(username);
+        SharedPreferences prefs = context.getSharedPreferences("SSHARING_PREFS", Context.MODE_PRIVATE);
+
+        String currentClean = cleanUsername(prefs.getString("CURRENT_USERNAME", ""));
+        if (cleanUser.equalsIgnoreCase(currentClean)) {
+            String currentName = prefs.getString("CURRENT_USER_NAME", "");
+            if (!currentName.isEmpty() && callback != null) {
+                callback.onResolved(currentName);
+            }
+        }
+
+        try {
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("users").document(cleanUser).get()
+                    .addOnSuccessListener(doc -> {
+                        if (doc != null && doc.exists()) {
+                            String name = doc.getString("fullName");
+                            if (name == null || name.trim().isEmpty()) {
+                                name = doc.getString("ho_ten");
+                            }
+                            if (name != null && !name.trim().isEmpty()) {
+                                if (callback != null) callback.onResolved(name.trim());
+                                return;
+                            }
+                        }
+                        if (callback != null) callback.onResolved(username);
+                    })
+                    .addOnFailureListener(e -> {
+                        if (callback != null) callback.onResolved(username);
+                    });
+        } catch (Throwable e) {
+            if (callback != null) callback.onResolved(username);
+        }
+    }
+
+    /**
      * Tạo mã ID phòng chat 1-on-1 cố định & đối xứng giữa 2 tài khoản (sắp xếp theo bảng chữ cái)
      */
     public static String generateSocialChatRoomCode(String userA, String userB) {

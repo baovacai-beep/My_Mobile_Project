@@ -160,13 +160,16 @@ public class activity_staff_arbiter extends AppCompatActivity {
 
     private void thựcHiệnPhánQuyếtHoànTiềnNgườiMua() {
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        int sốDưHiệnTại = bộLưuTrữVí.getInt("SO_DU_XU_SS", 1250);
-        int sốDưMới = sốDưHiệnTại + giáTrịXuEscrowĐangXửLý;
 
         // Đánh dấu giao dịch đã hoàn tất phán quyết -> Chuyển vào Lịch Sử Chat & Khóa đoạn chat lại
         đánhDấuKhóaGiaoDịchSauPhánQuyết(bộLưuTrữVí);
 
-        bộLưuTrữVí.edit().putInt("SO_DU_XU_SS", sốDưMới).apply();
+        // Hoàn xu cho tài khoản riêng của Người Mua
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, tênTàiKhoảnNgườiMua, giáTrịXuEscrowĐangXửLý);
+
+        String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+        String bảnGhiRefund = mãHồSơHiệnTại + "||Phán quyết Trọng tài: Hoàn tiền||+" + giáTrịXuEscrowĐangXửLý + " SS||" + thờiGianThực + "||Trọng tài Phán quyết||Thành công||Trọng tài hoàn " + giáTrịXuEscrowĐangXửLý + " SS cho hồ sơ " + mãHồSơHiệnTại;
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, tênTàiKhoảnNgườiMua, bảnGhiRefund, mãHồSơHiệnTại, "Hoàn tiền Trọng Tài", giáTrịXuEscrowĐangXửLý, "REFUND", "SUCCESS", "Hoàn xu do thắng khiếu nại");
 
         // Gửi thông báo tới Chuông Hệ Thống của cả 2 bên (Người mua thắng & Người bán bị trừ điểm)
         gửiThôngBáoVềChuôngCho2Bên(tênTàiKhoảnNgườiMua, tênTàiKhoảnNgườiBán, mãHồSơHiệnTại, true, giáTrịXuEscrowĐangXửLý);
@@ -183,6 +186,13 @@ public class activity_staff_arbiter extends AppCompatActivity {
 
         // Đánh dấu giao dịch đã hoàn tất phán quyết -> Chuyển vào Lịch Sử Chat & Khóa đoạn chat lại
         đánhDấuKhóaGiaoDịchSauPhánQuyết(bộLưuTrữVí);
+
+        // Giải ngân xu vào tài khoản riêng của Người Bán
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, tênTàiKhoảnNgườiBán, giáTrịXuEscrowĐangXửLý);
+
+        String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+        String bảnGhiRelease = mãHồSơHiệnTại + "||Phán quyết Trọng tài: Giải ngân người bán||+" + giáTrịXuEscrowĐangXửLý + " SS||" + thờiGianThực + "||Trọng tài Phán quyết||Thành công||Trọng tài giải ngân " + giáTrịXuEscrowĐangXửLý + " SS cho hồ sơ " + mãHồSơHiệnTại;
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, tênTàiKhoảnNgườiBán, bảnGhiRelease, mãHồSơHiệnTại, "Giải ngân Trọng Tài", giáTrịXuEscrowĐangXửLý, "RELEASE", "SUCCESS", "Giải ngân xu do bác khiếu nại");
 
         // Gửi thông báo tới Chuông Hệ Thống của cả 2 bên (Bác khiếu nại & Giải ngân người bán)
         gửiThôngBáoVềChuôngCho2Bên(tênTàiKhoảnNgườiMua, tênTàiKhoảnNgườiBán, mãHồSơHiệnTại, false, giáTrịXuEscrowĐangXửLý);

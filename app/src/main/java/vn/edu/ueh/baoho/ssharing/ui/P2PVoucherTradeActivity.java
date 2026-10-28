@@ -234,10 +234,9 @@ public class P2PVoucherTradeActivity extends AppCompatActivity {
             return;
         }
 
-        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
 
-        String danhSáchVoucherĐãLưu = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_LUU", "");
+        String danhSáchVoucherĐãLưu = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getSavedVouchers(this, usernameHiệnTại);
 
         // Khấu trừ danh sách voucher bạn đã đem ra trao đổi khỏi Ví của bạn
         StringBuilder danhSáchVoucherSauKhấuTrừ = new StringBuilder();
@@ -273,15 +272,11 @@ public class P2PVoucherTradeActivity extends AppCompatActivity {
         String môTảChiTiếtLịchSử = "Hoán đổi thành công: Đã cho " + (chuỗiMónCho.isEmpty() ? "Voucher" : chuỗiMónCho) + " ➜ Nhận Voucher GrabCar Giảm 50K & Highlands Mua 1 Tặng 1 từ " + tênĐốiTácHiệnTại;
 
         // Ghi nhật ký giao dịch vào Ví
-        String danhSáchGiaoDịchĐãLưu = bộLưuTrữVí.getString("DANH_SACH_GIAO_DICH", "");
         String mãGiaoDịchRandom = "TX-SWAP" + (100000 + (int)(Math.random() * 899999));
         String bảnGhiGiaoDịchMới = mãGiaoDịchRandom + "||Trao đổi Voucher P2P với " + tênĐốiTácHiệnTại + "||0 SS||" + thờiGianThực + "||Trao đổi P2P Swap||Thành công||" + môTảChiTiếtLịchSử;
-        String danhSáchGiaoDịchMới = bảnGhiGiaoDịchMới + (danhSáchGiaoDịchĐãLưu.isEmpty() ? "" : ";;" + danhSáchGiaoDịchĐãLưu);
 
-        bộLưuTrữVí.edit()
-                .putString("DANH_SACH_VOUCHER_DA_LUU", danhSáchVoucherMớiHoànTất)
-                .putString("DANH_SACH_GIAO_DICH", danhSáchGiaoDịchMới)
-                .apply();
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.setSavedVouchers(this, usernameHiệnTại, danhSáchVoucherMớiHoànTất);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, usernameHiệnTại, bảnGhiGiaoDịchMới, mãGiaoDịchRandom, "Trao đổi Voucher P2P với " + tênĐốiTácHiệnTại, 0, "P2P_SWAP", "SUCCESS", môTảChiTiếtLịchSử);
 
         // 3. Đồng bộ giao dịch trao đổi Atomic Swap lên Firebase Firestore
         đồngBộHoánĐổiVoucherLênFirebaseFirestore(mãGiaoDịchRandom, usernameHiệnTại, tênĐốiTácHiệnTại);

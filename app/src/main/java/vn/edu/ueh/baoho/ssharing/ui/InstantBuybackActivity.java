@@ -106,21 +106,15 @@ public class InstantBuybackActivity extends AppCompatActivity {
     }
 
     private void thựcHiệnĐổiXuTứcThì() {
-        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        int sốDưXuHiệnTại = bộLưuTrữVí.getInt("SO_DU_XU_SS", 1250);
-        int sốDưXuMới = sốDưXuHiệnTại + sốXuThựcNhậnTínhToán;
+        String currentUser = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getCurrentUsername(this);
         String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
 
         // Ghi lịch sử giao dịch
-        String danhSáchGiaoDịchĐãLưu = bộLưuTrữVí.getString("DANH_SACH_GIAO_DICH", "");
         String mãGiaoDịchRandom = "TX-BUYBACK" + (100000 + (int)(Math.random() * 899999));
         String bảnGhiGiaoDịchMới = mãGiaoDịchRandom + "||Đổi Xu Tức Thì (" + tênVoucherThuMua + ")||+\n" + sốXuThựcNhậnTínhToán + " SS||" + thờiGianThực + "||Instant Buyback||Thành công||SSharing thu mua voucher tự động 24/7";
-        String danhSáchGiaoDịchMới = bảnGhiGiaoDịchMới + (danhSáchGiaoDịchĐãLưu.isEmpty() ? "" : ";;" + danhSáchGiaoDịchĐãLưu);
 
-        bộLưuTrữVí.edit()
-                .putInt("SO_DU_XU_SS", sốDưXuMới)
-                .putString("DANH_SACH_GIAO_DICH", danhSáchGiaoDịchMới)
-                .apply();
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, currentUser, sốXuThựcNhậnTínhToán);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, currentUser, bảnGhiGiaoDịchMới, mãGiaoDịchRandom, "Đổi Xu Tức Thì (" + tênVoucherThuMua + ")", sốXuThựcNhậnTínhToán, "BUYBACK", "SUCCESS", "SSharing thu mua voucher tự động");
 
         Toast.makeText(this, "🎉 Đổi xu tức thì thành công! + " + String.format("%,d", sốXuThựcNhậnTínhToán) + " SS đã cộng vào ví của bạn.", Toast.LENGTH_LONG).show();
         finish();

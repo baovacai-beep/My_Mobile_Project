@@ -287,6 +287,16 @@ public class ChatInboxActivity extends AppCompatActivity {
 
         TextView nhãnTênĐốiTác = new TextView(this);
         nhãnTênĐốiTác.setText(tênĐốiTác);
+
+        // Tự động giải mã & hiển thị Họ tên đầy đủ mới nhất từ Cloud Firestore
+        if (!usernameClean.isEmpty()) {
+            final String finalUserClean = usernameClean;
+            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.getUserFullNameFromCloud(this, finalUserClean, latestName -> {
+                if (latestName != null && !latestName.trim().isEmpty() && nhãnTênĐốiTác != null) {
+                    nhãnTênĐốiTác.setText(latestName + " (@" + finalUserClean + ")");
+                }
+            });
+        }
         nhãnTênĐốiTác.setTextColor(Color.WHITE);
         nhãnTênĐốiTác.setTextSize(14);
         nhãnTênĐốiTác.setTypeface(null, android.graphics.Typeface.BOLD);
