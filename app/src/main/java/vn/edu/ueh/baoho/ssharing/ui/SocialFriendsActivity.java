@@ -50,6 +50,7 @@ public class SocialFriendsActivity extends AppCompatActivity {
 
     private String usernameHiệnTại = "baoho123";
     private List<ThôngTinThànhViênSocial> danhSáchTấtCảThànhViên = new ArrayList<>();
+    private com.google.firebase.firestore.ListenerRegistration bộLắngNgheFollowRealtimeFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,22 @@ public class SocialFriendsActivity extends AppCompatActivity {
         vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncFollowStateFromCloud(this, usernameHiệnTại, () -> {
             cậpNhậtThốngKêVàVẽDanhSáchthànhViên("");
         });
+
+        // Kích hoạt ngay bộ lắng nghe Firestore Realtime cho mọi sự kiện Follow/Unfollow mới
+        kíchHoạtLắngNgheFollowRealtimeFirestore();
+    }
+
+    private void kíchHoạtLắngNgheFollowRealtimeFirestore() {
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            bộLắngNgheFollowRealtimeFirestore = db.collection("follows")
+                    .addSnapshotListener((snapshot, error) -> {
+                        if (error != null || snapshot == null) return;
+                        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncFollowStateFromCloud(this, usernameHiệnTại, () -> {
+                            runOnUiThread(() -> cậpNhậtThốngKêVàVẽDanhSáchthànhViên(ôNhậpTìmKiếmUser != null ? ôNhậpTìmKiếmUser.getText().toString().trim() : ""));
+                        });
+                    });
+        } catch (Throwable ignored) {}
     }
 
     @Override
@@ -386,5 +403,13 @@ public class SocialFriendsActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
 
         cậpNhậtThốngKêVàVẽDanhSáchthànhViên(ôNhậpTìmKiếmUser != null ? ôNhậpTìmKiếmUser.getText().toString().trim() : "");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bộLắngNgheFollowRealtimeFirestore != null) {
+            bộLắngNgheFollowRealtimeFirestore.remove();
+        }
     }
 }

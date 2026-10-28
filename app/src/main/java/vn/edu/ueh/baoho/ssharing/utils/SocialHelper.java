@@ -25,19 +25,9 @@ public class SocialHelper {
     }
 
     /**
-     * Lấy danh sách mặc định các tài khoản mà username đang theo dõi
+     * Lấy danh sách mặc định các tài khoản mà username đang theo dõi (Sạch sẽ, không gán sẵn)
      */
     public static String getDefaultFollowingList(String username) {
-        String u = cleanUsername(username);
-        if ("baoho123".equals(u)) {
-            return "beo123;;minh.triet;;khanh.trinh";
-        } else if ("beo123".equals(u)) {
-            return "baoho123;;minh.triet";
-        } else if ("minh.triet".equals(u)) {
-            return "baoho123;;beo123";
-        } else if ("khanh.trinh".equals(u)) {
-            return "baoho123;;beo123";
-        }
         return "";
     }
 
