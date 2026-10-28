@@ -89,6 +89,18 @@ public class VoucherDetailActivity extends AppCompatActivity {
         if (nhãnTênThươngHiệu != null) {
             nhãnTênThươngHiệu.setText(làGianHàngChínhHãng ? "Thương hiệu: " + tênThươngHiệu : "Người bán C2C: " + tênNgườiBán);
         }
+
+        // Tự động tải tên đầy đủ mới nhất của Người bán C2C từ Cloud Firestore
+        if (!làGianHàngChínhHãng && tênNgườiBán != null) {
+            String sellerClean = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.cleanUsername(tênNgườiBán);
+            if (!sellerClean.isEmpty()) {
+                vn.edu.ueh.baoho.ssharing.utils.SocialHelper.getUserFullNameFromCloud(this, sellerClean, latestName -> {
+                    if (latestName != null && !latestName.trim().isEmpty() && nhãnTênThươngHiệu != null) {
+                        nhãnTênThươngHiệu.setText("Người bán C2C: " + latestName + " (@" + sellerClean + ")");
+                    }
+                });
+            }
+        }
         if (nhãnCấpĐộTínNhiệm != null) {
             nhãnCấpĐộTínNhiệm.setText(làGianHàngChínhHãng ? "✓ Đối Tác Chính Hãng (Trust Score: 100%)" : "✓ Thành viên cộng đồng (Trust Score: 98%)");
         }
@@ -152,7 +164,8 @@ public class VoucherDetailActivity extends AppCompatActivity {
             return;
         }
 
-        int sốDưXuHiệnTại = bộLưuTrữVí.getInt("SO_DU_XU_SS", 1250);
+        String currentUser = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getCurrentUsername(this);
+        int sốDưXuHiệnTại = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getBalance(this, currentUser);
 
         if (sốDưXuHiệnTại < giáXuVoucher) {
             Toast.makeText(this, "Số dư Xu không đủ! Bạn cần " + giáXuVoucher + " SS.", Toast.LENGTH_LONG).show();
@@ -164,7 +177,7 @@ public class VoucherDetailActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Xác nhận đổi Voucher Mall")
                     .setMessage("Bạn có chắc chắn dùng " + giáXuVoucher + " SS để đổi mã voucher chính hãng '" + tênVoucherChiTiết + "'?")
-                    .setPositiveButton("Đổi ngay", (hộpThoại, vịTrí) -> thựcHiệnMuaChínhHãng(bộLưuTrữVí, sốDưXuHiệnTại))
+                    .setPositiveButton("Đổi ngay", (hộpThoại, vịTrí) -> thựcHiệnMuaChínhHãng(currentUser))
                     .setNegativeButton("Hủy", null)
                     .show();
         } else {
@@ -178,8 +191,7 @@ public class VoucherDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void thựcHiệnMuaChínhHãng(SharedPreferences bộLưuTrữVí, int sốDưHiệnTại) {
-        int sốDưMới = sốDưHiệnTại - giáXuVoucher;
+    private void thựcHiệnMuaChínhHãng(String currentUser) {
         String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
 
         String địnhDạngMã = "CODE_TEXT";
@@ -190,21 +202,15 @@ public class VoucherDetailActivity extends AppCompatActivity {
         }
 
         // 1. Thêm vào Ví Voucher
-        String danhSáchVoucherĐãLưu = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_LUU", "");
         String voucherMớiThêm = mãBíMậtKíchHoạt + "::" + tênVoucherChiTiết + "::HSD: 31 T12 2026::BRAND::" + địnhDạngMã;
-        String danhSáchVoucherMới = voucherMớiThêm + (danhSáchVoucherĐãLưu.isEmpty() ? "" : ";;" + danhSáchVoucherĐãLưu);
 
         // 2. Thêm vào Lịch Sử Giao Dịch
-        String danhSáchGiaoDịchĐãLưu = bộLưuTrữVí.getString("DANH_SACH_GIAO_DICH", "");
         String mãGiaoDịchRandom = "TX-MALL" + (100000 + (int)(Math.random() * 899999));
         String bảnGhiGiaoDịchMới = mãGiaoDịchRandom + "||Đổi Voucher Mall " + tênThươngHiệu + "||-" + giáXuVoucher + " SS||" + thờiGianThực + "||SSharing Mall||Thành công||Thanh toán " + giáXuVoucher + " SS đổi mã " + mãBíMậtKíchHoạt;
-        String danhSáchGiaoDịchMới = bảnGhiGiaoDịchMới + (danhSáchGiaoDịchĐãLưu.isEmpty() ? "" : ";;" + danhSáchGiaoDịchĐãLưu);
 
-        bộLưuTrữVí.edit()
-                .putInt("SO_DU_XU_SS", sốDưMới)
-                .putString("DANH_SACH_VOUCHER_DA_LUU", danhSáchVoucherMới)
-                .putString("DANH_SACH_GIAO_DICH", danhSáchGiaoDịchMới)
-                .apply();
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, currentUser, -giáXuVoucher);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addSavedVoucherRecord(this, currentUser, voucherMớiThêm, mãBíMậtKíchHoạt, tênVoucherChiTiết);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, currentUser, bảnGhiGiaoDịchMới, mãGiaoDịchRandom, "Đổi Voucher Mall " + tênThươngHiệu, -giáXuVoucher, "PURCHASE", "SUCCESS", "Thanh toán đổi voucher " + mãBíMậtKíchHoạt);
 
         Toast.makeText(this, "🎉 Mua thành công " + tênVoucherChiTiết + "! Mã đã lưu vào Ví của bạn.", Toast.LENGTH_LONG).show();
         startActivity(new Intent(this, WalletActivity.class));

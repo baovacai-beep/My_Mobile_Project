@@ -222,7 +222,7 @@ public class CoinTopupActivity extends AppCompatActivity {
                 return;
             }
 
-            String danhSáchGiaoDịchĐãLưu = bộLưuTrữCụcBộ.getString("DANH_SACH_GIAO_DICH", "");
+            String danhSáchGiaoDịchĐãLưu = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getTransactionHistory(this, usernameHiệnTại);
             if (danhSáchGiaoDịchĐãLưu.contains(mãGDNhập)) {
                 Toast.makeText(this, "⚠️ Mã giao dịch #" + mãGDNhập + " đã được kiểm tra và nạp xu trước đó!", Toast.LENGTH_LONG).show();
                 return;
@@ -232,8 +232,6 @@ public class CoinTopupActivity extends AppCompatActivity {
         if (đãXácNhậnNạpThànhCông) return;
         đãXácNhậnNạpThànhCông = true;
 
-        int sốDưHiệnTại = bộLưuTrữCụcBộ.getInt("SO_DU_XU_SS", 1250);
-        int sốDưMới = sốDưHiệnTại + sốXuCầnNạp;
         String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
 
         String mãGiaoDịchChính;
@@ -245,15 +243,8 @@ public class CoinTopupActivity extends AppCompatActivity {
 
         String bảnGhiGiaoDịchMới = mãGiaoDịchChính + "||Nạp xu VietQR Napas247 MBBank (+" + sốXuCầnNạp + " SS)||+\n" + sốXuCầnNạp + " SS||" + thờiGianThực + "||VietQR Napas247||Thành công||Thanh toán chuyển khoản MBBank 0913672861 HO GIA BAO (Mã GD: " + mãGiaoDịchChính + ")";
 
-        String danhSáchGiaoDịchĐãLưu = bộLưuTrữCụcBộ.getString("DANH_SACH_GIAO_DICH", "");
-        String danhSáchGiaoDịchMới = bảnGhiGiaoDịchMới + (danhSáchGiaoDịchĐãLưu.isEmpty() ? "" : ";;" + danhSáchGiaoDịchĐãLưu);
-
-        bộLưuTrữCụcBộ.edit()
-                .putInt("SO_DU_XU_SS", sốDưMới)
-                .putString("DANH_SACH_GIAO_DICH", danhSáchGiaoDịchMới)
-                .apply();
-
-        đồngBộNạpXuLênFirebaseFirestore(usernameHiệnTại, sốXuCầnNạp, mãGiaoDịchChính);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, usernameHiệnTại, sốXuCầnNạp);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, usernameHiệnTại, bảnGhiGiaoDịchMới, mãGiaoDịchChính, "Nạp xu VietQR Napas247", sốXuCầnNạp, "TOPUP", "SUCCESS", "Thanh toán chuyển khoản MBBank");
         hiểnThịHóaĐơnNạpTiềnThànhCông(mãGiaoDịchChính, sốSốTiềnVND, sốXuCầnNạp, thờiGianThực, làSandboxDemo);
     }
 
@@ -483,22 +474,13 @@ public class CoinTopupActivity extends AppCompatActivity {
         int sốXuInt = (int) sốXuCộng;
 
         SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        int sốDưHiệnTại = bộLưuTrữCụcBộ.getInt("SO_DU_XU_SS", 1250);
-        int sốDưMới = sốDưHiệnTại + sốXuInt;
         String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
 
         String mãTX = "TX-" + idGiaoDich;
         String bảnGhiGiaoDịchMới = mãTX + "||Nạp xu VietQR Napas247 MBBank (+" + sốXuInt + " SS)||+\n" + sốXuInt + " SS||" + thờiGianThực + "||VietQR Napas247||Thành công||Hệ thống tự động phát hiện số dư Casso MBBank 0913672861 HO GIA BAO (Mã GD: " + mãTX + ")";
 
-        String danhSáchGiaoDịchĐãLưu = bộLưuTrữCụcBộ.getString("DANH_SACH_GIAO_DICH", "");
-        String danhSáchGiaoDịchMới = bảnGhiGiaoDịchMới + (danhSáchGiaoDịchĐãLưu.isEmpty() ? "" : ";;" + danhSáchGiaoDịchĐãLưu);
-
-        bộLưuTrữCụcBộ.edit()
-                .putInt("SO_DU_XU_SS", sốDưMới)
-                .putString("DANH_SACH_GIAO_DICH", danhSáchGiaoDịchMới)
-                .apply();
-
-        đồngBộNạpXuLênFirebaseFirestore(username, sốXuInt, mãTX);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, username, sốXuInt);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, username, bảnGhiGiaoDịchMới, mãTX, "Nạp xu VietQR Napas247", sốXuInt, "TOPUP", "SUCCESS", "Hệ thống tự động phát hiện số dư Casso MBBank");
 
         String tbMới = "🎉 [NẠP XU THÀNH CÔNG] Hệ thống Casso vừa ghi nhận giao dịch chuyển khoản " + String.format(Locale.getDefault(), "%,d VNĐ", sốTiềnVnd) + "! +" + sốXuInt + " SS đã được cộng vào Ví.||" + thờiGianThực;
         String tbGốc = bộLưuTrữCụcBộ.getString("DANH_SACH_THONG_BAO_" + username.toLowerCase().trim(), "");
@@ -515,20 +497,12 @@ public class CoinTopupActivity extends AppCompatActivity {
         if (đãXácNhậnNạpThànhCông) return;
         đãXácNhậnNạpThànhCông = true;
 
-        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        int sốDưHiệnTại = bộLưuTrữCụcBộ.getInt("SO_DU_XU_SS", 1250);
-        int sốDưMới = sốDưHiệnTại + sốXu;
         String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
 
         String bảnGhiGiaoDịchMới = mãTX + "||Nạp xu VietQR Napas247 MBBank (+" + sốXu + " SS)||+\n" + sốXu + " SS||" + thờiGianThực + "||VietQR Napas247||Thành công||Hệ thống tự động phát hiện số dư MBBank 0913672861 HO GIA BAO (Mã GD: " + mãTX + ")";
 
-        String danhSáchGiaoDịchĐãLưu = bộLưuTrữCụcBộ.getString("DANH_SACH_GIAO_DICH", "");
-        String danhSáchGiaoDịchMới = bảnGhiGiaoDịchMới + (danhSáchGiaoDịchĐãLưu.isEmpty() ? "" : ";;" + danhSáchGiaoDịchĐãLưu);
-
-        bộLưuTrữCụcBộ.edit()
-                .putInt("SO_DU_XU_SS", sốDưMới)
-                .putString("DANH_SACH_GIAO_DICH", danhSáchGiaoDịchMới)
-                .apply();
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, usernameHiệnTại, sốXu);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, usernameHiệnTại, bảnGhiGiaoDịchMới, mãTX, "Nạp xu VietQR Napas247", sốXu, "TOPUP", "SUCCESS", "Tự động cộng xu khi tín hiệu về");
 
         hiểnThịHóaĐơnNạpTiềnThànhCông(mãTX, sốSốTiềnVND, sốXu, thờiGianThực, false);
     }

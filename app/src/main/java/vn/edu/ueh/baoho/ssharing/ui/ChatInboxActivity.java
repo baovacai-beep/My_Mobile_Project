@@ -264,22 +264,12 @@ public class ChatInboxActivity extends AppCompatActivity {
         ôAvatar.setLayoutParams(thôngSốMatch);
         khungAvatar.addView(ôAvatar);
 
-        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         String usernameClean = tríchXuấtUsernameSạch(usernameĐốiTác);
-        String pathAvatar = bộLưuTrữVí.getString("CURRENT_USER_AVATAR_PATH_" + usernameClean, "");
-
-        if (!pathAvatar.isEmpty() && new java.io.File(pathAvatar).exists()) {
-            try {
-                android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeFile(pathAvatar);
-                if (bitmap != null) {
-                    android.widget.ImageView ảnhAvatarTarget = new android.widget.ImageView(this);
-                    ảnhAvatarTarget.setImageBitmap(bitmap);
-                    ảnhAvatarTarget.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
-                    ảnhAvatarTarget.setLayoutParams(thôngSốMatch);
-                    khungAvatar.addView(ảnhAvatarTarget);
-                }
-            } catch (Throwable ignored) {}
-        }
+        android.widget.ImageView ảnhAvatarTarget = new android.widget.ImageView(this);
+        ảnhAvatarTarget.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+        ảnhAvatarTarget.setLayoutParams(thôngSốMatch);
+        khungAvatar.addView(ảnhAvatarTarget);
+        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.loadUserAvatar(this, ảnhAvatarTarget, usernameClean);
 
         // Thông tin Chat
         LinearLayout khungThôngTin = new LinearLayout(this);
@@ -297,6 +287,16 @@ public class ChatInboxActivity extends AppCompatActivity {
 
         TextView nhãnTênĐốiTác = new TextView(this);
         nhãnTênĐốiTác.setText(tênĐốiTác);
+
+        // Tự động giải mã & hiển thị Họ tên đầy đủ mới nhất từ Cloud Firestore
+        if (!usernameClean.isEmpty()) {
+            final String finalUserClean = usernameClean;
+            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.getUserFullNameFromCloud(this, finalUserClean, latestName -> {
+                if (latestName != null && !latestName.trim().isEmpty() && nhãnTênĐốiTác != null) {
+                    nhãnTênĐốiTác.setText(latestName + " (@" + finalUserClean + ")");
+                }
+            });
+        }
         nhãnTênĐốiTác.setTextColor(Color.WHITE);
         nhãnTênĐốiTác.setTextSize(14);
         nhãnTênĐốiTác.setTypeface(null, android.graphics.Typeface.BOLD);
@@ -339,6 +339,7 @@ public class ChatInboxActivity extends AppCompatActivity {
 
         thẻCard.setOnClickListener(v -> {
             String idPhòng = "CHAT_ROOM_" + mãBíMật;
+            SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
             bộLưuTrữVí.edit().putBoolean("IS_READ_ROOM_" + idPhòng + "_" + usernameHiệnTại.toLowerCase().trim(), true).apply();
 
             Intent ýĐịnhEscrowChat = new Intent(this, EscrowChatActivity.class);

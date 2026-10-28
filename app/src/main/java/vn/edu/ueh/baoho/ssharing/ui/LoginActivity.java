@@ -109,18 +109,43 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
     }
 
-    private void tạoHoặcCậpNhậtUserFirestore(com.google.firebase.firestore.FirebaseFirestore db, String username, String fullName, String phone, String email, String md5Pass, int trustScore, boolean isVerified) {
-        java.util.Map<String, Object> userData = new java.util.HashMap<>();
-        userData.put("username", username);
-        userData.put("fullName", fullName);
-        userData.put("phone", phone);
-        userData.put("email", email);
-        userData.put("md5Password", md5Pass);
-        userData.put("trustScore", trustScore);
-        userData.put("isEkycVerified", isVerified);
-        userData.put("createdAt", System.currentTimeMillis());
+    private void tạoHoặcCậpNhậtUserFirestore(com.google.firebase.firestore.FirebaseFirestore db, String username, String defaultFullName, String phone, String email, String md5Pass, int trustScore, boolean isVerified) {
+        String cleanUser = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.cleanUsername(username);
+        int defaultBalance = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getDefaultBalanceForUser(cleanUser);
 
-        db.collection("users").document(username).set(userData, com.google.firebase.firestore.SetOptions.merge());
+        db.collection("users").document(cleanUser).get().addOnSuccessListener(doc -> {
+            if (!doc.exists()) {
+                java.util.Map<String, Object> userData = new java.util.HashMap<>();
+                userData.put("username", cleanUser);
+                userData.put("fullName", defaultFullName);
+                userData.put("ho_ten", defaultFullName);
+                userData.put("phone", phone);
+                userData.put("so_dien_thoai", phone);
+                userData.put("email", email);
+                userData.put("md5Password", md5Pass);
+                userData.put("trustScore", trustScore);
+                userData.put("isEkycVerified", isVerified);
+                userData.put("so_du_xu", defaultBalance);
+                userData.put("soDuXu", defaultBalance);
+                userData.put("createdAt", System.currentTimeMillis());
+
+                db.collection("users").document(cleanUser).set(userData, com.google.firebase.firestore.SetOptions.merge());
+            } else {
+                java.util.Map<String, Object> mergeData = new java.util.HashMap<>();
+                mergeData.put("md5Password", md5Pass);
+                if (!doc.contains("fullName") && !doc.contains("ho_ten")) {
+                    mergeData.put("fullName", defaultFullName);
+                    mergeData.put("ho_ten", defaultFullName);
+                }
+                if (!doc.contains("so_du_xu")) {
+                    mergeData.put("so_du_xu", defaultBalance);
+                    mergeData.put("soDuXu", defaultBalance);
+                }
+                db.collection("users").document(cleanUser).set(mergeData, com.google.firebase.firestore.SetOptions.merge());
+            }
+        }).addOnFailureListener(e -> {
+            // Fallback offline mode
+        });
     }
 
     private void tựĐộngĐiềnTàiKhoảnĐãGhiNhớTrướcĐó() {
@@ -286,6 +311,10 @@ public class LoginActivity extends AppCompatActivity {
                 trìnhSửa.remove("SAVED_PASSWORD");
             }
             trìnhSửa.apply();
+
+            // Kích hoạt đồng bộ ví & thông tin hồ sơ tài khoản từ Firebase Cloud Firestore
+            vn.edu.ueh.baoho.ssharing.utils.WalletManager.syncFromFirestore(this, usernameThànhCông, null);
+            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncUserProfileFromCloud(this, usernameThànhCông, null);
 
             Toast.makeText(this, "🎉 Đăng nhập thành công! Chào mừng " + họTênĐăngNhậpThànhCông, Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, MainActivity.class));

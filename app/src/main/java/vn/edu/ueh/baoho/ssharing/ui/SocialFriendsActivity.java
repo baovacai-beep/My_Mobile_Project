@@ -51,6 +51,7 @@ public class SocialFriendsActivity extends AppCompatActivity {
     private String usernameHiệnTại = "baoho123";
     private List<ThôngTinThànhViênSocial> danhSáchTấtCảThànhViên = new ArrayList<>();
     private com.google.firebase.firestore.ListenerRegistration bộLắngNgheFollowRealtimeFirestore;
+    private com.google.firebase.firestore.ListenerRegistration bộLắngNgheUsersRealtimeFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +68,60 @@ public class SocialFriendsActivity extends AppCompatActivity {
             cậpNhậtThốngKêVàVẽDanhSáchthànhViên("");
         });
 
-        // Kích hoạt ngay bộ lắng nghe Firestore Realtime cho mọi sự kiện Follow/Unfollow mới
+        // Kích hoạt ngay bộ lắng nghe Firestore Realtime cho mọi sự kiện Follow/Unfollow mới và Thay đổi Hồ Sơ User mới
         kíchHoạtLắngNgheFollowRealtimeFirestore();
+        kíchHoạtLắngNgheThànhViênRealtimeFirestore();
+    }
+
+    private void kíchHoạtLắngNgheThànhViênRealtimeFirestore() {
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            bộLắngNgheUsersRealtimeFirestore = db.collection("users")
+                    .addSnapshotListener((snapshot, error) -> {
+                        if (error != null || snapshot == null || snapshot.isEmpty()) return;
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : snapshot.getDocuments()) {
+                            String user = doc.getId();
+                            String fullName = doc.getString("fullName");
+                            if (fullName == null || fullName.trim().isEmpty()) {
+                                fullName = doc.getString("ho_ten");
+                            }
+                            if (fullName == null || fullName.trim().isEmpty()) {
+                                fullName = user;
+                            }
+
+                            Long trustObj = doc.getLong("trustScore");
+                            int trust = trustObj != null ? trustObj.intValue() : 96;
+                            Boolean verObj = doc.getBoolean("isEkycVerified");
+                            boolean ver = verObj != null && verObj;
+
+                            cậpNhậtHoặcThêmThànhViên(user, fullName, trust, ver);
+                        }
+                        runOnUiThread(() -> cậpNhậtThốngKêVàVẽDanhSáchthànhViên(ôNhậpTìmKiếmUser != null ? ôNhậpTìmKiếmUser.getText().toString().trim() : ""));
+                    });
+        } catch (Throwable ignored) {}
+    }
+
+    private void cậpNhậtHoặcThêmThànhViên(String user, String họTên, int trust, boolean verified) {
+        String initials = "SS";
+        if (họTên != null && họTên.length() >= 2) {
+            String[] mảngTừ = họTên.trim().split(" ");
+            if (mảngTừ.length >= 2) {
+                initials = (mảngTừ[0].substring(0, 1) + mảngTừ[mảngTừ.length - 1].substring(0, 1)).toUpperCase();
+            } else {
+                initials = họTên.substring(0, 2).toUpperCase();
+            }
+        }
+
+        for (ThôngTinThànhViênSocial item : danhSáchTấtCảThànhViên) {
+            if (item.username.equalsIgnoreCase(user)) {
+                item.họTên = họTên;
+                item.avatarInitials = initials;
+                item.điểmTrustScore = trust;
+                item.làVerified = verified;
+                return;
+            }
+        }
+        danhSáchTấtCảThànhViên.add(new ThôngTinThànhViênSocial(user, họTên, initials, trust, verified));
     }
 
     private void kíchHoạtLắngNgheFollowRealtimeFirestore() {
@@ -237,19 +290,11 @@ public class SocialFriendsActivity extends AppCompatActivity {
             ôAvatarText.setLayoutParams(thôngSốMatch);
             khungAvatar.addView(ôAvatarText);
 
-            String pathAvatar = bộLưuTrữVí.getString("CURRENT_USER_AVATAR_PATH_" + thànhViên.username.toLowerCase().trim(), "");
-            if (!pathAvatar.isEmpty() && new File(pathAvatar).exists()) {
-                try {
-                    android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeFile(pathAvatar);
-                    if (bitmap != null) {
-                        ImageView imgUser = new ImageView(this);
-                        imgUser.setImageBitmap(bitmap);
-                        imgUser.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        imgUser.setLayoutParams(thôngSốMatch);
-                        khungAvatar.addView(imgUser);
-                    }
-                } catch (Throwable ignored) {}
-            }
+            ImageView imgUser = new ImageView(this);
+            imgUser.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imgUser.setLayoutParams(thôngSốMatch);
+            khungAvatar.addView(imgUser);
+            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.loadUserAvatar(this, imgUser, thànhViên.username);
 
             // Thông tin Username & Họ tên (Chiếm 100% độ rộng còn lại)
             LinearLayout khungMôTả = new LinearLayout(this);
@@ -410,6 +455,9 @@ public class SocialFriendsActivity extends AppCompatActivity {
         super.onDestroy();
         if (bộLắngNgheFollowRealtimeFirestore != null) {
             bộLắngNgheFollowRealtimeFirestore.remove();
+        }
+        if (bộLắngNgheUsersRealtimeFirestore != null) {
+            bộLắngNgheUsersRealtimeFirestore.remove();
         }
     }
 }

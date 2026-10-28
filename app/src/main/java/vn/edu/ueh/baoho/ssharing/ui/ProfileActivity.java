@@ -357,14 +357,11 @@ public class ProfileActivity extends AppCompatActivity {
                         return;
                     }
 
-                    bộLưuTrữCụcBộ.edit()
-                            .putString("CURRENT_USER_NAME", tênMới)
-                            .putString("CURRENT_USER_EMAIL", emailMới)
-                            .putString("CURRENT_USER_PHONE", sđtMới)
-                            .apply();
+                    String usernameUser = bộLưuTrữCụcBộ.getString("CURRENT_USERNAME", "baoho123");
+                    vn.edu.ueh.baoho.ssharing.utils.SocialHelper.updateUserProfileOnCloud(this, usernameUser, tênMới, emailMới, sđtMới);
 
                     cậpNhậtThôngTinCáNhân();
-                    Toast.makeText(this, "🎉 Đã cập nhật hồ sơ cá nhân thành công!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "🎉 Đã cập nhật hồ sơ cá nhân và đồng bộ lên Firebase thành công!", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Hủy", null)
                 .show();

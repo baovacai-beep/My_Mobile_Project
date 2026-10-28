@@ -171,6 +171,16 @@ public class EscrowChatActivity extends AppCompatActivity {
         }
 
         if (nhãnTênĐốiTác != null) nhãnTênĐốiTác.setText(tênNgườiBán);
+
+        // Tự động tải tên đầy đủ mới nhất của Đối tác từ Cloud Firestore lên Header phòng Chat
+        final String finalPartnerClean = partnerClean;
+        if (!finalPartnerClean.isEmpty()) {
+            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.getUserFullNameFromCloud(this, finalPartnerClean, latestName -> {
+                if (latestName != null && !latestName.trim().isEmpty() && nhãnTênĐốiTác != null) {
+                    nhãnTênĐốiTác.setText(latestName + " (@" + finalPartnerClean + ")");
+                }
+            });
+        }
         if (nhãnAvatarĐốiTác != null) nhãnAvatarĐốiTác.setText(avatarNgườiBán);
         if (nhãnTiêuĐềVoucher != null) nhãnTiêuĐềVoucher.setText(tênVoucher);
         if (nhãnMãBíMậtVoucher != null) nhãnMãBíMậtVoucher.setText("Mã bí mật: " + mãBíMậtVoucher);
@@ -178,16 +188,7 @@ public class EscrowChatActivity extends AppCompatActivity {
         // Nạp ảnh đại diện thật của đối tác lên Header phòng Chat nếu có
         ImageView imgPartnerHeader = findViewById(R.id.imgPartnerAvatarHeader);
         if (imgPartnerHeader != null) {
-            String pathAvatarPartner = bộLưuTrữVí.getString("CURRENT_USER_AVATAR_PATH_" + partnerClean, "");
-            if (!pathAvatarPartner.isEmpty() && new File(pathAvatarPartner).exists()) {
-                try {
-                    Bitmap bitmap = BitmapFactory.decodeFile(pathAvatarPartner);
-                    if (bitmap != null) {
-                        imgPartnerHeader.setImageBitmap(bitmap);
-                        imgPartnerHeader.setVisibility(View.VISIBLE);
-                    }
-                } catch (Throwable ignored) {}
-            }
+            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.loadUserAvatar(this, imgPartnerHeader, partnerClean);
         }
 
         // Đọc & Cập nhật chỉ số Tín Nhiệm Uy Tín thật của đối tác
@@ -963,8 +964,7 @@ public class EscrowChatActivity extends AppCompatActivity {
 
     private void thựcHiệnHoànTấtEscrow() {
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        int sốDưHiệnTại = bộLưuTrữVí.getInt("SO_DU_XU_SS", 1250);
-        int sốDưMới = Math.max(0, sốDưHiệnTại - giáXuEscrow);
+        String currentUser = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getCurrentUsername(this);
         String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
 
         if (nhãnTrạngTháiEscrow != null) {
@@ -972,27 +972,30 @@ public class EscrowChatActivity extends AppCompatActivity {
             nhãnTrạngTháiEscrow.setTextColor(Color.parseColor("#00E676"));
         }
 
-        // 1. Thêm vào Ví Voucher
-        String danhSáchVoucherĐãLưu = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_LUU", "");
+        // 1. Thêm vào Ví Voucher của Người Mua
         String voucherMớiThêm = mãBíMậtVoucher + "::" + tênVoucher + "::HSD: 31 T12 2026::C2C";
-        String danhSáchVoucherMới = voucherMớiThêm + (danhSáchVoucherĐãLưu.isEmpty() ? "" : ";;" + danhSáchVoucherĐãLưu);
 
         // 2. Thêm vào Lịch Sử Giao Dịch
-        String danhSáchGiaoDịchĐãLưu = bộLưuTrữVí.getString("DANH_SACH_GIAO_DICH", "");
         String mãGiaoDịchRandom = "TX-ESC" + (100000 + (int)(Math.random() * 899999));
         String bảnGhiGiaoDịchMới = mãGiaoDịchRandom + "||Giải phóng Escrow " + tênVoucher + "||-" + giáXuEscrow + " SS||" + thờiGianThực + "||Thanh toán Escrow||Thành công||Giải phóng " + giáXuEscrow + " SS cho người bán " + tênNgườiBán;
-        String danhSáchGiaoDịchMới = bảnGhiGiaoDịchMới + (danhSáchGiaoDịchĐãLưu.isEmpty() ? "" : ";;" + danhSáchGiaoDịchĐãLưu);
 
         // 3. Đánh dấu Voucher đã BÁN xong -> Ẩn khỏi Sàn C2C Market
         String danhSáchĐãBánGốc = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
         String danhSáchĐãBánMới = mãBíMậtVoucher + ";;" + danhSáchĐãBánGốc;
+        bộLưuTrữVí.edit().putString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", danhSáchĐãBánMới).apply();
 
-        bộLưuTrữVí.edit()
-                .putInt("SO_DU_XU_SS", sốDưMới)
-                .putString("DANH_SACH_VOUCHER_DA_LUU", danhSáchVoucherMới)
-                .putString("DANH_SACH_GIAO_DICH", danhSáchGiaoDịchMới)
-                .putString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", danhSáchĐãBánMới)
-                .apply();
+        // Cập nhật ví và lịch sử riêng từng tài khoản
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, currentUser, -giáXuEscrow);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addSavedVoucherRecord(this, currentUser, voucherMớiThêm, mãBíMậtVoucher, tênVoucher);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, currentUser, bảnGhiGiaoDịchMới, mãGiaoDịchRandom, "Giải phóng Escrow " + tênVoucher, -giáXuEscrow, "ESCROW_RELEASE", "SUCCESS", "Giải phóng " + giáXuEscrow + " SS cho " + tênNgườiBán);
+
+        // Cộng tiền cho Ví Người Bán
+        String sellerUser = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.cleanUsername(tênNgườiBán);
+        if (!sellerUser.isEmpty()) {
+            String bảnGhiBán = mãGiaoDịchRandom + "||Bán Voucher C2C " + tênVoucher + "||+" + giáXuEscrow + " SS||" + thờiGianThực + "||Nhận tiền Escrow||Thành công||Nhận " + giáXuEscrow + " SS từ người mua " + currentUser;
+            vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, sellerUser, +giáXuEscrow);
+            vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, sellerUser, bảnGhiBán, mãGiaoDịchRandom, "Bán Voucher C2C " + tênVoucher, giáXuEscrow, "ESCROW_INCOME", "SUCCESS", "Nhận tiền bán voucher từ " + currentUser);
+        }
 
         // Thêm tin nhắn hệ thống xác nhận giải phóng xu
         String thờiGianTinSys = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());

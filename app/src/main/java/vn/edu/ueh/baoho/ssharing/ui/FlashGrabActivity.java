@@ -71,34 +71,27 @@ public class FlashGrabActivity extends AppCompatActivity {
     }
 
     private void thựcHiệnGiựtDeal(Button nútGiựt, String tênDeal, int giáXu, String mãBíMật, String loạiIcon) {
-        SharedPreferences bộLưuTrữCụcBộ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        int sốDưXuHiệnTại = bộLưuTrữCụcBộ.getInt("SO_DU_XU_SS", 1250);
+        String currentUser = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getCurrentUsername(this);
+        int sốDưXuHiệnTại = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getBalance(this, currentUser);
 
         if (sốDưXuHiệnTại < giáXu) {
             Toast.makeText(this, "Không đủ Xu để giựt deal này! Bạn cần có ít nhất " + giáXu + " SS.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        int sốDưMới = sốDưXuHiệnTại - giáXu;
         String thờiGianThực = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
 
         // 1. Lưu voucher đã giựt vào danh sách Ví Voucher
-        String danhSáchVoucherĐãLưu = bộLưuTrữCụcBộ.getString("DANH_SACH_VOUCHER_DA_LUU", "");
         String voucherMớiThêm = mãBíMật + "::" + tênDeal + "::HSD: 31 T12 2026::" + loạiIcon;
-        String danhSáchVoucherMới = voucherMớiThêm + (danhSáchVoucherĐãLưu.isEmpty() ? "" : ";;" + danhSáchVoucherĐãLưu);
 
         // 2. Thêm bản ghi giao dịch mới vào Danh sách Lịch Sử
-        String danhSáchGiaoDịchĐãLưu = bộLưuTrữCụcBộ.getString("DANH_SACH_GIAO_DICH", "");
         String mãGiaoDịchRandom = "TX-FG" + (100000 + (int)(Math.random() * 899999));
         String bảnGhiGiaoDịchMới = mãGiaoDịchRandom + "||Giựt Deal " + tênDeal + "||-" + giáXu + " SS||" + thờiGianThực + "||Giựt Deal Flash Grab||Thành công||Đã sử dụng " + giáXu + " SS để giựt mã " + mãBíMật;
-        String danhSáchGiaoDịchMới = bảnGhiGiaoDịchMới + (danhSáchGiaoDịchĐãLưu.isEmpty() ? "" : ";;" + danhSáchGiaoDịchĐãLưu);
 
-        // 3. Cập nhật SharedPreferences
-        bộLưuTrữCụcBộ.edit()
-                .putInt("SO_DU_XU_SS", sốDưMới)
-                .putString("DANH_SACH_VOUCHER_DA_LUU", danhSáchVoucherMới)
-                .putString("DANH_SACH_GIAO_DICH", danhSáchGiaoDịchMới)
-                .apply();
+        // 3. Cập nhật Ví riêng biệt của User
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, currentUser, -giáXu);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addSavedVoucherRecord(this, currentUser, voucherMớiThêm, mãBíMật, tênDeal);
+        vn.edu.ueh.baoho.ssharing.utils.WalletManager.addTransactionRecord(this, currentUser, bảnGhiGiaoDịchMới, mãGiaoDịchRandom, "Giựt Deal " + tênDeal, -giáXu, "FLASH_GRAB", "SUCCESS", "Giựt deal " + mãBíMật);
 
         // 4. Cập nhật nút
         if (nútGiựt != null) {
