@@ -60,7 +60,19 @@ public class SocialFriendsActivity extends AppCompatActivity {
         khởiTạoÁnhXạGiaoDiện();
         khởiTạoKhoThànhViênMẫu();
         càiĐặtSựKiệnLắngNghe();
-        cậpNhậtThốngKêVàVẽDanhSáchthànhViên("");
+
+        // Tự động đồng bộ liên kết Follow từ Cloud Firestore trước khi vẽ danh sách
+        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncFollowStateFromCloud(this, usernameHiệnTại, () -> {
+            cậpNhậtThốngKêVàVẽDanhSáchthànhViên("");
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncFollowStateFromCloud(this, usernameHiệnTại, () -> {
+            cậpNhậtThốngKêVàVẽDanhSáchthànhViên("");
+        });
     }
 
     private void đọcThôngTinTàiKhoản() {

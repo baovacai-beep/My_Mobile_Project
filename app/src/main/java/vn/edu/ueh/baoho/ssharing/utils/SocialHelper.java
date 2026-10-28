@@ -9,15 +9,33 @@ import java.util.List;
 public class SocialHelper {
 
     /**
+     * Chuẩn hóa Username (bỏ @, khoảng trắng, chữ hoa)
+     */
+    public static String cleanUsername(String raw) {
+        if (raw == null) return "";
+        String clean = raw.trim();
+        if (clean.contains("(@") && clean.contains(")")) {
+            int start = clean.indexOf("(@") + 2;
+            int end = clean.indexOf(")", start);
+            if (end > start) {
+                clean = clean.substring(start, end);
+            }
+        }
+        return clean.replaceAll("[^a-zA-Z0-9._-]", "").toLowerCase().trim();
+    }
+
+    /**
      * Lấy danh sách mặc định các tài khoản mà username đang theo dõi
      */
     public static String getDefaultFollowingList(String username) {
-        String u = username != null ? username.toLowerCase().trim() : "";
+        String u = cleanUsername(username);
         if ("baoho123".equals(u)) {
             return "beo123;;minh.triet;;khanh.trinh";
         } else if ("beo123".equals(u)) {
             return "baoho123;;minh.triet";
         } else if ("minh.triet".equals(u)) {
+            return "baoho123;;beo123";
+        } else if ("khanh.trinh".equals(u)) {
             return "baoho123;;beo123";
         }
         return "";
@@ -28,7 +46,7 @@ public class SocialHelper {
      */
     public static String getFollowingString(Context context, String username) {
         if (username == null || username.trim().isEmpty()) return "";
-        String cleanUser = username.toLowerCase().trim();
+        String cleanUser = cleanUsername(username);
         SharedPreferences prefs = context.getSharedPreferences("SSHARING_PREFS", Context.MODE_PRIVATE);
         String defaultList = getDefaultFollowingList(cleanUser);
         return prefs.getString("FOLLOWING_LIST_" + cleanUser, defaultList);
@@ -39,8 +57,8 @@ public class SocialHelper {
      */
     public static boolean isUserFollowing(Context context, String userA, String targetUser) {
         if (userA == null || targetUser == null) return false;
-        String cleanA = userA.toLowerCase().trim();
-        String cleanTarget = targetUser.toLowerCase().trim();
+        String cleanA = cleanUsername(userA);
+        String cleanTarget = cleanUsername(targetUser);
         if (cleanA.isEmpty() || cleanTarget.isEmpty()) return false;
 
         String followingStr = getFollowingString(context, cleanA);
@@ -48,7 +66,7 @@ public class SocialHelper {
 
         String[] parts = followingStr.split(";;");
         for (String p : parts) {
-            if (p.trim().equalsIgnoreCase(cleanTarget)) {
+            if (cleanUsername(p).equalsIgnoreCase(cleanTarget)) {
                 return true;
             }
         }
@@ -117,6 +135,77 @@ public class SocialHelper {
         } catch (Throwable ignored) {}
 
         return nowFollowing;
+    }
+
+    /**
+     * Tự động truy vấn và đồng bộ liên kết Theo dõi 2 chiều từ Cloud Firestore thời gian thực
+     */
+    public static void syncFollowStateFromCloud(Context context, String username, Runnable onComplete) {
+        if (context == null || username == null || username.trim().isEmpty()) {
+            if (onComplete != null) onComplete.run();
+            return;
+        }
+        String cleanUser = cleanUsername(username);
+
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            db.collection("follows").whereEqualTo("follower", cleanUser).get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (snapshot != null) {
+                            SharedPreferences prefs = context.getSharedPreferences("SSHARING_PREFS", Context.MODE_PRIVATE);
+                            String currentList = getFollowingString(context, cleanUser);
+                            List<String> list = new ArrayList<>();
+                            if (!currentList.isEmpty()) {
+                                for (String item : currentList.split(";;")) {
+                                    String trimmed = cleanUsername(item);
+                                    if (!trimmed.isEmpty() && !list.contains(trimmed)) {
+                                        list.add(trimmed);
+                                    }
+                                }
+                            }
+
+                            for (com.google.firebase.firestore.DocumentSnapshot doc : snapshot.getDocuments()) {
+                                String followingUser = cleanUsername(doc.getString("following"));
+                                if (!followingUser.isEmpty() && !list.contains(followingUser)) {
+                                    list.add(followingUser);
+                                }
+                            }
+
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = 0; i < list.size(); i++) {
+                                if (i > 0) sb.append(";;");
+                                sb.append(list.get(i));
+                            }
+                            prefs.edit().putString("FOLLOWING_LIST_" + cleanUser, sb.toString()).apply();
+                        }
+
+                        db.collection("follows").whereEqualTo("following", cleanUser).get()
+                                .addOnSuccessListener(snapshot2 -> {
+                                    if (snapshot2 != null) {
+                                        SharedPreferences prefs = context.getSharedPreferences("SSHARING_PREFS", Context.MODE_PRIVATE);
+                                        for (com.google.firebase.firestore.DocumentSnapshot doc2 : snapshot2.getDocuments()) {
+                                            String followerUser = cleanUsername(doc2.getString("follower"));
+                                            if (!followerUser.isEmpty()) {
+                                                String followerList = getFollowingString(context, followerUser);
+                                                if (!followerList.contains(cleanUser)) {
+                                                    String updatedList = followerList.isEmpty() ? cleanUser : followerList + ";;" + cleanUser;
+                                                    prefs.edit().putString("FOLLOWING_LIST_" + followerUser, updatedList).apply();
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (onComplete != null) onComplete.run();
+                                })
+                                .addOnFailureListener(e -> {
+                                    if (onComplete != null) onComplete.run();
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        if (onComplete != null) onComplete.run();
+                    });
+        } catch (Throwable ignored) {
+            if (onComplete != null) onComplete.run();
+        }
     }
 
     /**

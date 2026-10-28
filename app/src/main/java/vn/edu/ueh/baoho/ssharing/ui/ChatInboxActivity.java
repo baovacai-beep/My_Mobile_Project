@@ -37,7 +37,7 @@ public class ChatInboxActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        cậpNhậtDanhSáchĐoạnChatTheoTab();
+        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncFollowStateFromCloud(this, usernameHiệnTại, this::cậpNhậtDanhSáchĐoạnChatTheoTab);
     }
 
     private void đọcThôngTinTàiKhoản() {
