@@ -100,6 +100,22 @@ public class SocialHelper {
         }
 
         prefs.edit().putString("FOLLOWING_LIST_" + cleanA, sb.toString()).apply();
+
+        // Đồng bộ liên kết Theo Dõi lên Firebase Cloud Firestore
+        try {
+            com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+            String docId = cleanA + "_" + cleanTarget;
+            if (nowFollowing) {
+                java.util.Map<String, Object> data = new java.util.HashMap<>();
+                data.put("follower", cleanA);
+                data.put("following", cleanTarget);
+                data.put("timestamp", System.currentTimeMillis());
+                db.collection("follows").document(docId).set(data);
+            } else {
+                db.collection("follows").document(docId).delete();
+            }
+        } catch (Throwable ignored) {}
+
         return nowFollowing;
     }
 
@@ -235,9 +251,9 @@ public class SocialHelper {
         String cleanB = userB != null ? userB.toLowerCase().trim() : "";
 
         if (cleanA.compareTo(cleanB) <= 0) {
-            return "SOCIAL_" + cleanA + "_" + cleanB;
+            return "P2P_" + cleanA + "_" + cleanB;
         } else {
-            return "SOCIAL_" + cleanB + "_" + cleanA;
+            return "P2P_" + cleanB + "_" + cleanA;
         }
     }
 }

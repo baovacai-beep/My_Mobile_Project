@@ -125,6 +125,8 @@ public class ChatInboxActivity extends AppCompatActivity {
         String danhSáchPhòngChatTấtCả = bộLưuTrữVí.getString("DANH_SACH_PHONG_CHAT_TAT_CA", "");
         String danhSáchĐãBánHệThống = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
 
+        java.util.Set<String> cácĐốiTácĐãHiểnThịSet = new java.util.HashSet<>();
+
         if (!danhSáchPhòngChatTấtCả.isEmpty()) {
             String[] cácPhòng = danhSáchPhòngChatTấtCả.split(";;;");
             for (String phòng : cácPhòng) {
@@ -148,11 +150,17 @@ public class ChatInboxActivity extends AppCompatActivity {
                 String thờiGianCuối = mảngTrường.length > 9 ? mảngTrường[9] : "Vừa xong";
 
                 boolean đãHoànTất = danhSáchĐãBánHệThống.contains(mãCode);
-                boolean làChatSocial = giáXu == 0 || mãCode.startsWith("CHAT-") || mãCode.startsWith("SOCIAL_");
+                boolean làChatSocial = giáXu == 0 || mãCode.startsWith("CHAT-") || mãCode.startsWith("SOCIAL_") || mãCode.startsWith("P2P_");
 
                 // Kiểm tra bạn bè 2 chiều (Mutual Friends) vs Người lạ (Strangers)
                 String usernameThựcĐốiTác = usernameHiệnTại.equalsIgnoreCase(buyerUser) ? sellerName : buyerUser;
                 String partnerClean = tríchXuấtUsernameSạch(usernameThựcĐốiTác);
+
+                // Khử trùng lặp: Mỗi đối tác chỉ hiển thị 1 thẻ hội thoại gần nhất duy nhất
+                if (!partnerClean.isEmpty()) {
+                    if (cácĐốiTácĐãHiểnThịSet.contains(partnerClean)) continue;
+                }
+
                 boolean làBạnBè2Chiều = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isMutualFriend(this, usernameHiệnTại, partnerClean);
 
                 // Lọc chính xác Rạch Ròi theo từng Tab
@@ -166,6 +174,10 @@ public class ChatInboxActivity extends AppCompatActivity {
                     if (!đãHoànTất) continue;
                 } else if ("SUPPORT".equals(tabĐangChọn)) {
                     continue;
+                }
+
+                if (!partnerClean.isEmpty()) {
+                    cácĐốiTácĐãHiểnThịSet.add(partnerClean);
                 }
 
                 // Đọc tin nhắn mới nhất
