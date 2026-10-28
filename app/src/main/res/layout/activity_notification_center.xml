@@ -16,14 +16,14 @@
 
         <ImageView
             android:id="@+id/btnBackNotifications"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="Quay lại"
             android:focusable="true"
-            android:padding="4dp"
+            android:padding="10dp"
             android:src="@drawable/ic_arrow_back"
             app:tint="#FFFFFF" />
 

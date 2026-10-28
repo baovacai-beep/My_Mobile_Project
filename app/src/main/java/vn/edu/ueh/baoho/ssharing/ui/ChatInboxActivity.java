@@ -151,9 +151,7 @@ public class ChatInboxActivity extends AppCompatActivity {
                 // Kiểm tra bạn bè 2 chiều (Mutual Friends) vs Người lạ (Strangers)
                 String usernameThựcĐốiTác = usernameHiệnTại.equalsIgnoreCase(buyerUser) ? sellerName : buyerUser;
                 String partnerClean = tríchXuấtUsernameSạch(usernameThựcĐốiTác);
-                String chuỗiĐangTheoDõi = bộLưuTrữVí.getString("FOLLOWING_LIST_" + usernameHiệnTại.toLowerCase().trim(), "");
-                boolean làĐangTheoDõi = chuỗiĐangTheoDõi.contains(partnerClean);
-                boolean làBạnBè2Chiều = làĐangTheoDõi && ("beo123".equalsIgnoreCase(partnerClean) || "minh.triet".equalsIgnoreCase(partnerClean));
+                boolean làBạnBè2Chiều = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isMutualFriend(this, usernameHiệnTại, partnerClean);
 
                 // Lọc chính xác Rạch Ròi theo từng Tab
                 if ("ACTIVE".equals(tabĐangChọn)) {

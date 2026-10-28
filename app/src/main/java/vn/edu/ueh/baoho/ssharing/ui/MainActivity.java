@@ -113,16 +113,7 @@ public class MainActivity extends AppCompatActivity {
         if (ảnhĐạiDiệnHome != null) {
             // Reset ảnh mặc định ban đầu để xóa bộ nhớ đệm ảnh cũ khi chuyển đổi giữa các tài khoản
             ảnhĐạiDiệnHome.setImageResource(R.drawable.ic_user);
-
-            String keyAvatarCáNhân = "CURRENT_USER_AVATAR_PATH_" + usernameClean;
-            String đườngDẫnẢnh = bộLưuTrữ.getString(keyAvatarCáNhân, "");
-
-            if (đườngDẫnẢnh != null && !đườngDẫnẢnh.isEmpty() && new java.io.File(đườngDẫnẢnh).exists()) {
-                android.graphics.Bitmap bitmapAvatar = giảiMãẢnhThuNhỏAnToàn(đườngDẫnẢnh, 200);
-                if (bitmapAvatar != null) {
-                    ảnhĐạiDiệnHome.setImageBitmap(bitmapAvatar);
-                }
-            }
+            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.loadUserAvatar(this, ảnhĐạiDiệnHome, usernameClean);
         }
 
         View badgeRed = findViewById(R.id.viewNotificationBadgeRed);
