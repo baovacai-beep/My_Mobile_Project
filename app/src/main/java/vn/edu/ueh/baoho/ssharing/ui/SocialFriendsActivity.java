@@ -237,19 +237,11 @@ public class SocialFriendsActivity extends AppCompatActivity {
             ôAvatarText.setLayoutParams(thôngSốMatch);
             khungAvatar.addView(ôAvatarText);
 
-            String pathAvatar = bộLưuTrữVí.getString("CURRENT_USER_AVATAR_PATH_" + thànhViên.username.toLowerCase().trim(), "");
-            if (!pathAvatar.isEmpty() && new File(pathAvatar).exists()) {
-                try {
-                    android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeFile(pathAvatar);
-                    if (bitmap != null) {
-                        ImageView imgUser = new ImageView(this);
-                        imgUser.setImageBitmap(bitmap);
-                        imgUser.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        imgUser.setLayoutParams(thôngSốMatch);
-                        khungAvatar.addView(imgUser);
-                    }
-                } catch (Throwable ignored) {}
-            }
+            ImageView imgUser = new ImageView(this);
+            imgUser.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imgUser.setLayoutParams(thôngSốMatch);
+            khungAvatar.addView(imgUser);
+            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.loadUserAvatar(this, imgUser, thànhViên.username);
 
             // Thông tin Username & Họ tên (Chiếm 100% độ rộng còn lại)
             LinearLayout khungMôTả = new LinearLayout(this);

@@ -253,13 +253,15 @@ public class SocialHelper {
     }
 
     /**
-     * Tải và hiển thị ảnh đại diện từ Bộ nhớ Local hoặc Firebase Firestore Cloud
+     * Tải và hiển thị ảnh đại diện từ Bộ nhớ Local hoặc Firebase Firestore Cloud (Tải đệm tức thì & Cập nhật Cloud)
      */
     public static void loadUserAvatar(Context context, android.widget.ImageView targetImageView, String username) {
         if (targetImageView == null || username == null || username.trim().isEmpty()) return;
         String usernameClean = username.toLowerCase().trim();
         SharedPreferences prefs = context.getSharedPreferences("SSHARING_PREFS", Context.MODE_PRIVATE);
 
+        // 1. Nạp ảnh tức thì từ Local File hoặc Base64 Cache để tránh giật lag UI
+        boolean daHienAnhLocal = false;
         String localPath = prefs.getString("CURRENT_USER_AVATAR_PATH_" + usernameClean, "");
         if (!localPath.isEmpty() && new java.io.File(localPath).exists()) {
             try {
@@ -267,25 +269,26 @@ public class SocialHelper {
                 if (bitmap != null) {
                     targetImageView.setImageBitmap(bitmap);
                     targetImageView.setVisibility(android.view.View.VISIBLE);
-                    return;
+                    daHienAnhLocal = true;
                 }
             } catch (Throwable ignored) {}
         }
 
-        String b64Local = prefs.getString("CURRENT_USER_AVATAR_B64_" + usernameClean, "");
-        if (!b64Local.isEmpty()) {
-            try {
-                byte[] bytes = android.util.Base64.decode(b64Local, android.util.Base64.DEFAULT);
-                android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                if (bitmap != null) {
-                    targetImageView.setImageBitmap(bitmap);
-                    targetImageView.setVisibility(android.view.View.VISIBLE);
-                    return;
-                }
-            } catch (Throwable ignored) {}
+        if (!daHienAnhLocal) {
+            String b64Local = prefs.getString("CURRENT_USER_AVATAR_B64_" + usernameClean, "");
+            if (!b64Local.isEmpty()) {
+                try {
+                    byte[] bytes = android.util.Base64.decode(b64Local, android.util.Base64.DEFAULT);
+                    android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    if (bitmap != null) {
+                        targetImageView.setImageBitmap(bitmap);
+                        targetImageView.setVisibility(android.view.View.VISIBLE);
+                    }
+                } catch (Throwable ignored) {}
+            }
         }
 
-        // Tải trực tiếp từ Firebase Firestore Cloud
+        // 2. Luôn đồng bộ kiểm tra ảnh đại diện mới nhất từ Đám Mây Firebase Firestore Cloud
         try {
             com.google.firebase.firestore.FirebaseFirestore.getInstance()
                     .collection("users").document(usernameClean).get()
@@ -293,15 +296,19 @@ public class SocialHelper {
                         if (doc != null && doc.exists()) {
                             String b64Cloud = doc.getString("avatarBase64");
                             if (b64Cloud != null && !b64Cloud.isEmpty()) {
-                                prefs.edit().putString("CURRENT_USER_AVATAR_B64_" + usernameClean, b64Cloud).apply();
-                                try {
-                                    byte[] bytes = android.util.Base64.decode(b64Cloud, android.util.Base64.DEFAULT);
-                                    android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                    if (bitmap != null && targetImageView != null) {
-                                        targetImageView.setImageBitmap(bitmap);
-                                        targetImageView.setVisibility(android.view.View.VISIBLE);
-                                    }
-                                } catch (Throwable ignored) {}
+                                String oldB64 = prefs.getString("CURRENT_USER_AVATAR_B64_" + usernameClean, "");
+                                if (!b64Cloud.equals(oldB64)) {
+                                    prefs.edit().putString("CURRENT_USER_AVATAR_B64_" + usernameClean, b64Cloud).apply();
+                                    try {
+                                        byte[] bytes = android.util.Base64.decode(b64Cloud, android.util.Base64.DEFAULT);
+                                        android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                        if (bitmap != null && targetImageView != null) {
+                                            targetImageView.setImageBitmap(bitmap);
+                                            targetImageView.setVisibility(android.view.View.VISIBLE);
+                                            android.util.Log.d("SSharing_Profile", "☁️ [REALTIME AVATAR SYNC] Successfully updated avatar from Firebase Cloud for @" + usernameClean);
+                                        }
+                                    } catch (Throwable ignored) {}
+                                }
                             }
                         }
                     });

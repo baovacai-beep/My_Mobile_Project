@@ -178,16 +178,7 @@ public class EscrowChatActivity extends AppCompatActivity {
         // Nạp ảnh đại diện thật của đối tác lên Header phòng Chat nếu có
         ImageView imgPartnerHeader = findViewById(R.id.imgPartnerAvatarHeader);
         if (imgPartnerHeader != null) {
-            String pathAvatarPartner = bộLưuTrữVí.getString("CURRENT_USER_AVATAR_PATH_" + partnerClean, "");
-            if (!pathAvatarPartner.isEmpty() && new File(pathAvatarPartner).exists()) {
-                try {
-                    Bitmap bitmap = BitmapFactory.decodeFile(pathAvatarPartner);
-                    if (bitmap != null) {
-                        imgPartnerHeader.setImageBitmap(bitmap);
-                        imgPartnerHeader.setVisibility(View.VISIBLE);
-                    }
-                } catch (Throwable ignored) {}
-            }
+            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.loadUserAvatar(this, imgPartnerHeader, partnerClean);
         }
 
         // Đọc & Cập nhật chỉ số Tín Nhiệm Uy Tín thật của đối tác
