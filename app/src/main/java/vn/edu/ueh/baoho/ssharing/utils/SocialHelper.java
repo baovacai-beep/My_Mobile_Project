@@ -512,6 +512,24 @@ public class SocialHelper {
     }
 
     /**
+     * Kiểm tra chính xác 100% mã voucher đã bán/hoàn tất (khớp nguyên chuỗi từng mã, tránh lỗi substring match)
+     */
+    public static boolean isVoucherCodeExactSold(String danhSáchĐãBán, String targetCode) {
+        if (danhSáchĐãBán == null || targetCode == null) return false;
+        String cleanTarget = targetCode.trim();
+        if (cleanTarget.isEmpty()) return false;
+
+        String[] items = danhSáchĐãBán.split(";;");
+        for (String item : items) {
+            String trimmedItem = item.trim();
+            if (!trimmedItem.isEmpty() && trimmedItem.equalsIgnoreCase(cleanTarget)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Tạo mã ID phòng chat 1-on-1 cố định & đối xứng giữa 2 tài khoản (sắp xếp theo bảng chữ cái)
      */
     public static String generateSocialChatRoomCode(String userA, String userB) {

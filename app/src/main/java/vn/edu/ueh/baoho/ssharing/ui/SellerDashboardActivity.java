@@ -325,7 +325,7 @@ public class SellerDashboardActivity extends AppCompatActivity {
                     String buyerAvatar = t.length > 4 ? t[4] : "NM";
 
                     // Nếu mã voucher này đã hoàn tất/giải ngân xong -> Bỏ qua không hiển thị trong Chờ Xác Nhận nữa
-                    if (danhSáchĐãBánHệThống.contains(mãCode)) continue;
+                    if (vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isVoucherCodeExactSold(danhSáchĐãBánHệThống, mãCode)) continue;
 
                     int giáXuInt = 200;
                     try {
