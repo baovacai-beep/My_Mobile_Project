@@ -73,7 +73,8 @@
         <!-- 3 Màn hình của Hồ Gia Bảo -->
         <activity
             android:name=".ui.EscrowChatActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.SellerDashboardActivity"
             android:exported="false" />

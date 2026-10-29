@@ -541,7 +541,7 @@ public class MainActivity extends AppCompatActivity {
                 String mãVoucher = mảngTrường[3];
 
                 // Nếu mặt hàng đã BÁN xong -> Ẩn khỏi Sàn C2C Market
-                if (danhSáchĐãBánHệThống.contains(mãVoucher)) {
+                if (vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isVoucherCodeExactSold(danhSáchĐãBánHệThống, mãVoucher)) {
                     continue;
                 }
 

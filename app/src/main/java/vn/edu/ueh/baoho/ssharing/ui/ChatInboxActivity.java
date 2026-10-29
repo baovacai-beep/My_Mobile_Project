@@ -149,7 +149,8 @@ public class ChatInboxActivity extends AppCompatActivity {
                 String nộiDungCuối = mảngTrường.length > 8 ? mảngTrường[8] : "Giao dịch Escrow mới";
                 String thờiGianCuối = mảngTrường.length > 9 ? mảngTrường[9] : "Vừa xong";
 
-                boolean đãHoànTất = danhSáchĐãBánHệThống.contains(mãCode);
+                boolean đãHoànTất = bộLưuTrữVí.getBoolean("IS_LOCKED_ROOM_" + idPhòng, false)
+                        || (giáXu > 0 && vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isVoucherCodeExactSold(danhSáchĐãBánHệThống, mãCode));
                 boolean làChatSocial = giáXu == 0 || mãCode.startsWith("CHAT-") || mãCode.startsWith("SOCIAL_") || mãCode.startsWith("P2P_");
 
                 // Kiểm tra bạn bè 2 chiều (Mutual Friends) vs Người lạ (Strangers)

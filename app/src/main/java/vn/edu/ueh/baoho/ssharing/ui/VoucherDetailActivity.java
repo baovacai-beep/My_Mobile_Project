@@ -223,6 +223,8 @@ public class VoucherDetailActivity extends AppCompatActivity {
         String sellerClean = tênNgườiBán.toLowerCase().replaceAll("[^a-z0-9]", "").trim();
         if (sellerClean.isEmpty()) sellerClean = "beo123";
 
+        String idPhòngChat = "CHAT_ROOM_" + mãBíMậtKíchHoạt;
+
         String thờiGianThực = new SimpleDateFormat("HH:mm dd/MM", Locale.getDefault()).format(new Date());
         String tbMới = "🛒 [GIAO DỊCH MỚI] Người dùng @" + buyerUser + " vừa đặt mua voucher '" + tênVoucherChiTiết + "' (" + giáXuVoucher + " SS)! Mở Escrow Chat để giao dịch.||" + thờiGianThực;
         String tbGốc = bộLưuTrữVí.getString("DANH_SACH_THONG_BAO_" + sellerClean, "");
@@ -232,13 +234,23 @@ public class VoucherDetailActivity extends AppCompatActivity {
         String bảnGhiPendingMới = mãBíMậtKíchHoạt + "::" + tênVoucherChiTiết + "::" + giáXuVoucher + " SS::" + buyerUser + "::" + buyerUser.substring(0, Math.min(2, buyerUser.length())).toUpperCase() + "::" + buyerUser;
         String khoPendingMới = bảnGhiPendingMới + (khoPendingGốc.isEmpty() ? "" : ";;" + khoPendingGốc);
 
-        // Đánh dấu mã voucher đã được khóa / mua -> Biến mất khỏi Sàn C2C Market ngay lập tức khi vừa bấm Mua
-        String danhSáchĐãBánGốc = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
-        String danhSáchĐãBánMới = mãBíMậtKíchHoạt + ";;" + danhSáchĐãBánGốc;
+        // Đánh dấu mã voucher đang trong tiến trình giao dịch Escrow (Ẩn khỏi Sàn C2C Market)
+        String khoĐangGiaoDịchGốc = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DANG_GIAO_DICH_ESCROW", "");
+        String khoĐangGiaoDịchMới = mãBíMậtKíchHoạt + ";;" + khoĐangGiaoDịchGốc;
+
+        // Tạo tin nhắn chào mừng mặc định ban đầu trong phòng chat giao dịch Escrow
+        String timeShort = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+        String tinHệThống = "sys||Hệ thống||SS||🛡️ Hệ thống: Người mua @" + buyerUser + " đã khóa " + giáXuVoucher + " SS vào ví Escrow. Người mua có 24 giờ để kiểm tra mã trước khi giải ngân.||" + timeShort;
+        String tinChàoMua = buyerUser + "||" + buyerUser + "||NM||Xin chào @" + sellerClean + ", tôi vừa đặt cọc " + giáXuVoucher + " SS qua Escrow để mua voucher '" + tênVoucherChiTiết + "'. Bạn vui lòng gửi mã/hướng dẫn sử dụng nhé!||" + timeShort;
+        String tinGốc = bộLưuTrữVí.getString("DANH_SACH_TIN_NHAN_" + idPhòngChat, "");
+        String tinMới = tinHệThống + ";;" + tinChàoMua + (tinGốc.isEmpty() ? "" : ";;" + tinGốc);
 
         bộLưuTrữVí.edit()
+                .putLong("ESCROW_START_TIME_" + idPhòngChat, System.currentTimeMillis())
                 .putLong("ESCROW_START_TIME_" + mãBíMậtKíchHoạt, System.currentTimeMillis())
-                .putString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", danhSáchĐãBánMới)
+                .putBoolean("IS_LOCKED_ROOM_" + idPhòngChat, false) // BẬT MỞ PHÒNG CHAT 100% UNLOCKED!
+                .putString("DANH_SACH_VOUCHER_DANG_GIAO_DICH_ESCROW", khoĐangGiaoDịchMới)
+                .putString("DANH_SACH_TIN_NHAN_" + idPhòngChat, tinMới)
                 .putString("DANH_SACH_ESCROW_PENDING_" + sellerClean, khoPendingMới)
                 .putString("DANH_SACH_THONG_BAO_" + sellerClean, tbMới + (tbGốc.isEmpty() ? "" : ";;" + tbGốc))
                 .putBoolean("HAS_UNREAD_NOTIFICATIONS_" + sellerClean, true)

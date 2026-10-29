@@ -68,6 +68,9 @@ public class EscrowChatActivity extends AppCompatActivity {
     private String usernameHiệnTại = "baoho123";
     private String họTênHiệnTại = "Gia Bảo Hồ";
     private String idPhòngChat = "CHAT_ROOM_DEFAULT";
+    private boolean làChatTròChuyệnXãHội = false;
+    private boolean làPhòngĐãKhóaThựcTế = false;
+    private boolean làBànPhímĐangMở = false;
     private com.google.firebase.firestore.ListenerRegistration listenerFirestoreChat;
 
     @Override
@@ -79,6 +82,7 @@ public class EscrowChatActivity extends AppCompatActivity {
         khởiTạoÁnhXạGiaoDiện();
         đọcDữLiệuGiaoDịchTruyềnTới();
         càiĐặtSựKiệnLắngNghe();
+        càiĐặtLắngNgheBànPhímẨnHiệnNútThaoTác();
         khởiĐộngTảiTinNhắnRealtime();
         kíchHoạtLắngNgheTinNhắnFirestoreRealtime();
     }
@@ -148,7 +152,7 @@ public class EscrowChatActivity extends AppCompatActivity {
         }
 
         String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
-        boolean làChatTròChuyệnXãHội = (dữLiệuÝĐịnh != null && dữLiệuÝĐịnh.getBooleanExtra("EXTRA_IS_SOCIAL_CHAT", false))
+        this.làChatTròChuyệnXãHội = (dữLiệuÝĐịnh != null && dữLiệuÝĐịnh.getBooleanExtra("EXTRA_IS_SOCIAL_CHAT", false))
                 || (giáXuEscrow == 0 && (mãBíMậtVoucher.startsWith("CHAT-") || mãBíMậtVoucher.startsWith("P2P_") || "HOTLINE-CSKH-SUPPORT".equals(mãBíMậtVoucher)));
 
         // CHUẨN HÓA MÃ PHÒNG CHAT ĐỐI XỨNG BẠN BÈ/NGƯỜI LẠ P2P AN TOÀN
@@ -210,12 +214,24 @@ public class EscrowChatActivity extends AppCompatActivity {
             if (nhãnThôngBáoHệThốngĐầu != null) nhãnThôngBáoHệThốngĐầu.setVisibility(View.GONE);
             if (nútXácNhậnEscrow != null) nútXácNhậnEscrow.setVisibility(View.GONE);
             if (nútBáoCáoLỗiEscrow != null) nútBáoCáoLỗiEscrow.setVisibility(View.GONE);
+            if (ôNhậpTinNhắn != null) {
+                ôNhậpTinNhắn.setEnabled(true);
+                ôNhậpTinNhắn.setHint("Nhập tin nhắn trò chuyện...");
+            }
+            View btnSend = findViewById(R.id.btn_send_chat);
+            View btnAttach = findViewById(R.id.btn_attach_image_chat);
+            if (btnSend != null) btnSend.setVisibility(View.VISIBLE);
+            if (btnAttach != null) btnAttach.setVisibility(View.VISIBLE);
         } else {
             // Trường hợp Mua Bán / Trao Đổi Voucher Ký Quỹ Escrow Thực Tế
             String danhSáchĐãBánHệThống = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
-            if (danhSáchĐãBánHệThống.contains(mãBíMậtVoucher)) {
+            boolean làPhòngĐãKhóa = bộLưuTrữVí.getBoolean("IS_LOCKED_ROOM_" + idPhòngChat, false)
+                    || (giáXuEscrow > 0 && vn.edu.ueh.baoho.ssharing.utils.SocialHelper.isVoucherCodeExactSold(danhSáchĐãBánHệThống, mãBíMậtVoucher));
+            this.làPhòngĐãKhóaThựcTế = làPhòngĐãKhóa;
+
+            if (làPhòngĐãKhóa) {
                 if (nhãnTrạngTháiEscrow != null) {
-                    nhãnTrạngTháiEscrow.setText("⚖️ Phán quyết Trọng tài: Đã kết thúc & hoàn tất");
+                    nhãnTrạngTháiEscrow.setText("⚖️ Giao dịch đã kết thúc & hoàn tất");
                     nhãnTrạngTháiEscrow.setTextColor(Color.parseColor("#00E676"));
                 }
                 if (nhãnĐếmLùiEscrow != null) {
@@ -223,44 +239,70 @@ public class EscrowChatActivity extends AppCompatActivity {
                 }
                 if (nútXácNhậnEscrow != null) {
                     nútXácNhậnEscrow.setEnabled(false);
-                    nútXácNhậnEscrow.setText("✓ Giao Dịch Đã Phán Quyết Hoàn Tất (Đã Khóa)");
+                    nútXácNhậnEscrow.setText("✓ Giao Dịch Đã Hoàn Tất (Đã Khóa)");
                 }
                 if (nútBáoCáoLỗiEscrow != null) {
                     nútBáoCáoLỗiEscrow.setVisibility(View.GONE);
                 }
                 if (ôNhậpTinNhắn != null) {
                     ôNhậpTinNhắn.setEnabled(false);
-                    ôNhậpTinNhắn.setHint("🔒 Đoạn chat giao dịch đã hoàn tất và tự động khóa lưu trữ sau 3 ngày.");
+                    ôNhậpTinNhắn.setHint("🔒 Đoạn chat giao dịch đã hoàn tất và tự động khóa.");
                 }
                 View btnSend = findViewById(R.id.btn_send_chat);
                 View btnAttach = findViewById(R.id.btn_attach_image_chat);
                 if (btnSend != null) btnSend.setVisibility(View.GONE);
                 if (btnAttach != null) btnAttach.setVisibility(View.GONE);
             } else {
+                // ĐOẠN CHAT ĐANG TRONG TIẾN TRÌNH GIAO DỊCH ESCROW SỐNG (BẬT MỞ 100%)
                 partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
                 boolean làNgườiBánCủaGiaoDịch = usernameHiệnTại.equalsIgnoreCase(partnerClean)
                         || (tênNgườiBán != null && tênNgườiBán.toLowerCase().contains(usernameHiệnTại.toLowerCase()));
 
                 if (nhãnTrạngTháiEscrow != null) {
-                    nhãnTrạngTháiEscrow.setText("Đang tạm giữ: " + String.format("%,d", giáXuEscrow) + " SS");
+                    nhãnTrạngTháiEscrow.setText("🛡️ Đang tạm giữ Escrow: " + String.format("%,d", giáXuEscrow) + " SS");
+                    nhãnTrạngTháiEscrow.setTextColor(Color.parseColor("#FFD54F"));
                 }
+
+                if (ôNhậpTinNhắn != null) {
+                    ôNhậpTinNhắn.setEnabled(true);
+                    ôNhậpTinNhắn.setHint("Nhập tin nhắn trao đổi...");
+                }
+                View btnSend = findViewById(R.id.btn_send_chat);
+                View btnAttach = findViewById(R.id.btn_attach_image_chat);
+                if (btnSend != null) btnSend.setVisibility(View.VISIBLE);
+                if (btnAttach != null) btnAttach.setVisibility(View.VISIBLE);
 
                 if (làNgườiBánCủaGiaoDịch) {
                     if (nútXácNhậnEscrow != null) {
+                        nútXácNhậnEscrow.setEnabled(true);
                         nútXácNhậnEscrow.setText("💸 Hoàn Xu Cho Khách Hàng (Tự Nguyện)");
                         nútXácNhậnEscrow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FFD54F")));
                         nútXácNhậnEscrow.setTextColor(Color.parseColor("#120E22"));
                     }
                     if (nútBáoCáoLỗiEscrow != null) {
+                        nútBáoCáoLỗiEscrow.setVisibility(View.VISIBLE);
                         nútBáoCáoLỗiEscrow.setText("⚖️ Nộp Bằng Chứng Trọng Tài CSKH");
                         nútBáoCáoLỗiEscrow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#815BF5")));
+                        nútBáoCáoLỗiEscrow.setTextColor(Color.WHITE);
                     }
                     if (nhãnThôngBáoHệThốngĐầu != null) {
-                        nhãnThôngBáoHệThốngĐầu.setText("🛡️ Hệ thống: Người mua đang tạm giữ " + giáXuEscrow + " SS vào ví Escrow. Người mua có 24 giờ (1 ngày) để kiểm tra mã. Bạn sẽ nhận xu khi người mua xác nhận hoặc hết 24h!");
+                        nhãnThôngBáoHệThốngĐầu.setText("🛡️ Hệ thống: Người mua đang tạm giữ " + giáXuEscrow + " SS vào ví Escrow. Người mua có 24 giờ để kiểm tra mã trước khi giải ngân.");
                     }
                 } else {
+                    if (nútXácNhậnEscrow != null) {
+                        nútXácNhậnEscrow.setEnabled(true);
+                        nútXácNhậnEscrow.setText("✓ Xác Nhận Nhận Voucher & Giải Ngân Xu");
+                        nútXácNhậnEscrow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#00E676")));
+                        nútXácNhậnEscrow.setTextColor(Color.WHITE);
+                    }
+                    if (nútBáoCáoLỗiEscrow != null) {
+                        nútBáoCáoLỗiEscrow.setVisibility(View.VISIBLE);
+                        nútBáoCáoLỗiEscrow.setText("⚠️ Báo Lỗi / Khiếu Nại Tranh Chấp");
+                        nútBáoCáoLỗiEscrow.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FF5252")));
+                        nútBáoCáoLỗiEscrow.setTextColor(Color.WHITE);
+                    }
                     if (nhãnThôngBáoHệThốngĐầu != null) {
-                        nhãnThôngBáoHệThốngĐầu.setText("🛡️ Hệ thống: Bạn đã khóa " + giáXuEscrow + " SS vào ví Escrow. Bạn có 24 giờ (1 ngày) để kiểm tra mã trước khi giải ngân cho " + tênNgườiBán + ".");
+                        nhãnThôngBáoHệThốngĐầu.setText("🛡️ Hệ thống: Bạn đã khóa " + giáXuEscrow + " SS vào ví Escrow. Bạn có 24 giờ để kiểm tra mã trước khi tiền giải ngân cho " + tênNgườiBán + ".");
                     }
                 }
                 khởiĐộngBộĐếmLùiEscrow24GiờThựcTế();
@@ -274,7 +316,7 @@ public class EscrowChatActivity extends AppCompatActivity {
         }
 
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        String keyThờiGianBắtĐầu = "ESCROW_START_TIME_" + mãBíMậtVoucher;
+        String keyThờiGianBắtĐầu = "ESCROW_START_TIME_" + idPhòngChat;
         long thờiGianBắtĐầu = bộLưuTrữVí.getLong(keyThờiGianBắtĐầu, 0L);
 
         if (thờiGianBắtĐầu == 0L) {
@@ -317,6 +359,50 @@ public class EscrowChatActivity extends AppCompatActivity {
         }.start();
     }
 
+    private void càiĐặtLắngNgheBànPhímẨnHiệnNútThaoTác() {
+        View rootView = getWindow().getDecorView();
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            android.graphics.Rect r = new android.graphics.Rect();
+            rootView.getWindowVisibleDisplayFrame(r);
+            int screenHeight = rootView.getRootView().getHeight();
+            int keypadHeight = screenHeight - r.bottom;
+
+            boolean isKeyboardNowOpen = keypadHeight > screenHeight * 0.15; // > 15% màn hình = Bàn phím đang mở
+
+            if (isKeyboardNowOpen != làBànPhímĐangMở) {
+                làBànPhímĐangMở = isKeyboardNowOpen;
+                if (làBànPhímĐangMở) {
+                    if (nútXácNhậnEscrow != null) nútXácNhậnEscrow.setVisibility(View.GONE);
+                    if (nútBáoCáoLỗiEscrow != null) nútBáoCáoLỗiEscrow.setVisibility(View.GONE);
+                } else {
+                    if (!làPhòngĐãKhóaThựcTế && !làChatTròChuyệnXãHội) {
+                        if (nútXácNhậnEscrow != null) nútXácNhậnEscrow.setVisibility(View.VISIBLE);
+                        if (nútBáoCáoLỗiEscrow != null) nútBáoCáoLỗiEscrow.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+    }
+
+    private void moBanPhimInput() {
+        if (ôNhậpTinNhắn == null) return;
+
+        if (nútXácNhậnEscrow != null) nútXácNhậnEscrow.setVisibility(View.GONE);
+        if (nútBáoCáoLỗiEscrow != null) nútBáoCáoLỗiEscrow.setVisibility(View.GONE);
+
+        ôNhậpTinNhắn.setFocusable(true);
+        ôNhậpTinNhắn.setFocusableInTouchMode(true);
+        ôNhậpTinNhắn.requestFocus();
+        ôNhậpTinNhắn.postDelayed(() -> {
+            try {
+                android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.showSoftInput(ôNhậpTinNhắn, android.view.inputmethod.InputMethodManager.SHOW_FORCED);
+                }
+            } catch (Throwable ignored) {}
+        }, 100);
+    }
+
     private void càiĐặtSựKiệnLắngNghe() {
         if (findViewById(R.id.btnBack) != null) {
             findViewById(R.id.btnBack).setOnClickListener(v -> finish());
@@ -329,6 +415,25 @@ public class EscrowChatActivity extends AppCompatActivity {
                 if (khayNhớTạm != null) {
                     khayNhớTạm.setPrimaryClip(dữLiệuMã);
                     Toast.makeText(this, "Đã sao chép mã: " + mãBíMậtVoucher, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Ô nhập tin nhắn Chat - Tự động kích hoạt Bàn phím Soft Keyboard linh hoạt
+        if (ôNhậpTinNhắn != null) {
+            ôNhậpTinNhắn.setFocusable(true);
+            ôNhậpTinNhắn.setFocusableInTouchMode(true);
+            ôNhậpTinNhắn.setOnClickListener(v -> moBanPhimInput());
+            ôNhậpTinNhắn.setOnTouchListener((v, event) -> {
+                if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                    v.performClick();
+                    moBanPhimInput();
+                }
+                return false;
+            });
+            ôNhậpTinNhắn.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus) {
+                    moBanPhimInput();
                 }
             });
         }
@@ -595,6 +700,14 @@ public class EscrowChatActivity extends AppCompatActivity {
             return;
         }
 
+        if (khoTinNhắnPhòngChat.trim().isEmpty() && !làChatTròChuyệnXãHội) {
+            String timeShort = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+            String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
+            khoTinNhắnPhòngChat = "sys||Hệ thống||SS||🛡️ Hệ thống: Người mua @" + usernameHiệnTại + " đã khóa " + giáXuEscrow + " SS vào ví Escrow. Hai bên có 24 giờ để kiểm tra và trao đổi mã.||" + timeShort +
+                    ";;" + usernameHiệnTại + "||" + họTênHiệnTại + "||NM||Xin chào @" + partnerClean + ", tôi vừa mở giao dịch Escrow để mua voucher '" + tênVoucher + "'. Bạn vui lòng gửi mã/hướng dẫn sử dụng nhé!||" + timeShort;
+            bộLưuTrữVí.edit().putString("DANH_SACH_TIN_NHAN_" + idPhòngChat, khoTinNhắnPhòngChat).apply();
+        }
+
         chuỗiTinNhắnCũĐãVẽ = khoTinNhắnPhòngChat;
 
         // Dọn sạch danh sách tin nhắn cũ (giữ lại nhãn thông báo hệ thống đầu tiên)
@@ -618,7 +731,9 @@ public class EscrowChatActivity extends AppCompatActivity {
             String nộiDungGửi = mảngTrường[3];
             String thờiGianGửi = mảngTrường[4];
 
-            if (ngườiGửiUsername.equalsIgnoreCase(usernameHiệnTại)) {
+            if ("sys".equalsIgnoreCase(ngườiGửiUsername) || "system".equalsIgnoreCase(ngườiGửiUsername)) {
+                thêmBongBóngThôngBáoHệThốngMiddle(nộiDungGửi);
+            } else if (ngườiGửiUsername.equalsIgnoreCase(usernameHiệnTại)) {
                 // Bong bóng chat bên PHẢI
                 if (nộiDungGửi.startsWith("IMG:")) {
                     thêmBongBóngHìnhẢnhBênPhải(nộiDungGửi.substring(4), thờiGianGửi);
@@ -635,6 +750,28 @@ public class EscrowChatActivity extends AppCompatActivity {
             }
         }
         cuộnXuốngĐáyChat();
+    }
+
+    private void thêmBongBóngThôngBáoHệThốngMiddle(String nộiDung) {
+        TextView tvSystem = new TextView(this);
+        tvSystem.setText(nộiDung);
+        tvSystem.setTextColor(Color.parseColor("#E0E0E0"));
+        tvSystem.setTextSize(11);
+        tvSystem.setGravity(Gravity.CENTER);
+        tvSystem.setBackgroundResource(R.drawable.bg_card_dark);
+        tvSystem.setPadding(24, 16, 24, 16);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.topMargin = 16;
+        params.bottomMargin = 8;
+        tvSystem.setLayoutParams(params);
+
+        if (khungDanhSáchTinNhắn != null) {
+            khungDanhSáchTinNhắn.addView(tvSystem);
+        }
     }
 
     private void thêmBongBóngTinNhắnBênPhải(String nộiDung, String thờiGian) {
@@ -938,7 +1075,10 @@ public class EscrowChatActivity extends AppCompatActivity {
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
 
         String danhSáchĐãBánGốc = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
-        bộLưuTrữVí.edit().putString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", mãBíMậtVoucher + ";;" + danhSáchĐãBánGốc).apply();
+        bộLưuTrữVí.edit()
+                .putString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", mãBíMậtVoucher + ";;" + danhSáchĐãBánGốc)
+                .putBoolean("IS_LOCKED_ROOM_" + idPhòngChat, true)
+                .apply();
 
         thựcHiệnGửiGóiNộiDungTinNhắn("🛡️ Hệ thống: Người bán @" + usernameHiệnTại + " đã tự nguyện hoàn " + giáXuEscrow + " SS lại cho Người mua. Giao dịch đã khép lại!");
 
@@ -979,10 +1119,13 @@ public class EscrowChatActivity extends AppCompatActivity {
         String mãGiaoDịchRandom = "TX-ESC" + (100000 + (int)(Math.random() * 899999));
         String bảnGhiGiaoDịchMới = mãGiaoDịchRandom + "||Giải phóng Escrow " + tênVoucher + "||-" + giáXuEscrow + " SS||" + thờiGianThực + "||Thanh toán Escrow||Thành công||Giải phóng " + giáXuEscrow + " SS cho người bán " + tênNgườiBán;
 
-        // 3. Đánh dấu Voucher đã BÁN xong -> Ẩn khỏi Sàn C2C Market
+        // 3. Đánh dấu Voucher đã BÁN xong & Đơn hàng Escrow đã hoàn tất khóa
         String danhSáchĐãBánGốc = bộLưuTrữVí.getString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", "");
         String danhSáchĐãBánMới = mãBíMậtVoucher + ";;" + danhSáchĐãBánGốc;
-        bộLưuTrữVí.edit().putString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", danhSáchĐãBánMới).apply();
+        bộLưuTrữVí.edit()
+                .putString("DANH_SACH_VOUCHER_DA_BAN_HE_THONG", danhSáchĐãBánMới)
+                .putBoolean("IS_LOCKED_ROOM_" + idPhòngChat, true)
+                .apply();
 
         // Cập nhật ví và lịch sử riêng từng tài khoản
         vn.edu.ueh.baoho.ssharing.utils.WalletManager.addBalance(this, currentUser, -giáXuEscrow);
