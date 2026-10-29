@@ -30,8 +30,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -505,6 +507,83 @@ public class EscrowChatActivity extends AppCompatActivity {
         bộCậpNhậtChatRealtime.post(côngViệcTảiTinNhắnTựĐộng);
     }
 
+    public static class ChatMessageItem {
+        public String senderUsername;
+        public String senderName;
+        public String senderAvatar;
+        public String messageText;
+        public String timeStr;
+        public long timestamp;
+
+        public ChatMessageItem(String senderUsername, String senderName, String senderAvatar, String messageText, String timeStr, long timestamp) {
+            this.senderUsername = senderUsername != null ? senderUsername : "";
+            this.senderName = senderName != null ? senderName : "";
+            this.senderAvatar = senderAvatar != null ? senderAvatar : "SS";
+            this.messageText = messageText != null ? messageText : "";
+            this.timeStr = timeStr != null ? timeStr : "Vừa xong";
+            this.timestamp = timestamp > 0 ? timestamp : System.currentTimeMillis();
+        }
+    }
+
+    public static java.util.List<ChatMessageItem> parseMessageList(String rawData) {
+        java.util.List<ChatMessageItem> list = new java.util.ArrayList<>();
+        if (rawData == null || rawData.trim().isEmpty()) return list;
+
+        String trimmed = rawData.trim();
+        if (trimmed.startsWith("[")) {
+            try {
+                org.json.JSONArray array = new org.json.JSONArray(trimmed);
+                for (int i = 0; i < array.length(); i++) {
+                    org.json.JSONObject obj = array.getJSONObject(i);
+                    list.add(new ChatMessageItem(
+                            obj.optString("u", ""),
+                            obj.optString("n", ""),
+                            obj.optString("a", "SS"),
+                            obj.optString("m", ""),
+                            obj.optString("t", "Vừa xong"),
+                            obj.optLong("ts", System.currentTimeMillis())
+                    ));
+                }
+                return list;
+            } catch (Exception ignored) {}
+        }
+
+        String[] items = trimmed.split(";;");
+        for (String item : items) {
+            if (item.trim().isEmpty()) continue;
+            String[] fields = item.split("\\|\\|");
+            if (fields.length >= 4) {
+                String u = fields[0];
+                String n = fields[1];
+                String a = fields[2];
+                String m = fields[3];
+                String t = fields.length > 4 ? fields[4] : "Vừa xong";
+                list.add(new ChatMessageItem(u, n, a, m, t, System.currentTimeMillis()));
+            }
+        }
+        return list;
+    }
+
+    public static String serializeMessageList(java.util.List<ChatMessageItem> list) {
+        if (list == null || list.isEmpty()) return "[]";
+        try {
+            org.json.JSONArray array = new org.json.JSONArray();
+            for (ChatMessageItem item : list) {
+                org.json.JSONObject obj = new org.json.JSONObject();
+                obj.put("u", item.senderUsername);
+                obj.put("n", item.senderName);
+                obj.put("a", item.senderAvatar);
+                obj.put("m", item.messageText);
+                obj.put("t", item.timeStr);
+                obj.put("ts", item.timestamp);
+                array.put(obj);
+            }
+            return array.toString();
+        } catch (Exception e) {
+            return "[]";
+        }
+    }
+
     private void kíchHoạtLắngNgheTinNhắnFirestoreRealtime() {
         try {
             com.google.firebase.firestore.FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
@@ -515,38 +594,32 @@ public class EscrowChatActivity extends AppCompatActivity {
                     .addSnapshotListener((snapshots, e) -> {
                         if (e != null || snapshots == null || snapshots.isEmpty()) return;
 
-                        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-                        String khoTinNhắnGốc = bộLưuTrữVí.getString("DANH_SACH_TIN_NHAN_" + idPhòngChat, "");
+                        List<ChatMessageItem> cloudList = new ArrayList<>();
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : snapshots.getDocuments()) {
+                            String senderUser = doc.getString("sender_username");
+                            String senderName = doc.getString("sender_name");
+                            String senderAvatar = doc.getString("sender_avatar");
+                            String msgText = doc.getString("message_text");
+                            String timeStr = doc.getString("time_str");
+                            Long tsObj = doc.getLong("timestamp");
 
-                        boolean cóTinMới = false;
-                        StringBuilder sbKhoMới = new StringBuilder(khoTinNhắnGốc);
-
-                        for (com.google.firebase.firestore.DocumentChange dc : snapshots.getDocumentChanges()) {
-                            if (dc.getType() == com.google.firebase.firestore.DocumentChange.Type.ADDED) {
-                                com.google.firebase.firestore.DocumentSnapshot doc = dc.getDocument();
-                                String senderUser = doc.getString("sender_username");
-                                String senderName = doc.getString("sender_name");
-                                String senderAvatar = doc.getString("sender_avatar");
-                                String msgText = doc.getString("message_text");
-                                String timeStr = doc.getString("time_str");
-
-                                if (senderUser == null || msgText == null) continue;
-                                if (senderAvatar == null) senderAvatar = "SS";
-                                if (senderName == null) senderName = senderUser;
-                                if (timeStr == null) timeStr = "Vừa xong";
-
-                                String recordStr = senderUser + "||" + senderName + "||" + senderAvatar + "||" + msgText + "||" + timeStr;
-
-                                if (!sbKhoMới.toString().contains(recordStr)) {
-                                    if (sbKhoMới.length() > 0) sbKhoMới.append(";;");
-                                    sbKhoMới.append(recordStr);
-                                    cóTinMới = true;
-                                }
+                            if (senderUser != null && msgText != null && !msgText.trim().isEmpty()) {
+                                cloudList.add(new ChatMessageItem(
+                                        senderUser,
+                                        senderName != null ? senderName : senderUser,
+                                        senderAvatar != null ? senderAvatar : "SS",
+                                        msgText,
+                                        timeStr != null ? timeStr : "Vừa xong",
+                                        tsObj != null ? tsObj : System.currentTimeMillis()
+                                ));
                             }
                         }
 
-                        if (cóTinMới) {
-                            bộLưuTrữVí.edit().putString("DANH_SACH_TIN_NHAN_" + idPhòngChat, sbKhoMới.toString()).apply();
+                        if (!cloudList.isEmpty()) {
+                            String serialized = serializeMessageList(cloudList);
+                            SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+                            bộLưuTrữVí.edit().putString("DANH_SACH_TIN_NHAN_" + idPhòngChat, serialized).apply();
+
                             runOnUiThread(() -> {
                                 cậpNhậtHiểnThịDanhSáchTinNhắnRealtime();
                                 cuộnXuốngĐáyChat();
@@ -580,14 +653,22 @@ public class EscrowChatActivity extends AppCompatActivity {
             }
         }
 
-        // Cấu trúc bản ghi: username||họTên||avatar||nộiDung||thờiGian
-        String bảnGhiTinNhắn = usernameHiệnTại + "||" + họTênHiệnTại + "||" + avatarInitials + "||" + nộiDungGói + "||" + thờiGianThực;
-
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        String khoTinNhắnPhòngChat = bộLưuTrữVí.getString("DANH_SACH_TIN_NHAN_" + idPhòngChat, "");
+        String khoTinNhắnGốc = bộLưuTrữVí.getString("DANH_SACH_TIN_NHAN_" + idPhòngChat, "");
+        List<ChatMessageItem> listMsgs = parseMessageList(khoTinNhắnGốc);
 
-        String khoTinNhắnMới = khoTinNhắnPhòngChat.isEmpty() ? bảnGhiTinNhắn : khoTinNhắnPhòngChat + ";;" + bảnGhiTinNhắn;
-        bộLưuTrữVí.edit().putString("DANH_SACH_TIN_NHAN_" + idPhòngChat, khoTinNhắnMới).apply();
+        ChatMessageItem newMsg = new ChatMessageItem(
+                usernameHiệnTại,
+                họTênHiệnTại,
+                avatarInitials,
+                nộiDungGói,
+                thờiGianThực,
+                System.currentTimeMillis()
+        );
+        listMsgs.add(newMsg);
+
+        String serialized = serializeMessageList(listMsgs);
+        bộLưuTrữVí.edit().putString("DANH_SACH_TIN_NHAN_" + idPhòngChat, serialized).apply();
 
         String hiểnThịHiệuỨngInbox = nộiDungGói.startsWith("IMG:") ? "📷 [Hình ảnh]" : nộiDungGói;
 
@@ -672,7 +753,7 @@ public class EscrowChatActivity extends AppCompatActivity {
     }
 
     private final Map<String, Bitmap> bộNhớĐệmBitmapChat = new HashMap<>();
-    private String chuỗiTinNhắnCũĐãVẽ = "";
+    private String chuỗiTinNhắnCũĐãVẽ = null;
 
     private Bitmap lấyBitmapTừBộNhớĐệmChat(String đườngDẫn) {
         if (đườngDẫn == null || đườngDẫn.isEmpty()) return null;
@@ -695,44 +776,52 @@ public class EscrowChatActivity extends AppCompatActivity {
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         String khoTinNhắnPhòngChat = bộLưuTrữVí.getString("DANH_SACH_TIN_NHAN_" + idPhòngChat, "");
 
-        // Tối ưu hóa hiệu năng ANR: Nếu không có tin nhắn mới -> Bỏ qua toàn bộ vẽ lại UI
-        if (khoTinNhắnPhòngChat.equals(chuỗiTinNhắnCũĐãVẽ)) {
+        if (chuỗiTinNhắnCũĐãVẽ != null && khoTinNhắnPhòngChat.equals(chuỗiTinNhắnCũĐãVẽ) && !khoTinNhắnPhòngChat.isEmpty()) {
             return;
         }
 
+        // Tự động khởi tạo tin nhắn chào mừng cho phòng chat Escrow nếu kho trống
         if (khoTinNhắnPhòngChat.trim().isEmpty() && !làChatTròChuyệnXãHội) {
             String timeShort = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
             String partnerClean = tríchXuấtUsernameSạch(tênNgườiBán);
-            khoTinNhắnPhòngChat = "sys||Hệ thống||SS||🛡️ Hệ thống: Người mua @" + usernameHiệnTại + " đã khóa " + giáXuEscrow + " SS vào ví Escrow. Hai bên có 24 giờ để kiểm tra và trao đổi mã.||" + timeShort +
-                    ";;" + usernameHiệnTại + "||" + họTênHiệnTại + "||NM||Xin chào @" + partnerClean + ", tôi vừa mở giao dịch Escrow để mua voucher '" + tênVoucher + "'. Bạn vui lòng gửi mã/hướng dẫn sử dụng nhé!||" + timeShort;
+            List<ChatMessageItem> initialList = new ArrayList<>();
+            initialList.add(new ChatMessageItem(
+                    "sys", "Hệ thống", "SS",
+                    "🛡️ Hệ thống: Người mua @" + usernameHiệnTại + " đã khóa " + giáXuEscrow + " SS vào ví Escrow. Hai bên có 24 giờ để kiểm tra và trao đổi mã.",
+                    timeShort, System.currentTimeMillis() - 1000
+            ));
+            initialList.add(new ChatMessageItem(
+                    usernameHiệnTại, họTênHiệnTại, "NM",
+                    "Xin chào @" + partnerClean + ", tôi vừa mở giao dịch Escrow để mua voucher '" + tênVoucher + "'. Bạn vui lòng gửi mã/hướng dẫn sử dụng nhé!",
+                    timeShort, System.currentTimeMillis()
+            ));
+            khoTinNhắnPhòngChat = serializeMessageList(initialList);
             bộLưuTrữVí.edit().putString("DANH_SACH_TIN_NHAN_" + idPhòngChat, khoTinNhắnPhòngChat).apply();
         }
 
         chuỗiTinNhắnCũĐãVẽ = khoTinNhắnPhòngChat;
 
-        // Dọn sạch danh sách tin nhắn cũ (giữ lại nhãn thông báo hệ thống đầu tiên)
-        if (khungDanhSáchTinNhắn.getChildCount() > 1) {
-            khungDanhSáchTinNhắn.removeViews(1, khungDanhSáchTinNhắn.getChildCount() - 1);
-        }
+        List<ChatMessageItem> list = parseMessageList(khoTinNhắnPhòngChat);
 
-        if (khoTinNhắnPhòngChat.trim().isEmpty()) {
+        // Dọn sạch hoàn toàn danh sách tin nhắn cũ trước khi vẽ lại
+        khungDanhSáchTinNhắn.removeAllViews();
+
+        if (list.isEmpty()) {
             return;
         }
 
-        String[] mảngCácTinNhắn = khoTinNhắnPhòngChat.split(";;");
-        for (String chuỗiTin : mảngCácTinNhắn) {
-            if (chuỗiTin.trim().isEmpty()) continue;
-            String[] mảngTrường = chuỗiTin.split("\\|\\|");
-            if (mảngTrường.length < 5) continue;
+        for (ChatMessageItem item : list) {
+            String ngườiGửiUsername = item.senderUsername;
+            String avatarText = item.senderAvatar;
+            String nộiDungGửi = item.messageText;
+            String thờiGianGửi = item.timeStr;
 
-            String ngườiGửiUsername = mảngTrường[0];
-            String ngườiGửiHọTên = mảngTrường[1];
-            String avatarText = mảngTrường[2];
-            String nộiDungGửi = mảngTrường[3];
-            String thờiGianGửi = mảngTrường[4];
+            if (nộiDungGửi == null || nộiDungGửi.trim().isEmpty()) continue;
 
             if ("sys".equalsIgnoreCase(ngườiGửiUsername) || "system".equalsIgnoreCase(ngườiGửiUsername)) {
-                thêmBongBóngThôngBáoHệThốngMiddle(nộiDungGửi);
+                if (!làChatTròChuyệnXãHội) {
+                    thêmBongBóngThôngBáoHệThốngMiddle(nộiDungGửi);
+                }
             } else if (ngườiGửiUsername.equalsIgnoreCase(usernameHiệnTại)) {
                 // Bong bóng chat bên PHẢI
                 if (nộiDungGửi.startsWith("IMG:")) {

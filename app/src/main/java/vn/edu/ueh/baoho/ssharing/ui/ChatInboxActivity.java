@@ -184,12 +184,13 @@ public class ChatInboxActivity extends AppCompatActivity {
                 // Đọc tin nhắn mới nhất
                 String khoTinNhắn = bộLưuTrữVí.getString("DANH_SACH_TIN_NHAN_" + idPhòng, "");
                 if (!khoTinNhắn.isEmpty()) {
-                    String[] cácTin = khoTinNhắn.split(";;");
-                    String tinCuối = cácTin[cácTin.length - 1];
-                    String[] mảngTin = tinCuối.split("\\|\\|");
-                    if (mảngTin.length >= 5) {
-                        nộiDungCuối = mảngTin[3];
-                        thờiGianCuối = mảngTin[4];
+                    java.util.List<EscrowChatActivity.ChatMessageItem> listMsg = EscrowChatActivity.parseMessageList(khoTinNhắn);
+                    if (!listMsg.isEmpty()) {
+                        EscrowChatActivity.ChatMessageItem lastMsg = listMsg.get(listMsg.size() - 1);
+                        if (lastMsg.messageText != null && !lastMsg.messageText.isEmpty()) {
+                            nộiDungCuối = lastMsg.messageText.startsWith("IMG:") ? "📷 [Hình ảnh]" : lastMsg.messageText;
+                            thờiGianCuối = lastMsg.timeStr;
+                        }
                     }
                 }
 
