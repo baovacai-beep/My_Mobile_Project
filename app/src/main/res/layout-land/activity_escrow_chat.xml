@@ -8,7 +8,7 @@
     android:padding="12dp"
     android:weightSum="10">
 
-    <!-- CỘT TRÁI (3.8 / 10) -->
+    <!-- CỘT TRÁI (3.8 / 10): Thông tin Header & Thao tác Escrow -->
     <LinearLayout
         android:id="@+id/layoutLeftLandPanel"
         android:layout_width="0dp"
@@ -39,25 +39,39 @@
                 android:textColor="#FFFFFF"
                 android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/tvAvatarUser"
+            <FrameLayout
+                android:id="@+id/framePartnerAvatarHeader"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="8dp"
-                android:layout_toEndOf="@id/btnBack"
-                android:background="@drawable/bg_circle_purple"
-                android:gravity="center"
-                android:text="MT"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:layout_toEndOf="@id/btnBack">
+
+                <TextView
+                    android:id="@+id/tvAvatarUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_circle_purple"
+                    android:gravity="center"
+                    android:text="MT"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imgPartnerAvatarHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Ảnh đại diện đối tác"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
-                android:layout_toEndOf="@id/tvAvatarUser"
+                android:layout_toEndOf="@id/framePartnerAvatarHeader"
                 android:orientation="vertical">
 
                 <TextView
@@ -187,7 +201,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnConfirmEscrow"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="44dp"
             android:background="@drawable/bg_btn_purple"
             android:text="✓ Xác nhận thành công"
             android:textAllCaps="false"
@@ -198,17 +212,17 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnReportEscrow"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="44dp"
             android:layout_marginTop="6dp"
             android:background="@drawable/bg_btn_outline_pink"
             android:text="⚠ Báo cáo lỗi"
             android:textAllCaps="false"
-            android:textColor="#FF4081"
+            android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- CỘT PHẢI (6.2 / 10) -->
+    <!-- CỘT PHẢI (6.2 / 10): Vùng Cuộn Tin Nhắn & Soạn Thảo Chat Realtime -->
     <RelativeLayout
         android:id="@+id/layoutRightLandPanel"
         android:layout_width="0dp"
@@ -224,6 +238,7 @@
             android:scrollbars="none">
 
             <LinearLayout
+                android:id="@+id/containerChatMessages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -238,77 +253,6 @@
                     android:text="🛡️ Hệ thống: Tiền đang giữ an toàn trong ví Escrow."
                     android:textColor="#9E9AA9"
                     android:textSize="10sp" />
-
-                <!-- Tin nhắn Người bán -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:background="@drawable/bg_circle_dark_purple"
-                        android:gravity="center"
-                        android:text="MT"
-                        android:textColor="#FFFFFF"
-                        android:textSize="10sp" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:background="@drawable/bg_bubble_seller"
-                        android:maxWidth="320dp"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Chào bạn, mã mình mới nhận sáng nay chưa dùng nhé!"
-                            android:textColor="#FFFFFF"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="end"
-                            android:layout_marginTop="2dp"
-                            android:text="09:38"
-                            android:textColor="#78718C"
-                            android:textSize="9sp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Tin nhắn Người mua -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_bubble_buyer"
-                    android:maxWidth="320dp"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Ok để mình nhập thử vào Shopee xem được không."
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginTop="2dp"
-                        android:text="09:39 ✓✓"
-                        android:textColor="#D1C4E9"
-                        android:textSize="9sp" />
-                </LinearLayout>
             </LinearLayout>
         </ScrollView>
 
@@ -320,15 +264,31 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/btn_attach_image_chat"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_input_field"
+                android:contentDescription="Gửi ảnh"
+                android:padding="10dp"
+                android:src="@drawable/ic_document_file"
+                app:tint="#815BF5" />
+
             <EditText
                 android:id="@+id/et_chat_input"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="44dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_input_field"
                 android:hint="Nhập tin nhắn..."
-                android:inputType="textShortMessage"
                 android:importantForAutofill="no"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="3"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:clickable="true"
+                android:cursorVisible="true"
                 android:paddingHorizontal="12dp"
                 android:textColor="#FFFFFF"
                 android:textColorHint="#6C638A"
@@ -336,8 +296,8 @@
 
             <ImageButton
                 android:id="@+id/btn_send_chat"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:layout_marginStart="6dp"
                 android:background="@drawable/bg_btn_purple"
                 android:contentDescription="Gửi tin nhắn"

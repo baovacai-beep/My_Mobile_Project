@@ -143,13 +143,13 @@ public class MainActivity extends AppCompatActivity {
             for (String phòng : cácPhòng) {
                 if (phòng.trim().isEmpty()) continue;
                 String[] mảngTrường = phòng.split("\\|\\|");
-                if (mảngTrường.length < 8) continue;
+                if (mảngTrường.length < 4) continue;
 
                 String idPhòng = mảngTrường[0];
-                String buyerUser = mảngTrường[3];
-                String sellerName = mảngTrường[5];
+                String buyerUser = mảngTrường.length > 3 ? mảngTrường[3] : "";
+                String sellerName = mảngTrường.length > 5 ? mảngTrường[5] : "";
 
-                if (usernameHiệnTại.equalsIgnoreCase(buyerUser) || sellerName.toLowerCase().contains(usernameHiệnTại.toLowerCase())) {
+                if (usernameHiệnTại.equalsIgnoreCase(buyerUser) || (sellerName != null && !sellerName.isEmpty() && sellerName.toLowerCase().contains(usernameHiệnTại.toLowerCase()))) {
                     // Kiểm tra trạng thái đã đọc/chưa đọc của phòng chat này
                     boolean làĐãĐọc = bộLưuTrữ.getBoolean("IS_READ_ROOM_" + idPhòng + "_" + usernameHiệnTại.toLowerCase().trim(), false);
                     if (!làĐãĐọc) {
@@ -228,20 +228,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Hủy bỏ callback cũ tránh nhân bản vòng lặp trượt banner khi xoay màn hình
+        if (bộLịchTrượtTựĐộng != null) {
+            bộLịchTrượtTựĐộng.removeCallbacksAndMessages(null);
+        }
+
         // Tự động trượt mỗi 5 giây
         côngViệcTựĐộngTrượtBanner = new Runnable() {
             @Override
             public void run() {
-                if (bộTrượtBannerMain != null && danhSáchBanner.size() > 0) {
-                    int vịTríHiệnTại = bộTrượtBannerMain.getCurrentItem();
-                    int vịTríMới = (vịTríHiệnTại + 1) % danhSáchBanner.size();
-                    bộTrượtBannerMain.setCurrentItem(vịTríMới, true);
-                    bộLịchTrượtTựĐộng.postDelayed(this, 5000);
+                if (!isFinishing() && !isDestroyed() && bộTrượtBannerMain != null && danhSáchBanner.size() > 0) {
+                    try {
+                        int vịTríHiệnTại = bộTrượtBannerMain.getCurrentItem();
+                        int vịTríMới = (vịTríHiệnTại + 1) % danhSáchBanner.size();
+                        bộTrượtBannerMain.setCurrentItem(vịTríMới, true);
+                    } catch (Throwable ignored) {}
+                    if (bộLịchTrượtTựĐộng != null) {
+                        bộLịchTrượtTựĐộng.postDelayed(this, 5000);
+                    }
                 }
             }
         };
 
-        bộLịchTrượtTựĐộng.postDelayed(côngViệcTựĐộngTrượtBanner, 5000);
+        if (bộLịchTrượtTựĐộng != null) {
+            bộLịchTrượtTựĐộng.postDelayed(côngViệcTựĐộngTrượtBanner, 5000);
+        }
     }
 
     private void tạoDấuDotChỉSốTrang(int tổngSốTrang, int vịTríHiệnTại) {
@@ -439,6 +450,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences bộLưuTrữ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        cậpNhậtTênNgườiDùngMànChính(bộLưuTrữ);
+        cậpNhậtSốDưMànChính();
+
+        if (bộLịchTrượtTựĐộng != null && côngViệcTựĐộngTrượtBanner != null) {
+            bộLịchTrượtTựĐộng.removeCallbacks(côngViệcTựĐộngTrượtBanner);
+            bộLịchTrượtTựĐộng.postDelayed(côngViệcTựĐộngTrượtBanner, 5000);
+        }
+
+        // Tự động kiểm tra và đồng bộ Cloud bất đồng bộ siêu nhẹ
+        String usernameCurrent = bộLưuTrữ.getString("CURRENT_USERNAME", "baoho123");
+        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncUserProfileFromCloud(this, usernameCurrent, () -> {
+            if (!isFinishing() && !isDestroyed()) {
+                SharedPreferences updatedPrefs = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+                cậpNhậtTênNgườiDùngMànChính(updatedPrefs);
+            }
+        });
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         if (bộLịchTrượtTựĐộng != null && côngViệcTựĐộngTrượtBanner != null) {
@@ -447,20 +480,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        SharedPreferences bộLưuTrữ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-        cậpNhậtSốDưMànChính();
-
-        String usernameCurrent = bộLưuTrữ.getString("CURRENT_USERNAME", "baoho123");
-        vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncUserProfileFromCloud(this, usernameCurrent, () -> {
-            SharedPreferences updatedPrefs = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
-            cậpNhậtTênNgườiDùngMànChính(updatedPrefs);
-        });
-
-        cậpNhậtTênNgườiDùngMànChính(bộLưuTrữ);
-        if (bộLịchTrượtTựĐộng != null && côngViệcTựĐộngTrượtBanner != null) {
-            bộLịchTrượtTựĐộng.postDelayed(côngViệcTựĐộngTrượtBanner, 5000);
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bộLịchTrượtTựĐộng != null) {
+            bộLịchTrượtTựĐộng.removeCallbacksAndMessages(null);
         }
     }
 
@@ -471,9 +494,11 @@ public class MainActivity extends AppCompatActivity {
             nhãnSốDưXuMànChính.setText(String.format("%,d", sốDưXu) + " SS");
         }
         vn.edu.ueh.baoho.ssharing.utils.WalletManager.syncFromFirestore(this, username, () -> {
-            int sốDưMới = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getBalance(this, username);
-            if (nhãnSốDưXuMànChính != null) {
-                nhãnSốDưXuMànChính.setText(String.format("%,d", sốDưMới) + " SS");
+            if (!isFinishing() && !isDestroyed()) {
+                int sốDưMới = vn.edu.ueh.baoho.ssharing.utils.WalletManager.getBalance(this, username);
+                if (nhãnSốDưXuMànChính != null) {
+                    nhãnSốDưXuMànChính.setText(String.format("%,d", sốDưMới) + " SS");
+                }
             }
         });
     }

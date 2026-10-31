@@ -1,7 +1,9 @@
 package vn.edu.ueh.baoho.ssharing.utils;
 
+import vn.edu.ueh.baoho.ssharing.model.VoucherC2CCongDong;
+import vn.edu.ueh.baoho.ssharing.model.VoucherChinhHangMall;
+
 public class InstantBuybackHelper {
-    private static idyllic.PhiSanConfig PHI_SAN = new idyllic.PhiSanConfig(0.05); // 5% phí sàn
 
     public static class BuybackResult {
         public double giaGoc;
@@ -16,18 +18,21 @@ public class InstantBuybackHelper {
     }
 
     /**
-     * Tính toán công thức thu mua tức thì: Trừ 5% phí rào cản đơn và trả xu liền tay
+     * Tính toán công thức thu mua tức thì C2C/Cộng đồng: 2% mặc định, 1% nếu Trust Score >= 80 (Kim Cương)
      */
-    public static BuybackResult tinhToanThuMuaTucThi(double giaTriNiemYetVoucherXu) {
-        double phiSan = giaTriNiemYetVoucherXu * 0.05; // Khấu trừ 5% phí vận hành nền tảng
+    public static BuybackResult tinhToanThuMuaTucThiC2C(double giaTriNiemYetVoucherXu, int trustScore) {
+        VoucherC2CCongDong v = new VoucherC2CCongDong("VC", "Voucher C2C", "Brand", 0, giaTriNiemYetVoucherXu, "31/12/2026", "USER", "SECRET", trustScore);
+        long phiSan = v.tinhPhiSanGiaoDich((long) giaTriNiemYetVoucherXu);
         double thucNhan = giaTriNiemYetVoucherXu - phiSan;
         return new BuybackResult(giaTriNiemYetVoucherXu, phiSan, Math.max(0, thucNhan));
     }
-}
 
-class idyllic {
-    static class PhiSanConfig {
-        double rate;
-        PhiSanConfig(double r) { this.rate = r; }
+    /**
+     * Tính toán thu mua chính hãng Mall: Phí sàn luôn trả về 0 SS theo cam kết trợ giá đối tác
+     */
+    public static BuybackResult tinhToanThuMuaMall(double giaTriNiemYetVoucherXu) {
+        VoucherChinhHangMall v = new VoucherChinhHangMall("VM", "Voucher Mall", "Brand Mall", 0, giaTriNiemYetVoucherXu, "31/12/2026", "BRAND", "SECRET");
+        long phiSan = v.tinhPhiSanGiaoDich((long) giaTriNiemYetVoucherXu);
+        return new BuybackResult(giaTriNiemYetVoucherXu, phiSan, giaTriNiemYetVoucherXu);
     }
 }

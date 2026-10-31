@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
@@ -18,7 +16,8 @@ public class WalletManager {
     private static final String PREF_NAME = "SSHARING_PREFS";
 
     public static String getCurrentUsername(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        if (context == null) return "baoho123";
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         String raw = prefs.getString("CURRENT_USERNAME", "baoho123");
         return SocialHelper.cleanUsername(raw);
     }
@@ -66,8 +65,9 @@ public class WalletManager {
     }
 
     public static int getBalance(Context context, String username) {
+        if (context == null) return getDefaultBalanceForUser(username);
         String clean = SocialHelper.cleanUsername(username);
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         String key = "SO_DU_XU_SS_" + clean;
         if (!prefs.contains(key)) {
             int initial = getDefaultBalanceForUser(clean);
@@ -79,14 +79,16 @@ public class WalletManager {
     }
 
     public static void setBalance(Context context, String username, int newBalance) {
+        if (context == null) return;
         String clean = SocialHelper.cleanUsername(username);
         int val = Math.max(0, newBalance);
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         prefs.edit().putInt("SO_DU_XU_SS_" + clean, val).apply();
         setBalanceInFirestore(clean, val);
     }
 
     public static void addBalance(Context context, String username, int delta) {
+        if (context == null) return;
         int current = getBalance(context, username);
         setBalance(context, username, current + delta);
     }
@@ -98,6 +100,7 @@ public class WalletManager {
             Map<String, Object> updateData = new HashMap<>();
             updateData.put("so_du_xu", val);
             updateData.put("soDuXu", val);
+
             db.collection("users").document(cleanUsername)
                     .set(updateData, SetOptions.merge());
 
@@ -112,8 +115,9 @@ public class WalletManager {
     }
 
     public static String getTransactionHistory(Context context, String username) {
+        if (context == null) return getDefaultTransactionsForUser(username);
         String clean = SocialHelper.cleanUsername(username);
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         String key = "DANH_SACH_GIAO_DICH_" + clean;
         String val = prefs.getString(key, "");
         if (val.isEmpty()) {
@@ -124,8 +128,9 @@ public class WalletManager {
     }
 
     public static void addTransactionRecord(Context context, String username, String recordStr, String txId, String title, int amountSS, String type, String status, String description) {
+        if (context == null) return;
         String clean = SocialHelper.cleanUsername(username);
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         String key = "DANH_SACH_GIAO_DICH_" + clean;
         String currentList = prefs.getString(key, "");
         if (currentList.isEmpty()) {
@@ -159,8 +164,9 @@ public class WalletManager {
     }
 
     public static String getSavedVouchers(Context context, String username) {
+        if (context == null) return getDefaultVouchersForUser(username);
         String clean = SocialHelper.cleanUsername(username);
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         String key = "DANH_SACH_VOUCHER_DA_LUU_" + clean;
         String val = prefs.getString(key, "");
         if (val.isEmpty()) {
@@ -171,14 +177,16 @@ public class WalletManager {
     }
 
     public static void setSavedVouchers(Context context, String username, String vouchersStr) {
+        if (context == null) return;
         String clean = SocialHelper.cleanUsername(username);
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         prefs.edit().putString("DANH_SACH_VOUCHER_DA_LUU_" + clean, vouchersStr).apply();
     }
 
     public static void addSavedVoucherRecord(Context context, String username, String voucherRecordStr, String voucherId, String title) {
+        if (context == null) return;
         String clean = SocialHelper.cleanUsername(username);
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         String key = "DANH_SACH_VOUCHER_DA_LUU_" + clean;
         String currentList = prefs.getString(key, "");
         if (currentList.isEmpty()) {
@@ -205,6 +213,11 @@ public class WalletManager {
     }
 
     public static void syncFromFirestore(Context context, String username, Runnable onComplete) {
+        if (context == null) {
+            if (onComplete != null) onComplete.run();
+            return;
+        }
+        final Context appContext = context.getApplicationContext();
         String clean = SocialHelper.cleanUsername(username);
         if (clean.isEmpty()) {
             if (onComplete != null) onComplete.run();
@@ -215,71 +228,23 @@ public class WalletManager {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("users").document(clean).get()
                     .addOnSuccessListener(doc -> {
-                        if (doc.exists()) {
+                        if (doc != null && doc.exists()) {
                             Long val = doc.getLong("so_du_xu");
                             if (val == null) val = doc.getLong("soDuXu");
                             if (val != null) {
-                                SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+                                SharedPreferences prefs = appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
                                 prefs.edit().putInt("SO_DU_XU_SS_" + clean, val.intValue()).apply();
                             } else {
-                                int currentLocal = getBalance(context, clean);
+                                int currentLocal = getBalance(appContext, clean);
                                 setBalanceInFirestore(clean, currentLocal);
                             }
                         } else {
-                            int currentLocal = getBalance(context, clean);
+                            int currentLocal = getBalance(appContext, clean);
                             setBalanceInFirestore(clean, currentLocal);
                         }
-
-                        db.collection("users").document(clean)
-                                .collection("transactions")
-                                .orderBy("created_at", Query.Direction.DESCENDING)
-                                .get()
-                                .addOnSuccessListener(txDocs -> {
-                                    if (!txDocs.isEmpty()) {
-                                        StringBuilder sb = new StringBuilder();
-                                        for (DocumentSnapshot tDoc : txDocs.getDocuments()) {
-                                            String rec = tDoc.getString("record_str");
-                                            if (rec != null && !rec.trim().isEmpty()) {
-                                                if (sb.length() > 0) sb.append(";;");
-                                                sb.append(rec);
-                                            }
-                                        }
-                                        if (sb.length() > 0) {
-                                            SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-                                            prefs.edit().putString("DANH_SACH_GIAO_DICH_" + clean, sb.toString()).apply();
-                                        }
-                                    }
-
-                                    db.collection("users").document(clean)
-                                            .collection("vouchers")
-                                            .get()
-                                            .addOnSuccessListener(vDocs -> {
-                                                if (!vDocs.isEmpty()) {
-                                                    StringBuilder sbV = new StringBuilder();
-                                                    for (DocumentSnapshot vDoc : vDocs.getDocuments()) {
-                                                        String rec = vDoc.getString("record_str");
-                                                        if (rec != null && !rec.trim().isEmpty()) {
-                                                            if (sbV.length() > 0) sbV.append(";;");
-                                                            sbV.append(rec);
-                                                        }
-                                                    }
-                                                    if (sbV.length() > 0) {
-                                                        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-                                                        prefs.edit().putString("DANH_SACH_VOUCHER_DA_LUU_" + clean, sbV.toString()).apply();
-                                                    }
-                                                }
-                                                if (onComplete != null) onComplete.run();
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                if (onComplete != null) onComplete.run();
-                                            });
-                                })
-                                .addOnFailureListener(e -> {
-                                    if (onComplete != null) onComplete.run();
-                                });
+                        if (onComplete != null) onComplete.run();
                     })
                     .addOnFailureListener(e -> {
-                        Log.w(TAG, "Chế độ Ngoại tuyến - sử dụng dữ liệu SharedPreferences cho: " + clean, e);
                         if (onComplete != null) onComplete.run();
                     });
         } catch (Exception e) {
