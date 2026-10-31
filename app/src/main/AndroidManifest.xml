@@ -28,6 +28,7 @@
         <!-- Màn hình Đăng nhập (Màn hình khởi chạy bắt buộc) -->
         <activity
             android:name=".ui.LoginActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,14 +39,17 @@
         <!-- Màn hình chính -->
         <activity
             android:name=".ui.MainActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="false" />
 
         <!-- Màn hình Trạm 0đ & Flash Grab -->
         <activity
             android:name=".ui.CommunityCouponsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="false" />
         <activity
             android:name=".ui.FlashGrabActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="false" />
 
         <!-- 2 Màn hình của Lê Nguyễn Khánh Trình -->

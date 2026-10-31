@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout khungChỉSốDotBanner;
     private Handler bộLịchTrượtTựĐộng = new Handler(Looper.getMainLooper());
     private Runnable côngViệcTựĐộngTrượtBanner;
+    private ViewPager2.OnPageChangeCallback bộLắngNgheSựKiệnTrượtPage;
 
     private LinearLayout thẻGianHàngMall, thẻChợC2C;
     private VoucherViewModel bộQuảnLýDữLiệuVoucher;
@@ -215,18 +216,30 @@ public class MainActivity extends AppCompatActivity {
                 )
         );
 
-        bộTrượtBannerMain.setAdapter(bộTrượtAdapter);
+        try {
+            bộTrượtBannerMain.setAdapter(bộTrượtAdapter);
+        } catch (Throwable ignored) {}
 
         // Tạo dấu Dot chỉ số trang
         tạoDấuDotChỉSốTrang(danhSáchBanner.size(), 0);
 
-        bộTrượtBannerMain.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        if (bộLắngNgheSựKiệnTrượtPage != null) {
+            try {
+                bộTrượtBannerMain.unregisterOnPageChangeCallback(bộLắngNgheSựKiệnTrượtPage);
+            } catch (Throwable ignored) {}
+        }
+
+        bộLắngNgheSựKiệnTrượtPage = new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 cậpNhậtDotChỉSốTrang(danhSáchBanner.size(), position);
             }
-        });
+        };
+
+        try {
+            bộTrượtBannerMain.registerOnPageChangeCallback(bộLắngNgheSựKiệnTrượtPage);
+        } catch (Throwable ignored) {}
 
         // Hủy bỏ callback cũ tránh nhân bản vòng lặp trượt banner khi xoay màn hình
         if (bộLịchTrượtTựĐộng != null) {
@@ -469,6 +482,42 @@ public class MainActivity extends AppCompatActivity {
                 cậpNhậtTênNgườiDùngMànChính(updatedPrefs);
             }
         });
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Hủy timer trượt banner cũ tránh nhân bản vòng lặp khi xoay màn hình
+        if (bộLịchTrượtTựĐộng != null) {
+            bộLịchTrượtTựĐộng.removeCallbacksAndMessages(null);
+        }
+
+        if (bộTrượtBannerMain != null) {
+            try {
+                if (bộLắngNgheSựKiệnTrượtPage != null) {
+                    bộTrượtBannerMain.unregisterOnPageChangeCallback(bộLắngNgheSựKiệnTrượtPage);
+                }
+                bộTrượtBannerMain.setAdapter(null);
+            } catch (Throwable ignored) {}
+        }
+
+        // Tải lại layout tương ứng với hướng màn hình mới (Dọc vs Ngang)
+        try {
+            setContentView(R.layout.activity_main);
+        } catch (Throwable ignored) {}
+
+        // Reset chuỗi tab để nạp lại đúng giao diện cho màn hình mới
+        chuỗiTabĐangChọn = "";
+
+        khởiTạoÁnhXạGiaoDiện();
+        SharedPreferences bộLưuTrữ = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        cậpNhậtTênNgườiDùngMànChính(bộLưuTrữ);
+        cậpNhậtSốDưMànChính();
+        càiĐặtBannerAutoSlider();
+        càiĐặtSựKiệnLắngNgheGiaoDiện();
+        cậpNhậtGiaoDiệnTab("C2C".equals(bộQuảnLýDữLiệuVoucher != null ? bộQuảnLýDữLiệuVoucher.getSelectedFilter().getValue() : "") ? false : true);
+        cậpNhậtKhungGợiÝDànhChoBạn();
     }
 
     @Override
