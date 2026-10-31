@@ -8,7 +8,7 @@
     android:background="#0D0C12"
     tools:ignore="All">
 
-    <!-- Scroll Content (Nội dung chính cuộn được) -->
+    <!-- Scroll Content (Nội dung chính cuộn được màn hình ngang) -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -22,73 +22,64 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="12dp">
 
-            <!-- 1. HEADER SECTION -->
-            <RelativeLayout
+            <!-- 1. HEADER SECTION (Landscape Toolbar) -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp">
+                android:layout_height="52dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/imgAvatar"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_user"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:id="@+id/layoutUserInfoHeader"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="12dp"
-                    android:layout_toEndOf="@id/imgAvatar"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Good morning,"
+                        android:text="Xin chào,"
                         android:textColor="#9E9DA8"
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/tvUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Linh Nguyen"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="Gia Bảo Hồ"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/btnNotification"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:contentDescription="Thông báo"
-                    android:focusable="true"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_bell" />
-
+                <!-- Coin Badge Button -->
                 <LinearLayout
                     android:id="@+id/btnCoinBadge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
-                    android:layout_toStartOf="@id/btnNotification"
+                    android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_chip_gold_dark"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="10dp"
-                    android:paddingVertical="6dp">
+                    android:paddingVertical="5dp">
 
                     <ImageView
                         android:layout_width="16dp"
@@ -100,90 +91,194 @@
                         android:id="@+id/tvCoins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="4dp"
                         android:text="2,500 SS"
                         android:textColor="#FFFFFF"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
                 </LinearLayout>
-            </RelativeLayout>
 
-            <!-- 2. SLIDER BANNER SECTION -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_marginTop="20dp"
-                app:cardBackgroundColor="#7C4DFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+                <!-- Social Friends Icon Button -->
+                <ImageView
+                    android:id="@+id/btnSocialFriendsHeader"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Tìm kiếm bạn bè"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_user"
+                    app:tint="#815BF5" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="200dp"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="THE OFFICIAL BRAND EDIT"
-                            android:textColor="#E0D7FF"
-                            android:textSize="10sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="SSharing Mall - Big brands, deep discounts"
-                            android:textColor="#FFFFFF"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <!-- Bell Notification Icon Button -->
+                <FrameLayout
+                    android:id="@+id/layoutNotificationContainer"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp">
 
                     <ImageView
-                        android:id="@+id/imgBanner"
-                        android:layout_width="140dp"
+                        android:id="@+id/btnNotification"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
-                        android:contentDescription="Banner quảng cáo"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/bg_purple_button" />
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:contentDescription="Thông báo"
+                        android:focusable="true"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_bell" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:orientation="horizontal">
+                    <View
+                        android:id="@+id/viewNotificationBadgeRed"
+                        android:layout_width="9dp"
+                        android:layout_height="9dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/bg_badge_pink" />
+                </FrameLayout>
+            </LinearLayout>
 
-                        <View
-                            android:layout_width="16dp"
-                            android:layout_height="4dp"
-                            android:background="#FFFFFF" />
-                        <View
-                            android:layout_width="4dp"
-                            android:layout_height="4dp"
-                            android:layout_marginStart="4dp"
-                            android:background="#80FFFFFF" />
-                        <View
-                            android:layout_width="4dp"
-                            android:layout_height="4dp"
-                            android:layout_marginStart="4dp"
-                            android:background="#80FFFFFF" />
-                    </LinearLayout>
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- 2.1 QUICK ACTION HUB (4 Nút tròn y chang dọc) -->
+            <!-- 2. BANNER SLIDER & SEARCH BAR (Side-by-Side Horizontal in Landscape) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="12dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <!-- Left: ViewPager Banner -->
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="140dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/bannerViewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:overScrollMode="never" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutBannerDots"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center"
+                        android:orientation="horizontal" />
+                </RelativeLayout>
+
+                <!-- Right: Search Bar & Tab Switcher -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <!-- Search Input Bar -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="10dp">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:contentDescription="Search Icon"
+                            android:src="@drawable/ic_market"
+                            app:tint="#888888" />
+
+                        <EditText
+                            android:id="@+id/etHomeSearch"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:hint="Tìm kiếm voucher..."
+                            android:imeOptions="actionSearch"
+                            android:inputType="text"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#6C638A"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/btnDoSearchHome"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_btn_purple"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
+                            android:text="Tìm"
+                            android:textColor="#FFFFFF"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Tab Switcher (SSharing Mall / C2C Market) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_tab_container"
+                        android:orientation="horizontal"
+                        android:padding="3dp">
+
+                        <LinearLayout
+                            android:id="@+id/tabMall"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_tab_active"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🏪 SSharing Mall"
+                                android:textColor="#FFFFFF"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/tabC2C"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="👤 C2C Market"
+                                android:textColor="#9E9DA8"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 2.1 QUICK ACTION HUB (4 Nút tròn) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
                 android:orientation="horizontal"
                 android:weightSum="4">
 
@@ -197,20 +292,20 @@
                     android:gravity="center"
                     android:orientation="vertical">
                     <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
                         android:background="@drawable/bg_circle_icon"
                         android:contentDescription="Trạm 0đ"
-                        android:padding="16dp"
+                        android:padding="12dp"
                         android:src="@drawable/ic_market"
                         app:tint="#FF4081" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:text="Trạm 0đ"
                         android:textColor="#FFFFFF"
-                        android:textSize="12sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -224,20 +319,20 @@
                     android:gravity="center"
                     android:orientation="vertical">
                     <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
                         android:background="@drawable/bg_circle_icon"
                         android:contentDescription="Giựt Deal"
-                        android:padding="16dp"
+                        android:padding="12dp"
                         android:src="@drawable/ic_coin"
                         app:tint="#FFD54F" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:text="Giựt Deal"
                         android:textColor="#FFFFFF"
-                        android:textSize="12sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -251,20 +346,20 @@
                     android:gravity="center"
                     android:orientation="vertical">
                     <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
                         android:background="@drawable/bg_circle_icon"
                         android:contentDescription="Mall"
-                        android:padding="16dp"
+                        android:padding="12dp"
                         android:src="@drawable/ic_wallet"
                         app:tint="#E1BEE7" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:text="Mall"
                         android:textColor="#FFFFFF"
-                        android:textSize="12sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -278,571 +373,321 @@
                     android:gravity="center"
                     android:orientation="vertical">
                     <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
                         android:background="@drawable/bg_circle_icon"
                         android:contentDescription="Đổi Xu"
-                        android:padding="16dp"
+                        android:padding="12dp"
                         android:src="@drawable/ic_arrow_up_right"
                         app:tint="#4DB6AC" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:text="Đổi Xu"
                         android:textColor="#FFFFFF"
-                        android:textSize="12sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- 3. TOGGLE SWITCH -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/bg_tab_container"
-                android:orientation="horizontal"
-                android:padding="4dp">
-
-                <LinearLayout
-                    android:id="@+id/tabMall"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_tab_active"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:contentDescription="Icon Mall"
-                        android:src="@drawable/ic_market"
-                        app:tint="#FFFFFF" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:text="SSharing Mall"
-                        android:textColor="#FFFFFF"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tabC2C"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:contentDescription="Icon Chợ"
-                        android:src="@drawable/ic_user"
-                        app:tint="#9E9DA8" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:text="C2C Market"
-                        android:textColor="#9E9DA8"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- 4. CATEGORIES ROW -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:orientation="horizontal"
-                android:weightSum="4">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-                    <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/bg_circle_icon"
-                        android:contentDescription="Food"
-                        android:padding="16dp"
-                        android:src="@drawable/ic_market"
-                        app:tint="#FF4081" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Food"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-                    <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/bg_circle_icon"
-                        android:contentDescription="Shopping"
-                        android:padding="16dp"
-                        android:src="@drawable/ic_wallet"
-                        app:tint="#E1BEE7" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Shopping"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-                    <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/bg_circle_icon"
-                        android:contentDescription="Transport"
-                        android:padding="16dp"
-                        android:src="@drawable/ic_arrow_up_right"
-                        app:tint="#4DB6AC" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Transport"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-                    <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/bg_circle_icon"
-                        android:contentDescription="Entertainment"
-                        android:padding="16dp"
-                        android:src="@drawable/ic_coin"
-                        app:tint="#FFD54F" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Entertainment"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- 5. PICKED FOR YOU SECTION -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Picked for you"
-                    android:textColor="#FFFFFF"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:id="@+id/btnViewAll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:text="View all  →"
-                    android:textColor="#9E9DA8"
-                    android:textSize="14sp" />
-            </RelativeLayout>
-
+            <!-- 4. DANH MỤC LỌC -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal"
-                android:weightSum="2">
+                android:weightSum="4">
 
-                <!-- CARD 1 -->
-                <androidx.cardview.widget.CardView
+                <LinearLayout
+                    android:id="@+id/btnCategoryAmThuc"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="#16141E"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp">
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:contentDescription="Starbucks Deal"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/bg_card_dark" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                android:background="@drawable/bg_badge_pink"
-                                android:paddingHorizontal="8dp"
-                                android:paddingVertical="4dp"
-                                android:text="STARBUCKS"
-                                android:textColor="#FFFFFF"
-                                android:textSize="10sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:layout_margin="8dp"
-                                android:background="@drawable/bg_tag_dark"
-                                android:paddingHorizontal="6dp"
-                                android:paddingVertical="2dp"
-                                android:text="✓ Official"
-                                android:textColor="#FFFFFF"
-                                android:textSize="10sp" />
-                        </RelativeLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:maxLines="2"
-                                android:text="20K off orders from 50K"
-                                android:textColor="#FFFFFF"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_marginEnd="4dp"
-                                    android:contentDescription="Coin Icon"
-                                    android:src="@drawable/ic_coin" />
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="160 SS"
-                                    android:textColor="#00E676"
-                                    android:textStyle="bold" />
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="6dp"
-                                    android:text="200 SS"
-                                    android:textColor="#666666"
-                                    android:textSize="12sp" />
-                            </LinearLayout>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:text="⚡ Instant delivery"
-                                android:textColor="#9E9DA8"
-                                android:textSize="10sp" />
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:gravity="center_vertical">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="★ 4.9"
-                                    android:textColor="#FFFFFF"
-                                    android:textSize="11sp" />
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="8dp"
-                                    android:text="Starbucks\nTrust score 100"
-                                    android:textColor="#888888"
-                                    android:textSize="9sp" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                        android:background="@drawable/bg_tag_dark"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp"
+                        android:text="🍕 Ẩm thực"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp" />
+                </LinearLayout>
 
-                <!-- CARD 2 -->
-                <androidx.cardview.widget.CardView
+                <LinearLayout
+                    android:id="@+id/btnCategoryMuaSam"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="#16141E"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp">
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:contentDescription="Grab Deal"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/bg_card_dark" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="8dp"
-                                android:background="@drawable/bg_badge_pink"
-                                android:paddingHorizontal="8dp"
-                                android:paddingVertical="4dp"
-                                android:text="GRAB"
-                                android:textColor="#FFFFFF"
-                                android:textSize="10sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:layout_margin="8dp"
-                                android:background="@drawable/bg_tag_dark"
-                                android:paddingHorizontal="6dp"
-                                android:paddingVertical="2dp"
-                                android:text="👥 Community"
-                                android:textColor="#FFFFFF"
-                                android:textSize="10sp" />
-                        </RelativeLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:maxLines="2"
-                                android:text="50K off your next ride"
-                                android:textColor="#FFFFFF"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-                                <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_marginEnd="4dp"
-                                    android:contentDescription="Coin Icon"
-                                    android:src="@drawable/ic_coin" />
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="350 SS"
-                                    android:textColor="#00E676"
-                                    android:textStyle="bold" />
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="6dp"
-                                    android:text="500 SS"
-                                    android:textColor="#666666"
-                                    android:textSize="12sp" />
-                            </LinearLayout>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                android:background="@drawable/bg_chip_gold"
-                                android:paddingHorizontal="6dp"
-                                android:paddingVertical="2dp"
-                                android:text="⏰ Expiring soon"
-                                android:textColor="#000000"
-                                android:textSize="10sp"
-                                android:textStyle="bold" />
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:gravity="center_vertical">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="★ 4.9"
-                                    android:textColor="#FFFFFF"
-                                    android:textSize="11sp" />
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="8dp"
-                                    android:text="\@minh.anh\nTrust score 98"
-                                    android:textColor="#888888"
-                                    android:textSize="9sp" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                        android:background="@drawable/bg_tag_dark"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp"
+                        android:text="🛍 Mua sắm"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btnCategoryDiChuyen"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_tag_dark"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp"
+                        android:text="🚗 Di chuyển"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btnCategoryGiaiTri"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_tag_dark"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp"
+                        android:text="🎮 Giải trí"
+                        android:textColor="#FFFFFF"
+                        android:textSize="11sp" />
+                </LinearLayout>
             </LinearLayout>
+
+            <!-- 5. SECTION TIÊU ĐỀ KHU VỰC & KHUNG LƯỚI VOUCHER -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:id="@+id/tvHomeSectionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gian Hàng SSharing Mall (Thương Hiệu)"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnViewFullSearchResults"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Xem tất cả →"
+                    android:textColor="#815BF5"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <!-- Khung chứa lưới Voucher Trang Chủ -->
+            <LinearLayout
+                android:id="@+id/containerVoucherHomeGrid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical" />
+
+            <!-- Khung Gợi Ý Dành Cho Bạn -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="🔥 Deal Gợi Ý Dành Cho Bạn"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/containerSuggestedVouchers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Floating Chat Bubble Button -->
+    <TextView
+        android:id="@+id/btnFloatingChatBubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_purple_button"
+        android:clickable="true"
+        android:elevation="6dp"
+        android:focusable="true"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="8dp"
+        android:text="💬 Chat"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationContainer"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- 6. BOTTOM NAVIGATION BAR -->
     <LinearLayout
         android:id="@+id/bottomNavigationContainer"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="56dp"
         android:background="#121018"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:weightSum="5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- Home -->
         <LinearLayout
             android:id="@+id/navHome"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="Home Icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="Trang chủ"
                 android:src="@drawable/ic_home"
-                app:tint="#7C4DFF" />
+                app:tint="#815BF5" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Home"
-                android:textColor="#7C4DFF"
+                android:text="Trang chủ"
+                android:textColor="#815BF5"
                 android:textSize="10sp" />
         </LinearLayout>
 
-        <!-- Search -->
         <LinearLayout
             android:id="@+id/navSearch"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="Search Icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="Bản đồ"
                 android:src="@drawable/ic_market"
                 app:tint="#888888" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Search"
+                android:text="Bản đồ"
                 android:textColor="#888888"
                 android:textSize="10sp" />
         </LinearLayout>
 
-        <!-- Post -->
         <LinearLayout
             android:id="@+id/navSell"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="Post Icon"
-                android:src="@drawable/ic_arrow_up_right"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="Đăng bán"
+                android:src="@drawable/ic_plus"
                 app:tint="#888888" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Post"
+                android:text="Đăng bán"
                 android:textColor="#888888"
                 android:textSize="10sp" />
         </LinearLayout>
 
-        <!-- Wallet -->
         <LinearLayout
             android:id="@+id/navWallet"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="Wallet Icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="Ví Xu"
                 android:src="@drawable/ic_wallet"
                 app:tint="#888888" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Wallet"
+                android:text="Ví Xu"
                 android:textColor="#888888"
                 android:textSize="10sp" />
         </LinearLayout>
 
-        <!-- Profile -->
         <LinearLayout
             android:id="@+id/navProfile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="Profile Icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="Cá nhân"
                 android:src="@drawable/ic_user"
                 app:tint="#888888" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Profile"
+                android:text="Cá nhân"
                 android:textColor="#888888"
                 android:textSize="10sp" />
         </LinearLayout>
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -312,11 +312,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             trìnhSửa.apply();
 
-            // Kích hoạt đồng bộ ví & thông tin hồ sơ tài khoản từ Firebase Cloud Firestore
-            vn.edu.ueh.baoho.ssharing.utils.WalletManager.syncFromFirestore(this, usernameThànhCông, null);
-            vn.edu.ueh.baoho.ssharing.utils.SocialHelper.syncUserProfileFromCloud(this, usernameThànhCông, null);
-
-            Toast.makeText(this, "🎉 Đăng nhập thành công! Chào mừng " + họTênĐăngNhậpThànhCông, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "🎉 Đăng nhập thành công! Chào mừng " + họTênĐăngNhậpThànhCông, Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, MainActivity.class));
             finish();
         } else {
