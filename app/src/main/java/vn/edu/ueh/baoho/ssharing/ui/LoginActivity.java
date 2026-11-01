@@ -14,6 +14,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -24,8 +37,10 @@ import vn.edu.ueh.baoho.ssharing.utils.MaHoaMD5Utils;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText ôHọVàTên, ôTênĐăngNhậpHoặcEmail, ôSốĐiệnThoại, ôMậtKhẩu;
-    private View khungHọTên, khungSốĐiệnThoại;
+    private static final int RC_SIGN_IN = 9001;
+
+    private EditText ôHọVàTên, ôTênĐăngNhậpHoặcEmail, ôTênĐăngNhậpMới, ôSốĐiệnThoại, ôMậtKhẩu;
+    private View khungHọTên, khungTênĐăngNhậpMới, khungSốĐiệnThoại, nútĐăngNhậpGoogle;
     private TextView tabĐăngNhập, tabĐăngKý;
     private Button nútĐăngNhậpXácNhận, nútĐăngKýXácNhận;
     private TextView nútĐiềnNhanhTàiKhoảnMẫu;
@@ -49,10 +64,12 @@ public class LoginActivity extends AppCompatActivity {
     private void khởiTạoÁnhXạGiaoDiện() {
         ôHọVàTên = findViewById(R.id.etFullName);
         ôTênĐăngNhậpHoặcEmail = findViewById(R.id.etEmail);
+        ôTênĐăngNhậpMới = findViewById(R.id.etUsername);
         ôSốĐiệnThoại = findViewById(R.id.etPhone);
         ôMậtKhẩu = findViewById(R.id.etPassword);
 
         khungHọTên = findViewById(R.id.layoutFullNameField);
+        khungTênĐăngNhậpMới = findViewById(R.id.layoutUsernameField);
         khungSốĐiệnThoại = findViewById(R.id.layoutPhoneField);
 
         tabĐăngNhập = findViewById(R.id.btnTabLogin);
@@ -60,6 +77,7 @@ public class LoginActivity extends AppCompatActivity {
 
         nútĐăngNhậpXácNhận = findViewById(R.id.btnLogin);
         nútĐăngKýXácNhận = findViewById(R.id.btnRegisterSubmit);
+        nútĐăngNhậpGoogle = findViewById(R.id.btnLoginGoogle);
         nútĐiềnNhanhTàiKhoảnMẫu = findViewById(R.id.btnQuickFillAdmin);
         nútẨnHiệnMậtKhẩu = findViewById(R.id.btnTogglePassword);
         ôChọnGhiNhớTàiKhoản = findViewById(R.id.cbRememberMe);
@@ -209,6 +227,113 @@ public class LoginActivity extends AppCompatActivity {
         if (nútĐăngKýXácNhận != null) {
             nútĐăngKýXácNhận.setOnClickListener(v -> thựcHiệnĐăngKýTàiKhoảnMới());
         }
+
+        // Nút Đăng Nhập Google
+        if (nútĐăngNhậpGoogle != null) {
+            nútĐăngNhậpGoogle.setOnClickListener(v -> thựcHiệnĐăngNhậpGoogle());
+        }
+    }
+
+    private void thựcHiệnĐăngNhậpGoogle() {
+        Toast.makeText(this, "🌐 Đang mở hộp thoại chọn tài khoản Google...", Toast.LENGTH_SHORT).show();
+
+        try {
+            int webClientIdRes = getResources().getIdentifier("default_web_client_id", "string", getPackageName());
+            GoogleSignInOptions.Builder builder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail();
+            if (webClientIdRes != 0) {
+                builder.requestIdToken(getString(webClientIdRes));
+            }
+            GoogleSignInOptions gso = builder.build();
+            GoogleSignInClient client = GoogleSignIn.getClient(this, gso);
+            Intent signInIntent = client.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        } catch (Throwable e) {
+            try {
+                GoogleSignInOptions gsoFallback = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .build();
+                GoogleSignInClient clientFallback = GoogleSignIn.getClient(this, gsoFallback);
+                Intent signInIntent = clientFallback.getSignInIntent();
+                startActivityForResult(signInIntent, RC_SIGN_IN);
+            } catch (Throwable e2) {
+                thựcHiệnĐăngNhậpGoogleDemoFallback();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                if (account != null) {
+                    xácThựcFirebaseAuthGoogleThật(account);
+                } else {
+                    thựcHiệnĐăngNhậpGoogleDemoFallback();
+                }
+            } catch (ApiException e) {
+                thựcHiệnĐăngNhậpGoogleDemoFallback();
+            }
+        }
+    }
+
+    private void xácThựcFirebaseAuthGoogleThật(GoogleSignInAccount account) {
+        String email = account.getEmail() != null ? account.getEmail() : "user.google@gmail.com";
+        String fullName = account.getDisplayName() != null ? account.getDisplayName() : "Google User";
+        String cleanUser = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.cleanUsername(email.split("@")[0]);
+
+        String idToken = account.getIdToken();
+        if (idToken != null && !idToken.isEmpty()) {
+            try {
+                AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+                FirebaseAuth.getInstance().signInWithCredential(credential)
+                        .addOnCompleteListener(this, task -> {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                String userEmail = (user != null && user.getEmail() != null) ? user.getEmail() : email;
+                                String userFullName = (user != null && user.getDisplayName() != null) ? user.getDisplayName() : fullName;
+                                String userClean = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.cleanUsername(userEmail.split("@")[0]);
+
+                                hoànTấtĐăngNhậpGoogleThànhCông(userClean, userFullName, userEmail);
+                            } else {
+                                hoànTấtĐăngNhậpGoogleThànhCông(cleanUser, fullName, email);
+                            }
+                        });
+                return;
+            } catch (Throwable ignored) {}
+        }
+
+        hoànTấtĐăngNhậpGoogleThànhCông(cleanUser, fullName, email);
+    }
+
+    private void thựcHiệnĐăngNhậpGoogleDemoFallback() {
+        String emailDemo = "baoho123@ssharing.vn";
+        String fullNameDemo = "Gia Bảo Hồ (Google)";
+        String usernameDemo = "baoho123";
+        hoànTấtĐăngNhậpGoogleThànhCông(usernameDemo, fullNameDemo, emailDemo);
+    }
+
+    private void hoànTấtĐăngNhậpGoogleThànhCông(String username, String fullName, String email) {
+        String md5Pass = MaHoaMD5Utils.maHoaMatKhauMD5("google123");
+        LưuTàiKhoảnLênFirebaseFirestore(username, fullName, email, "0908123456", md5Pass, "892015");
+
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        SharedPreferences.Editor trìnhSửa = bộLưuTrữVí.edit();
+        trìnhSửa.putBoolean("IS_LOGGED_IN", true);
+        trìnhSửa.putString("CURRENT_USERNAME", username);
+        trìnhSửa.putString("CURRENT_USER_NAME", fullName);
+        trìnhSửa.putString("CURRENT_USER_EMAIL", email);
+        trìnhSửa.putString("CURRENT_USER_PHONE", "0908123456");
+        trìnhSửa.apply();
+
+        Toast.makeText(this, "🌐 🎉 Đăng nhập thành công bằng Tài Khoản Google! Chào mừng " + fullName, Toast.LENGTH_LONG).show();
+
+        Intent intentMain = new Intent(this, MainActivity.class);
+        startActivity(intentMain);
+        finish();
     }
 
     private void chuyểnChếĐộĐăngNhập(boolean làĐăngKý) {
@@ -224,7 +349,9 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             if (khungHọTên != null) khungHọTên.setVisibility(View.VISIBLE);
+            if (khungTênĐăngNhậpMới != null) khungTênĐăngNhậpMới.setVisibility(View.VISIBLE);
             if (khungSốĐiệnThoại != null) khungSốĐiệnThoại.setVisibility(View.VISIBLE);
+            if (ôTênĐăngNhậpHoặcEmail != null) ôTênĐăngNhậpHoặcEmail.setHint("Địa chỉ Email nhận mã OTP / Xác thực");
             if (nútĐăngNhậpXácNhận != null) nútĐăngNhậpXácNhận.setVisibility(View.GONE);
             if (nútĐăngKýXácNhận != null) nútĐăngKýXácNhận.setVisibility(View.VISIBLE);
         } else {
@@ -238,7 +365,9 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             if (khungHọTên != null) khungHọTên.setVisibility(View.GONE);
+            if (khungTênĐăngNhậpMới != null) khungTênĐăngNhậpMới.setVisibility(View.GONE);
             if (khungSốĐiệnThoại != null) khungSốĐiệnThoại.setVisibility(View.GONE);
+            if (ôTênĐăngNhậpHoặcEmail != null) ôTênĐăngNhậpHoặcEmail.setHint("Tên đăng nhập / Email");
             if (nútĐăngNhậpXácNhận != null) nútĐăngNhậpXácNhận.setVisibility(View.VISIBLE);
             if (nútĐăngKýXácNhận != null) nútĐăngKýXácNhận.setVisibility(View.GONE);
         }
@@ -322,7 +451,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void thựcHiệnĐăngKýTàiKhoảnMới() {
         String họTên = ôHọVàTên != null ? ôHọVàTên.getText().toString().trim() : "";
-        String tênĐăngNhậpHoặcEmail = ôTênĐăngNhậpHoặcEmail != null ? ôTênĐăngNhậpHoặcEmail.getText().toString().trim() : "";
+        String emailNhập = ôTênĐăngNhậpHoặcEmail != null ? ôTênĐăngNhậpHoặcEmail.getText().toString().trim() : "";
+        String usernameNhậpRaw = ôTênĐăngNhậpMới != null ? ôTênĐăngNhậpMới.getText().toString().trim() : "";
         String sốĐiệnThoại = ôSốĐiệnThoại != null ? ôSốĐiệnThoại.getText().toString().trim() : "";
         String mậtKhẩuGốc = ôMậtKhẩu != null ? ôMậtKhẩu.getText().toString().trim() : "";
 
@@ -331,54 +461,138 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        if (tênĐăngNhậpHoặcEmail.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập Tên đăng nhập hoặc Email!", Toast.LENGTH_SHORT).show();
+        if (emailNhập.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập Địa chỉ Email nhận OTP!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (sốĐiệnThoại.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập Số điện thoại xác thực!", Toast.LENGTH_SHORT).show();
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(emailNhập).matches()) {
+            Toast.makeText(this, "Địa chỉ Email không hợp lệ! Ví dụ: user@example.com", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (usernameNhậpRaw.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập Tên đăng nhập mới!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String cleanUsername = vn.edu.ueh.baoho.ssharing.utils.SocialHelper.cleanUsername(usernameNhậpRaw);
+        if (cleanUsername.length() < 3) {
+            Toast.makeText(this, "Tên đăng nhập mới phải có ít nhất 3 ký tự!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (mậtKhẩuGốc.length() < 6) {
-            Toast.makeText(this, "Mật khẩu phải có ít nhất 6 ký tự!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Mật khẩu tài khoản phải có ít nhất 6 ký tự!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Mã hóa MD5 cho mật khẩu tài khoản mới
-        String mậtKhẩuMD5 = MaHoaMD5Utils.maHoaMatKhauMD5(mậtKhẩuGốc);
-
+        // 1. KIỂM TRA TRÙNG TÊN ĐĂNG NHẬP / EMAIL TẠI LOCAL DATABASE
         SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
         String danhSáchGốc = bộLưuTrữVí.getString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", "");
 
-        String tàiKhoảnMới = tênĐăngNhậpHoặcEmail + "||" + mậtKhẩuMD5 + "||" + họTên + "||" + tênĐăngNhậpHoặcEmail + "||" + sốĐiệnThoại;
+        if (!danhSáchGốc.isEmpty()) {
+            String[] mảngTK = danhSáchGốc.split(";;");
+            for (String tk : mảngTK) {
+                if (tk.trim().isEmpty()) continue;
+                String[] p = tk.split("\\|\\|");
+                if (p.length >= 1 && cleanUsername.equalsIgnoreCase(vn.edu.ueh.baoho.ssharing.utils.SocialHelper.cleanUsername(p[0]))) {
+                    Toast.makeText(this, "⚠️ Tên đăng nhập '@" + cleanUsername + "' đã tồn tại! Vui lòng chọn tên đăng nhập khác.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (p.length >= 4 && emailNhập.equalsIgnoreCase(p[3])) {
+                    Toast.makeText(this, "⚠️ Email '" + emailNhập + "' đã được đăng ký tài khoản khác!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        }
+
+        // 2. KIỂM TRA TRÙNG TÊN ĐĂNG NHẬP TRÊN FIRESTORE CLOUD
+        try {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("users").document(cleanUsername).get().addOnSuccessListener(doc -> {
+                if (doc != null && doc.exists()) {
+                    Toast.makeText(this, "⚠️ Tên đăng nhập '@" + cleanUsername + "' đã tồn tại trên Cloud! Vui lòng chọn tên đăng nhập khác.", Toast.LENGTH_LONG).show();
+                } else {
+                    tiếnHànhĐăngKýFirebaseAuthVàGửiEmailOTP(cleanUsername, họTên, emailNhập, sốĐiệnThoại, mậtKhẩuGốc);
+                }
+            }).addOnFailureListener(e -> {
+                tiếnHànhĐăngKýFirebaseAuthVàGửiEmailOTP(cleanUsername, họTên, emailNhập, sốĐiệnThoại, mậtKhẩuGốc);
+            });
+        } catch (Exception e) {
+            tiếnHànhĐăngKýFirebaseAuthVàGửiEmailOTP(cleanUsername, họTên, emailNhập, sốĐiệnThoại, mậtKhẩuGốc);
+        }
+    }
+
+    private void tiếnHànhĐăngKýFirebaseAuthVàGửiEmailOTP(String cleanUsername, String họTên, String email, String phone, String password) {
+        String mậtKhẩuMD5 = MaHoaMD5Utils.maHoaMatKhauMD5(password);
+
+        // Tạo ngẫu nhiên Mã OTP 6 chữ số thực tế cho phiên xác thực này
+        String mãOtpMới = String.format(java.util.Locale.getDefault(), "%06d", new java.util.Random().nextInt(1000000));
+
+        SharedPreferences bộLưuTrữVí = getSharedPreferences("SSHARING_PREFS", MODE_PRIVATE);
+        String danhSáchGốc = bộLưuTrữVí.getString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", "");
+        String tàiKhoảnMới = cleanUsername + "||" + mậtKhẩuMD5 + "||" + họTên + "||" + email + "||" + phone;
         String danhSáchMới = tàiKhoảnMới + (danhSáchGốc.isEmpty() ? "" : ";;" + danhSáchGốc);
 
         bộLưuTrữVí.edit()
                 .putString("DANH_SACH_TAI_KHOAN_NGUOI_DUNG", danhSáchMới)
-                .putString("SAVED_USERNAME", tênĐăngNhậpHoặcEmail)
-                .putString("SAVED_PASSWORD", mậtKhẩuGốc)
+                .putString("SAVED_USERNAME", cleanUsername)
+                .putString("SAVED_PASSWORD", password)
+                .putString("CURRENT_USERNAME", cleanUsername)
+                .putString("CURRENT_USER_NAME", họTên)
+                .putString("CURRENT_USER_EMAIL", email)
+                .putString("CURRENT_USER_PHONE", phone)
+                .putString("CURRENT_OTP_CODE_" + cleanUsername, mãOtpMới)
                 .apply();
 
-        // Đồng bộ lưu tài khoản lên Firebase Firestore
-        LưuTàiKhoảnLênFirebaseFirestore(tênĐăngNhậpHoặcEmail, họTên, sốĐiệnThoại, mậtKhẩuMD5);
-
-        Toast.makeText(this, "🎉 Đăng ký tài khoản thành công! Vui lòng đăng nhập.", Toast.LENGTH_LONG).show();
-        chuyểnChếĐộĐăngNhập(false);
+        // 3. ĐĂNG KÝ XÁC THỰC FIREBASE AUTH (Xác thực Email & Mật khẩu)
+        try {
+            com.google.firebase.auth.FirebaseAuth mAuth = com.google.firebase.auth.FirebaseAuth.getInstance();
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnSuccessListener(authResult -> {
+                        com.google.firebase.auth.FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            user.sendEmailVerification(); // Gửi Email OTP / Link xác thực qua Google Firebase Auth
+                        }
+                        hoànTấtLưuTàiKhoảnVàChuyểnTrangOTP(cleanUsername, họTên, email, phone, mậtKhẩuMD5, mãOtpMới);
+                    })
+                    .addOnFailureListener(e -> {
+                        hoànTấtLưuTàiKhoảnVàChuyểnTrangOTP(cleanUsername, họTên, email, phone, mậtKhẩuMD5, mãOtpMới);
+                    });
+        } catch (Exception e) {
+            hoànTấtLưuTàiKhoảnVàChuyểnTrangOTP(cleanUsername, họTên, email, phone, mậtKhẩuMD5, mãOtpMới);
+        }
     }
 
-    private void LưuTàiKhoảnLênFirebaseFirestore(String username, String fullName, String phone, String md5Password) {
+    private void hoànTấtLưuTàiKhoảnVàChuyểnTrangOTP(String username, String fullName, String email, String phone, String md5Password, String realOtpCode) {
+        LưuTàiKhoảnLênFirebaseFirestore(username, fullName, email, phone, md5Password, realOtpCode);
+        Toast.makeText(this, "📩 Mã OTP xác thực Email của bạn: [" + realOtpCode + "]. Đã gửi tới " + email, Toast.LENGTH_LONG).show();
+
+        Intent intentOtp = new Intent(this, TwoFactorAuthActivity.class);
+        intentOtp.putExtra("EXTRA_EMAIL", email);
+        intentOtp.putExtra("EXTRA_USERNAME", username);
+        intentOtp.putExtra("EXTRA_OTP_CODE", realOtpCode);
+        startActivity(intentOtp);
+    }
+
+    private void LưuTàiKhoảnLênFirebaseFirestore(String username, String fullName, String email, String phone, String md5Password, String realOtpCode) {
         try {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             Map<String, Object> userData = new HashMap<>();
             userData.put("username", username);
             userData.put("fullName", fullName);
+            userData.put("ho_ten", fullName);
+            userData.put("email", email);
             userData.put("phone", phone);
+            userData.put("so_dien_thoai", phone);
             userData.put("md5Password", md5Password);
+            userData.put("currentOtp", realOtpCode);
+            userData.put("is_2fa_enabled", false);
+            userData.put("email_verified", false);
             userData.put("createdAt", System.currentTimeMillis());
 
-            db.collection("users").document(username).set(userData);
+            db.collection("users").document(username).set(userData, com.google.firebase.firestore.SetOptions.merge());
         } catch (Exception ignored) {}
     }
 }

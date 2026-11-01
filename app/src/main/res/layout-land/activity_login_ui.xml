@@ -163,6 +163,39 @@
                             android:textSize="13sp" />
                     </LinearLayout>
 
+                    <!-- Trường Tên Đăng Nhập Mới Không Trùng (chỉ hiện khi Đăng ký) -->
+                    <LinearLayout
+                        android:id="@+id/layoutUsernameField"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_input_field"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="14dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:contentDescription="Username"
+                            android:src="@drawable/ic_user"
+                            app:tint="#A09CAB" />
+
+                        <EditText
+                            android:id="@+id/etUsername"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="10dp"
+                            android:background="@null"
+                            android:hint="Tên đăng nhập mới (không trùng)"
+                            android:importantForAutofill="no"
+                            android:inputType="text"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#6C677A"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
                     <!-- Trường Tên Đăng Nhập / Email -->
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -326,6 +359,36 @@
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:visibility="gone" />
+
+                    <!-- Nút Đăng Nhập Bằng Google với Logo G đa màu -->
+                    <LinearLayout
+                        android:id="@+id/btnLoginGoogle"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_rounded_card"
+                        android:backgroundTint="#1F1A30"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="14dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="Google Logo"
+                            android:src="@drawable/ic_google_logo" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="Đăng nhập nhanh bằng Google"
+                            android:textColor="#FFFFFF"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                     <!-- Tài Khoản Mẫu Nhanh -->
                     <LinearLayout

@@ -39,12 +39,13 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
 
     // ==========================================
-    // 2. Thư viện Firebase (BOM & Dịch vụ)
+    // 2. Thư viện Firebase & Google Auth (BOM & Dịch vụ)
     // ==========================================
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-firestore") // Cloud Firestore
     implementation("com.google.firebase:firebase-auth")      // Xác thực người dùng
     implementation("com.google.firebase:firebase-storage")   // Lưu trữ hình ảnh
+    implementation("com.google.android.gms:play-services-auth:21.2.0") // Đăng nhập Google Auth
 
     // ==========================================
     // 3. Thư viện Google Maps & Định vị (GPS)
